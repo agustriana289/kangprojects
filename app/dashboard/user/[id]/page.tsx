@@ -2,7 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Clock, BriefcaseBusiness, Mail, Calendar, ShieldCheck, User as UserIcon, MapPin, Building, Settings } from "lucide-react";
-import Avatar from "@/components/Avatar";
+import Avatar from "@/components/admin/Avatar";
 
 function getTimeAgo(dateString: string) {
   const date = new Date(dateString);

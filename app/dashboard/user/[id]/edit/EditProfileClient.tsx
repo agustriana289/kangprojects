@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { Save, AlertCircle, ArrowLeft, Loader2, Link as LinkIcon, Building, MapPin, Building2, User, Mail } from "lucide-react";
 import Link from "next/link";
-import Avatar from "@/components/Avatar";
+import Avatar from "@/components/admin/Avatar";
 
 export default function EditProfileClient({ profile }: { profile: any }) {
   const supabase = createClient();

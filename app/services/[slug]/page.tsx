@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 import FadeIn from "@/components/landing/FadeIn";
 import Pricing from "@/components/landing/Pricing";
 import { BriefcaseBusiness, ChevronRight, Home } from "lucide-react";
-import DynamicIcon from "@/components/DynamicIcon";
+import DynamicIcon from "@/components/dashboard/DynamicIcon";
 import Link from "next/link";
 import FAQSection from "@/components/landing/FAQSection";
 

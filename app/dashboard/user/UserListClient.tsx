@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { Search, Filter, ShieldCheck, User as UserIcon, ChevronLeft, ChevronRight, Loader2, Mail, ExternalLink } from "lucide-react";
-import Avatar from "@/components/Avatar";
+import Avatar from "@/components/admin/Avatar";
 import Link from "next/link";
 import { getTimeAgo } from "@/utils/dateFormatter";
 

@@ -5,7 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import FadeIn from "@/components/landing/FadeIn";
 import { ShoppingBag, ChevronRight, Home, Check, Tag } from "lucide-react";
-import DynamicIcon from "@/components/DynamicIcon";
+import DynamicIcon from "@/components/dashboard/DynamicIcon";
 import Link from "next/link";
 import { calculateDiscountedPrice } from "@/utils/discounts";
 import FAQSection from "@/components/landing/FAQSection";
