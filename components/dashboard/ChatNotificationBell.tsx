@@ -111,11 +111,11 @@ export default function ChatNotificationBell({ role = "user", userId }: { role?:
   }, []);
 
   // Merge live chats and DB chats
-  const liveChatsAsNotifs: ChatNotif[] = liveChatHistory.map(l => ({
+  const liveChatsAsNotifs: ChatNotif[] = liveChatHistory.map((l: any) => ({
     id: `live_${l.id}`,
     senderName: l.senderName,
     message: l.message,
-    time: l.time,
+    time: new Date(l.time).toISOString(),
     link: l.link,
     type: "live",
     avatarLetter: l.avatarLetter
@@ -129,10 +129,10 @@ export default function ChatNotificationBell({ role = "user", userId }: { role?:
       removeFromHistory(chat.id.replace("live_", ""));
     } else if (chat.type === "support") {
       await supabase.from("support_ticket_messages").update({ is_read: true }).eq("id", chat.id.replace("support_", ""));
-      setDbChats(dbChats.filter(c => c.id !== chat.id));
+      setDbChats(dbChats.filter((c: ChatNotif) => c.id !== chat.id));
     } else if (chat.type === "workspace") {
       await supabase.from("store_messages").update({ is_read: true }).eq("id", chat.id.replace("ws_", ""));
-      setDbChats(dbChats.filter(c => c.id !== chat.id));
+      setDbChats(dbChats.filter((c: ChatNotif) => c.id !== chat.id));
     }
   };
 
@@ -143,12 +143,12 @@ export default function ChatNotificationBell({ role = "user", userId }: { role?:
 
     // Mark all as read for support & workspace
     // Simplest way: loop and update (since we want to avoid complex multi-table update queries)
-    const supportIds = dbChats.filter(c => c.type === 'support').map(c => c.id.replace('support_', ''));
+    const supportIds = dbChats.filter((c: ChatNotif) => c.type === 'support').map((c: ChatNotif) => c.id.replace('support_', ''));
     if (supportIds.length > 0) {
       await supabase.from('support_ticket_messages').update({ is_read: true }).in('id', supportIds);
     }
 
-    const wsIds = dbChats.filter(c => c.type === 'workspace').map(c => c.id.replace('ws_', ''));
+    const wsIds = dbChats.filter((c: ChatNotif) => c.type === 'workspace').map((c: ChatNotif) => c.id.replace('ws_', ''));
     if (wsIds.length > 0) {
       await supabase.from('store_messages').update({ is_read: true }).in('id', wsIds);
     }
