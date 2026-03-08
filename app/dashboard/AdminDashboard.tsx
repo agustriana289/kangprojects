@@ -139,7 +139,7 @@ export default async function AdminDashboard({
     .map((s) => ({
       name: s.title as string,
       cat: s.category as string,
-      sold: orders.filter((o) => o.store_services?.title === s.title).length,
+      sold: orders.filter((o: any) => o.store_services?.title === s.title).length,
     }))
     .sort((a, b) => b.sold - a.sold)
     .slice(0, 5);
@@ -153,7 +153,7 @@ export default async function AdminDashboard({
     .map((p) => ({
       name: p.title as string,
       cat: p.category as string,
-      sold: orders.filter((o) => o.store_products?.title === p.title).length,
+      sold: orders.filter((o: any) => o.store_products?.title === p.title).length,
     }))
     .sort((a, b) => b.sold - a.sold)
     .slice(0, 5);
