@@ -77,8 +77,12 @@ export default function RichTextEditor({ value, onChange, placeholder = "Write y
   const btnBase = "p-2 rounded-lg transition-all text-slate-500 hover:bg-slate-100 hover:text-slate-900";
   const btnActive = "bg-indigo-50 text-indigo-700 ring-1 ring-indigo-200";
 
-  const isActive = (name: string, attrs?: Record<string, unknown>) =>
-    attrs ? editor.isActive(name, attrs) : editor.isActive(name);
+  const isActive = (nameOrAttrs: string | Record<string, unknown>, attrs?: Record<string, unknown>) => {
+    if (typeof nameOrAttrs === "string") {
+      return attrs ? editor.isActive(nameOrAttrs, attrs) : editor.isActive(nameOrAttrs);
+    }
+    return editor.isActive(nameOrAttrs);
+  };
 
   return (
     <div className="bg-white border border-slate-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-indigo-500/20 focus-within:border-indigo-400 transition-all">
