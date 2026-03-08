@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Plus, Pencil, Trash2, Loader2, ArrowLeft, Save, Globe, Clock, Star, Box, Check, X, Layers, MessageSquare } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { useToast } from "@/components/ToastProvider";
+import ImageUploader from "@/components/admin/ImageUploader";
 
 interface ServicePackage {
   name: string;
@@ -52,7 +53,7 @@ const emptyForm: Omit<Service, "id"> = {
   packages: [{ name: "Standard", price: 0, description: "Standard Package", features: [] }], 
   form_fields: [{ label: "Project Details", type: "textarea", required: true }], 
   key_features: [],
-  is_published: false, 
+  is_published: true, 
   is_featured: false, 
   sort_order: 0 
 };
@@ -115,7 +116,8 @@ export default function ServicesClient() {
       if (error) showToast("Failed to update service", "error");
       else { showToast("Service updated", "success"); setView("list"); fetchServices(); }
     } else {
-      const { error } = await supabase.from("store_services").insert(form);
+      const newOrder = services.length > 0 ? Math.max(...services.map(s => s.sort_order || 0)) + 1 : 1;
+      const { error } = await supabase.from("store_services").insert({ ...form, sort_order: newOrder });
       if (error) showToast("Failed to create service", "error");
       else { showToast("Service created", "success"); setView("list"); fetchServices(); }
     }
@@ -222,31 +224,30 @@ export default function ServicesClient() {
                   </div>
                 </div>
                 
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block">Category</label>
+                    <select value={form.category} onChange={e => setForm(p => ({ ...p, category: e.target.value }))} className={`${inputClass} w-full`}>
+                      <option>Design</option>
+                      <option>Development</option>
+                      <option>Marketing</option>
+                      <option>Consulting</option>
+                      <option>Other</option>
+                    </select>
+                  </div>
+                </div>
+                
                 <div className="space-y-2">
                   <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Description</label>
                   <textarea rows={4} value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} placeholder="Describe your service offering..." className={`${inputClass} resize-none`} />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Image URL</label>
-                    <input value={form.thumbnail_url} onChange={e => setForm(p => ({ ...p, thumbnail_url: e.target.value }))} placeholder="https://..." className={inputClass} />
-                    {form.thumbnail_url && <img src={form.thumbnail_url} alt="Preview" className="h-20 max-w-full rounded-xl object-cover mt-2 border border-slate-200 shadow-sm" />}
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Category & Order</label>
-                    <div className="flex gap-2">
-                      <select value={form.category} onChange={e => setForm(p => ({ ...p, category: e.target.value }))} className={`${inputClass} flex-1`}>
-                        <option>Design</option>
-                        <option>Development</option>
-                        <option>Marketing</option>
-                        <option>Consulting</option>
-                        <option>Other</option>
-                      </select>
-                      <input type="number" value={form.sort_order} onChange={e => setForm(p => ({ ...p, sort_order: parseInt(e.target.value) || 0 }))} placeholder="Order" className={`${inputClass} w-24`} />
-                    </div>
-                  </div>
-                </div>
+                <ImageUploader 
+                  label="Service Thumbnail" 
+                  value={form.thumbnail_url} 
+                  onChange={(url) => setForm(p => ({ ...p, thumbnail_url: url }))} 
+                  folder="services"
+                />
               </div>
 
               {/* Pricing Packages */}
