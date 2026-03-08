@@ -81,7 +81,7 @@ export default function RichTextEditor({ value, onChange, placeholder = "Write y
     if (typeof nameOrAttrs === "string") {
       return attrs ? editor.isActive(nameOrAttrs, attrs) : editor.isActive(nameOrAttrs);
     }
-    return editor.isActive(nameOrAttrs);
+    return editor.isActive(nameOrAttrs as any);
   };
 
   return (
