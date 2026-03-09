@@ -59,9 +59,9 @@ async function getAds() {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const blog = await getBlog(slug);
-  if (!blog) return { title: "Blog Not Found | Kanglogo" };
+  if (!blog) return { title: "Blog Not Found" };
   return {
-    title: blog.meta_title || `${blog.title} | Kanglogo`,
+    title: blog.meta_title || blog.title,
     description: blog.meta_description || blog.excerpt,
     keywords: blog.meta_keywords,
     openGraph: {

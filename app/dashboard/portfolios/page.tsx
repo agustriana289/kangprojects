@@ -2,7 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import PortfoliosClient from "./PortfoliosClient";
 
-export const metadata = { title: "Portfolios | Kanglogo Dashboard" };
+export const metadata = { title: "Portfolios" };
 
 export default async function PortfoliosPage() {
   const supabase = await createClient();

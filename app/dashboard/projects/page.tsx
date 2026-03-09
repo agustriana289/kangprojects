@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import AdminProjectsClient from "./AdminProjectsClient";
 import UserProjectsClient from "./UserProjectsClient";
 
-export const metadata = { title: "Projects | Kanglogo Dashboard" };
+export const metadata = { title: "Projects" };
 
 export default async function ProjectsPage() {
   const supabase = await createClient();

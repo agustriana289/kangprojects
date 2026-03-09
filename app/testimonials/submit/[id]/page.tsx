@@ -5,7 +5,7 @@ import { Clock, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 
 export const metadata = {
-  title: "Submit Testimonial | Kanglogo",
+  title: "Submit Testimonial",
   description: "Share your experience working with us.",
 };
 

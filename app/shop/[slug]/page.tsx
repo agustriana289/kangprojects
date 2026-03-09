@@ -28,9 +28,9 @@ async function getProduct(slug: string) {
 export async function generateMetadata({ params }: ProductProps): Promise<Metadata> {
   const { slug } = await params;
   const prod = await getProduct(slug);
-  if (!prod) return { title: "Product Not Found | Kanglogo" };
+  if (!prod) return { title: "Product Not Found" };
   return {
-    title: `${prod.title} | Kanglogo Shop`,
+    title: prod.title,
     description: prod.description,
   };
 }

@@ -2,7 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import HelpFaqClient from "./HelpFaqClient";
 
-export const metadata = { title: "Help & FAQ | Kanglogo" };
+export const metadata = { title: "Help & FAQ" };
 
 export default async function HelpFaqPage() {
   const supabase = await createClient();

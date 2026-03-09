@@ -3,7 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import UserListClient from "./UserListClient";
 
 export const metadata = {
-  title: "User Management | Kanglogo Dashboard",
+  title: "User Management",
   description: "Manage clients and administrators",
 };
 

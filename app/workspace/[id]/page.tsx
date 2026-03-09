@@ -1,6 +1,11 @@
 import { createClient } from "@/utils/supabase/server";
 import { notFound, redirect } from "next/navigation";
+import { Metadata } from "next";
 import WorkspaceClient from "./WorkspaceClient";
+
+export const metadata: Metadata = {
+  title: "Project Workspace",
+};
 
 async function getOrder(id: string, supabase: any) {
   // 1. Ambil data order

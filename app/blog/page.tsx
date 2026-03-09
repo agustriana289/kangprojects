@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Calendar, ArrowRight, BookOpen } from "lucide-react";
 
 export const metadata = {
-  title: "Blog | Kanglogo",
+  title: "Blog",
   description: "Read the latest tips, trends, and insights on logo design, branding, and visual identity.",
 };
 

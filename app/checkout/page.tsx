@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 import CheckoutClient from "./CheckoutClient";
 
 export const metadata: Metadata = {
-  title: "Checkout | Kanglogo",
+  title: "Checkout",
 };
 
 interface CheckoutPageProps {

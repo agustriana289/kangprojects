@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import SettingsClient from "./SettingsClient";
 
 export const metadata = {
-  title: "System Settings | Kanglogo Dashboard",
+  title: "System Settings",
   description: "Configure global application settings",
 };
 

@@ -2,7 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import BrowseShopClient from "./BrowseShopClient";
 
-export const metadata = { title: "Browse Shop | Kanglogo" };
+export const metadata = { title: "Browse Shop" };
 
 export default async function BrowseShopPage() {
   const supabase = await createClient();

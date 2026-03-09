@@ -2,7 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import VouchersClient from "./VouchersClient";
 
-export const metadata = { title: "Discounts & Vouchers | Kanglogo" };
+export const metadata = { title: "Discounts & Vouchers" };
 
 export default async function UserVouchersPage() {
   const supabase = await createClient();

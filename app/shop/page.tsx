@@ -6,7 +6,7 @@ import Link from "next/link";
 import { ArrowRight, ShoppingBag, Eye } from "lucide-react";
 
 export const metadata = {
-  title: "Shop | Kanglogo",
+  title: "Shop",
   description: "Browse premium design assets, templates, and digital resources.",
 };
 

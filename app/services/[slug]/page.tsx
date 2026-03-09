@@ -28,9 +28,9 @@ async function getService(slug: string) {
 export async function generateMetadata({ params }: ServiceProps): Promise<Metadata> {
   const { slug } = await params;
   const service = await getService(slug);
-  if (!service) return { title: "Service Not Found | Kanglogo" };
+  if (!service) return { title: "Service Not Found" };
   return {
-    title: `${service.title} | Kanglogo Services`,
+    title: service.title,
     description: service.description,
   };
 }

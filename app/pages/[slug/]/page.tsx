@@ -23,9 +23,9 @@ async function getPage(slug: string) {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const page = await getPage(slug);
-  if (!page) return { title: "Page Not Found | Kanglogo" };
+  if (!page) return { title: "Page Not Found" };
   return {
-    title: `${page.title} | Kanglogo`,
+    title: page.title,
     description: page.meta_description,
   };
 }

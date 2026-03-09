@@ -2,7 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import UserPagesClient from "./UserPagesClient";
 
-export const metadata = { title: "Explore Pages | Kanglogo" };
+export const metadata = { title: "Explore Pages" };
 
 export default async function ExplorePages() {
   const supabase = await createClient();

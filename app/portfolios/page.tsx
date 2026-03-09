@@ -5,7 +5,7 @@ import FadeIn from "@/components/landing/FadeIn";
 import { BriefcaseBusiness, Eye } from "lucide-react";
 
 export const metadata = {
-  title: "Portfolios | Kanglogo",
+  title: "Portfolios",
   description: "Explore our creative portfolios and successful projects.",
 };
 

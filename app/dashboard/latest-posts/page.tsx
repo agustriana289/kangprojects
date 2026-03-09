@@ -2,7 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import LatestPostsClient from "./LatestPostsClient";
 
-export const metadata = { title: "Latest Posts | Kanglogo" };
+export const metadata = { title: "Latest Posts" };
 
 export default async function LatestPostsPage() {
   const supabase = await createClient();

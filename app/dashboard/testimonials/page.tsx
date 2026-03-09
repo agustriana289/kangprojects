@@ -2,7 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import TestimonialsClient from "./TestimonialsClient";
 
-export const metadata = { title: "Testimonials | Kanglogo Dashboard" };
+export const metadata = { title: "Testimonials" };
 
 export default async function TestimonialsPage() {
   const supabase = await createClient();

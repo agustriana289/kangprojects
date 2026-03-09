@@ -5,7 +5,7 @@ import FadeIn from "@/components/landing/FadeIn";
 import { Star, MessageSquareQuote } from "lucide-react";
 
 export const metadata = {
-  title: "Testimonials | Kanglogo",
+  title: "Testimonials",
   description: "Read what our clients have to say about our services.",
 };
 
