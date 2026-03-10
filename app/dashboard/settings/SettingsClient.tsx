@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useToast } from "@/components/ToastProvider";
 import { Save, Loader2, Globe, FileText, MonitorSmartphone, LayoutTemplate, PanelTop, PanelBottom, Settings, Search, Banknote, Upload, Image as ImageIcon, Plus, Trash2, ArrowUp, ArrowDown, Rocket, Sparkles, CheckCircle2, Zap, Shield, RefreshCcw, Lightbulb, Edit3, DownloadCloud, Star, TrendingUp, Users, Briefcase, Award } from "lucide-react";
@@ -332,7 +332,7 @@ export default function SettingsClient() {
   };
 
   const removeListItem = (field: keyof WebsiteSettings, index: number) => {
-    setSettings((prev) => {
+    setSettings((prev: any) => {
       const arr = [...(prev[field] as any[])];
       arr.splice(index, 1);
       return { ...prev, [field]: arr };
@@ -340,7 +340,7 @@ export default function SettingsClient() {
   };
 
   const moveListItem = (field: keyof WebsiteSettings, index: number, direction: 'up' | 'down') => {
-    setSettings((prev) => {
+    setSettings((prev: any) => {
       const arr = [...(prev[field] as any[])];
       if (direction === 'up' && index > 0) {
         [arr[index - 1], arr[index]] = [arr[index], arr[index - 1]];
@@ -813,15 +813,12 @@ export default function SettingsClient() {
                          type="color"
                          id={col.id}
                          name={col.id}
-                         // @ts-ignore
-                         value={settings[col.id] || "#000000"}
+                         value={(settings[col.id as keyof WebsiteSettings] as string) || "#000000"}
                          onChange={handleChange}
                          className="h-9 w-10 border-0 rounded cursor-pointer bg-transparent p-0"
                        />
                         <span className="text-xs font-bold text-slate-500 ml-2 uppercase tracking-wide">
-                          
-
-                          {settings[col.id]}
+                          {(settings[col.id as keyof WebsiteSettings] as string) || ""}
                         </span>
                      </div>
                    </div>
