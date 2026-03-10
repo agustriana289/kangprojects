@@ -44,7 +44,9 @@ export default function CheckoutClient({ user, item, type, selectedPlan, initial
   useEffect(() => {
     const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY;
     if (!clientKey) return;
-    const isProduction = process.env.MIDTRANS_IS_PRODUCTION === "true";
+    
+    // Check if the client key is for production or sandbox
+    const isProduction = !clientKey.startsWith('SB-');
     const scriptSrc = isProduction
       ? "https://app.midtrans.com/snap/snap.js"
       : "https://app.sandbox.midtrans.com/snap/snap.js";
