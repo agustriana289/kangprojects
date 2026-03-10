@@ -4,24 +4,36 @@ import Footer from "@/components/Footer";
 import FadeIn from "@/components/landing/FadeIn";
 import Link from "next/link";
 import { ArrowRight, BriefcaseBusiness, CheckCircle2 } from "lucide-react";
+import Pagination from "@/components/landing/Pagination";
 
 export const metadata = {
   title: "Services",
   description: "Explore our professional design and branding services tailored exactly for your needs.",
 };
 
-async function getServices() {
+async function getServices(page: number, limit: number) {
   const supabase = await createClient();
-  const { data } = await supabase
+  const from = (page - 1) * limit;
+  const to = from + limit - 1;
+
+  const { data, count } = await supabase
     .from("store_services")
-    .select("id, title, slug, description, category, thumbnail_url, packages")
+    .select("id, title, slug, description, category, thumbnail_url, packages", { count: "exact" })
     .eq("is_published", true)
-    .order("sort_order", { ascending: true });
-  return data || [];
+    .order("sort_order", { ascending: true })
+    .range(from, to);
+    
+  return { data: data || [], total: count || 0 };
 }
 
-export default async function ServicesPage() {
-  const services = await getServices();
+export default async function ServicesPage(props: { searchParams?: Promise<{ [key: string]: string | string[] | undefined }> }) {
+  const searchParams = await props.searchParams;
+  const pageStr = searchParams?.page;
+  const page = typeof pageStr === "string" ? parseInt(pageStr, 10) : 1;
+  const limit = 9;
+
+  const { data: services, total } = await getServices(page, limit);
+  const totalPages = Math.ceil(total / limit);
 
   return (
     <div className="min-h-screen bg-white text-slate-900 font-sans">
@@ -30,7 +42,7 @@ export default async function ServicesPage() {
       <div className="pt-8 pb-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <FadeIn delay={100} className="max-w-2xl mb-16">
-            <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-sm font-medium text-indigo-700 mb-6">
+            <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-sm font-medium text-primary mb-6">
               <BriefcaseBusiness size={14} />
               <span>Our Services</span>
             </div>
@@ -67,7 +79,7 @@ export default async function ServicesPage() {
                       )}
                       {service.category && (
                         <div className="absolute top-4 left-4 flex flex-wrap gap-1">
-                          <span className="rounded-full bg-white/90 backdrop-blur-sm px-3 py-1 text-xs font-semibold text-indigo-900 shadow-sm">
+                          <span className="rounded-full bg-white/90 backdrop-blur-sm px-3 py-1 text-xs font-semibold text-primary shadow-sm">
                             {service.category.trim()}
                           </span>
                         </div>
@@ -75,7 +87,7 @@ export default async function ServicesPage() {
                     </div>
 
                     <div className="flex flex-col flex-1 p-6">
-                      <h2 className="text-xl font-bold text-slate-900 leading-snug mb-3 group-hover:text-indigo-600 transition-colors line-clamp-2">
+                      <h2 className="text-xl font-bold text-slate-900 leading-snug mb-3 group-hover:text-primary transition-colors line-clamp-2">
                         {service.title}
                       </h2>
                       {service.description && (
@@ -117,6 +129,10 @@ export default async function ServicesPage() {
                 </FadeIn>
               ))}
             </div>
+          )}
+
+          {totalPages > 1 && (
+            <Pagination totalPages={totalPages} currentPage={page} />
           )}
         </div>
       </div>

@@ -36,7 +36,7 @@ export default function Steps({ settings }: { settings?: any }) {
     <section className="bg-slate-50 py-24 sm:py-32 overflow-hidden" id="process">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <FadeIn delay={100} className="mx-auto max-w-2xl text-center mb-16 sm:mb-24">
-          <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-sm font-medium text-indigo-700 mb-4">
+          <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-sm font-medium text-primary mb-4">
             <span>{settings?.process_badge || "Our Process"}</span>
           </div>
           <h2 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
@@ -48,24 +48,28 @@ export default function Steps({ settings }: { settings?: any }) {
         </FadeIn>
 
         <div className="relative z-10">
-          {/* Connecting Line for Desktop */}
+          
+
           <div className="hidden lg:block absolute top-14 left-8 w-[calc(100%-4rem)] h-px bg-linear-to-r from-indigo-100 via-indigo-200 to-indigo-100 -z-10"></div>
 
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-4 lg:gap-8">
             {stepsList.map((step: any, idx: number) => (
               <FadeIn key={idx} delay={150 + idx * 150} className="relative group">
                 <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
-                  {/* Icon & Number Circle */}
+                  
+
                   <div className="relative flex h-24 w-24 sm:h-28 sm:w-28 items-center justify-center rounded-full bg-white ring-8 ring-slate-50 border border-slate-100 shadow-sm transition-transform duration-500 group-hover:scale-110 group-hover:border-indigo-200 group-hover:shadow-md mb-6 z-10">
-                    <DynamicIcon name={step.icon} size={32} className="text-indigo-600 transition-colors duration-300 group-hover:text-indigo-500" />
-                    {/* Background faint number */}
-                    <span className="absolute -bottom-2 -right-2 text-5xl font-extrabold text-slate-100 group-hover:text-indigo-50 transition-colors duration-500 -z-10 select-none">
+                    <DynamicIcon name={step.icon} size={32} className="text-primary transition-colors duration-300 group-hover:text-primary" />
+                    
+
+                    <span className="absolute -bottom-2 -right-2 text-5xl font-extrabold text-slate-100 group-hover:text-primary transition-colors duration-500 -z-10 select-none">
                       {step.id}
                     </span>
                   </div>
 
-                  {/* Content */}
-                  <h3 className="text-xl font-semibold text-slate-900 mb-3 group-hover:text-indigo-600 transition-colors duration-300">
+                  
+
+                  <h3 className="text-xl font-semibold text-slate-900 mb-3 group-hover:text-primary transition-colors duration-300">
                     Step {parseInt(step.id)}: {step.name}
                   </h3>
                   <p className="text-slate-600 leading-relaxed max-w-sm">

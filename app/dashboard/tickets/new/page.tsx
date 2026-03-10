@@ -47,7 +47,7 @@ export default function NewTicketPage() {
       <div className="flex-1 bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl overflow-hidden">
 
         <div className="px-6 py-5 border-b border-slate-100 flex items-center gap-4">
-          <Link href="/dashboard/tickets" className="w-8 h-8 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:border-indigo-200 transition-all">
+          <Link href="/dashboard/tickets" className="w-8 h-8 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-center text-slate-400 hover:text-primary hover:border-indigo-200 transition-all">
             <ArrowLeft className="w-4 h-4" />
           </Link>
           <div>

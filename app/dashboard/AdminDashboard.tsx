@@ -234,13 +234,14 @@ export default async function AdminDashboard({
 
   return (
     <div className="pt-6 px-4">
-      {/* Top Banner & Stats Area */}
+      
+
       <div className="w-full bg-linear-to-r from-indigo-600 to-indigo-500 rounded-3xl p-6 sm:p-8 mb-6 text-white shadow-lg shadow-indigo-200">
         <div className="mb-8">
           <h1 className="text-2xl font-bold tracking-tight mb-2">
             Good morning, {name || "Admin"}
           </h1>
-          <p className="text-sm font-medium text-indigo-100">
+          <p className="text-sm font-medium text-primary">
             Here&apos;s what&apos;s happening with your agency today.
           </p>
         </div>
@@ -275,7 +276,7 @@ export default async function AdminDashboard({
               key={i}
               className="bg-white/10 backdrop-blur-md rounded-2xl p-5 ring-1 ring-white/20 transition-all hover:bg-white/20"
             >
-              <div className="flex items-center gap-2 mb-3 text-indigo-100">
+              <div className="flex items-center gap-2 mb-3 text-primary">
                 <stat.icon className="w-4 h-4" />
                 <h3 className="text-sm font-medium">{stat.title}</h3>
               </div>
@@ -290,7 +291,8 @@ export default async function AdminDashboard({
         </div>
       </div>
 
-      {/* Main Graph & Right Panel */}
+      
+
       <div className="w-full grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-4 mt-4">
         <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-4 sm:p-6 xl:p-8 2xl:col-span-2 flex flex-col">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
@@ -306,7 +308,8 @@ export default async function AdminDashboard({
           </div>
 
           <div className="flex flex-col md:flex-row gap-8 sm:gap-12 flex-1 pb-4">
-            {/* Left Stats */}
+            
+
             <div className="w-full md:w-1/3 xl:w-1/4 flex flex-col justify-center shrink-0">
               <div className="mb-8">
                 <span className="text-2xl font-bold text-slate-900 block mb-1">
@@ -342,7 +345,8 @@ export default async function AdminDashboard({
               </div>
             </div>
 
-            {/* Right Chart (CSS Bars) */}
+            
+
             <div className="w-full md:w-2/3 xl:w-3/4 flex items-end justify-between h-56 sm:h-[280px] relative mt-4 md:mt-0">
               {monthlyRevenue.map((data, idx) => {
                 const percentage = (data.value / maxRevenue) * 100;
@@ -377,7 +381,7 @@ export default async function AdminDashboard({
             <h3 className="text-lg font-bold text-slate-900 tracking-tight">
               Portfolio Gallery
             </h3>
-            <span className="text-xs font-bold uppercase tracking-wider text-indigo-600 hover:bg-slate-50 rounded-lg px-3 py-2 cursor-pointer transition-colors">
+            <span className="text-xs font-bold uppercase tracking-wider text-primary hover:bg-slate-50 rounded-lg px-3 py-2 cursor-pointer transition-colors">
               View all
             </span>
           </div>
@@ -420,7 +424,7 @@ export default async function AdminDashboard({
                   <Link
                     key={client.id}
                     href={`/dashboard/user/${client.id}`}
-                    className="h-10 w-10 rounded-full border-[3px] border-white bg-indigo-100 flex items-center justify-center text-xs font-bold uppercase tracking-wider text-indigo-700 shadow-sm hover:z-10 hover:scale-110 transition-transform cursor-pointer overflow-hidden"
+                    className="h-10 w-10 rounded-full border-[3px] border-white bg-indigo-100 flex items-center justify-center text-xs font-bold uppercase tracking-wider text-primary shadow-sm hover:z-10 hover:scale-110 transition-transform cursor-pointer overflow-hidden"
                     title={client.full_name || client.email}
                   >
                     <Avatar
@@ -434,7 +438,7 @@ export default async function AdminDashboard({
               })}
               <Link
                 href="/dashboard/users"
-                className="h-10 w-10 rounded-full border-[3px] border-white bg-slate-50 border-dashed flex items-center justify-center text-slate-400 hover:z-10 hover:text-indigo-600 hover:border-indigo-100 transition-colors cursor-pointer relative"
+                className="h-10 w-10 rounded-full border-[3px] border-white bg-slate-50 border-dashed flex items-center justify-center text-slate-400 hover:z-10 hover:text-primary hover:border-indigo-100 transition-colors cursor-pointer relative"
                 title="View All Users"
               >
                 <Users size={14} />
@@ -445,7 +449,8 @@ export default async function AdminDashboard({
       </div>
 
       <div className="grid grid-cols-1 2xl:grid-cols-2 xl:gap-4 my-4">
-        {/* Available Services */}
+        
+
         <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl mb-4 p-4 sm:p-6 h-full">
           <div className="flex items-center justify-between mb-4">
             <div>
@@ -456,7 +461,7 @@ export default async function AdminDashboard({
                 Agency core offerings
               </span>
             </div>
-            <span className="text-xs font-bold uppercase tracking-wider text-indigo-600 hover:bg-slate-50 rounded-lg px-3 py-2 cursor-pointer transition-colors">
+            <span className="text-xs font-bold uppercase tracking-wider text-primary hover:bg-slate-50 rounded-lg px-3 py-2 cursor-pointer transition-colors">
               View all
             </span>
           </div>
@@ -494,7 +499,8 @@ export default async function AdminDashboard({
           </div>
         </div>
 
-        {/* Shop Products */}
+        
+
         <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl mb-4 p-4 sm:p-6 h-full">
           <div className="flex items-center justify-between mb-4">
             <div>
@@ -505,7 +511,7 @@ export default async function AdminDashboard({
                 Asset & store inventory
               </span>
             </div>
-            <span className="text-xs font-bold uppercase tracking-wider text-indigo-600 hover:bg-slate-50 rounded-lg px-3 py-2 cursor-pointer transition-colors">
+            <span className="text-xs font-bold uppercase tracking-wider text-primary hover:bg-slate-50 rounded-lg px-3 py-2 cursor-pointer transition-colors">
               View all
             </span>
           </div>
@@ -547,9 +553,11 @@ export default async function AdminDashboard({
         </div>
       </div>
 
-      {/* Bottom Section: Latest Projects & Timeline */}
+      
+
       <div className="grid grid-cols-1 2xl:grid-cols-3 gap-4 my-4">
-        {/* Latest projects */}
+        
+
         <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-4 sm:p-6 xl:p-8 2xl:col-span-2">
           <div className="mb-6 flex items-center justify-between">
             <div>
@@ -627,7 +635,7 @@ export default async function AdminDashboard({
                               "bg-amber-50 text-amber-700 border-amber-100",
                             waiting_payment:
                               "bg-yellow-50 text-yellow-700 border-yellow-100",
-                            paid: "bg-indigo-50 text-indigo-700 border-indigo-100",
+                            paid: "bg-indigo-50 text-primary border-indigo-100",
                             processing:
                               "bg-blue-50 text-blue-700 border-blue-100",
                             completed:
@@ -684,7 +692,7 @@ export default async function AdminDashboard({
                               <td className="p-4 whitespace-nowrap text-right">
                                 <Link
                                   href={`/workspace/${order.id}`}
-                                  className="text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 p-2 rounded-lg inline-flex items-center transition-colors shadow-sm"
+                                  className="text-primary hover:text-primary bg-indigo-50 hover:bg-indigo-100 p-2 rounded-lg inline-flex items-center transition-colors shadow-sm"
                                   title="Open Workspace"
                                 >
                                   <svg
@@ -714,7 +722,8 @@ export default async function AdminDashboard({
           </div>
         </div>
 
-        {/* Timeline */}
+        
+
         <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-4 sm:p-6 xl:p-8">
           <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-8 border-b border-slate-100 pb-4">
             Timeline

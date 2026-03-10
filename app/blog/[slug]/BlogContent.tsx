@@ -69,7 +69,7 @@ export default function BlogContent({ blog, recentBlogs, nextArticle, ads }: Blo
         {categories.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-5">
             {categories.map((cat) => (
-              <span key={cat} className="inline-flex items-center rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700">
+              <span key={cat} className="inline-flex items-center rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-semibold text-primary">
                 {cat}
               </span>
             ))}
@@ -117,8 +117,8 @@ export default function BlogContent({ blog, recentBlogs, nextArticle, ads }: Blo
         {showReadAlso && recentBlogs[0] && (
           <div className="my-8 p-4 rounded-2xl bg-indigo-50/70 border border-indigo-100">
             <p className="text-sm text-slate-700">
-              <span className="font-bold text-indigo-700">Baca juga: </span>
-              <Link href={`/blog/${recentBlogs[0].slug}`} className="text-indigo-600 hover:text-indigo-800 underline underline-offset-2 font-medium transition-colors">
+              <span className="font-bold text-primary">Baca juga: </span>
+              <Link href={`/blog/${recentBlogs[0].slug}`} className="text-primary hover:text-primary underline underline-offset-2 font-medium transition-colors">
                 {recentBlogs[0].title}
               </Link>
             </p>
@@ -134,8 +134,8 @@ export default function BlogContent({ blog, recentBlogs, nextArticle, ads }: Blo
         {showReadAlso && recentBlogs[1] && (
           <div className="my-8 p-4 rounded-2xl bg-indigo-50/70 border border-indigo-100">
             <p className="text-sm text-slate-700">
-              <span className="font-bold text-indigo-700">Baca juga: </span>
-              <Link href={`/blog/${recentBlogs[1].slug}`} className="text-indigo-600 hover:text-indigo-800 underline underline-offset-2 font-medium transition-colors">
+              <span className="font-bold text-primary">Baca juga: </span>
+              <Link href={`/blog/${recentBlogs[1].slug}`} className="text-primary hover:text-primary underline underline-offset-2 font-medium transition-colors">
                 {recentBlogs[1].title}
               </Link>
             </p>
@@ -155,14 +155,14 @@ export default function BlogContent({ blog, recentBlogs, nextArticle, ads }: Blo
         <div className="flex items-center justify-between gap-4 py-4 border-t border-slate-100">
           <Link
             href="/blog"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-indigo-600 transition-colors"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-primary transition-colors"
           >
             <ArrowLeft className="w-4 h-4" /> All Articles
           </Link>
           {nextArticle && (
             <Link
               href={`/blog/${nextArticle.slug}`}
-              className="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-indigo-600 transition-colors text-right"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-primary transition-colors text-right"
             >
               <span className="line-clamp-1 max-w-[180px] sm:max-w-xs">{nextArticle.title}</span>
               <ArrowRight className="w-4 h-4 shrink-0" />
@@ -173,7 +173,7 @@ export default function BlogContent({ blog, recentBlogs, nextArticle, ads }: Blo
         {recentBlogs.length > 0 && (
           <div className="mt-16 pt-10 border-t border-slate-100">
             <div className="flex items-center gap-2 mb-6">
-              <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-sm font-medium text-indigo-700">
+              <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-sm font-medium text-primary">
                 <BookOpen size={14} />
                 <span>Other Articles</span>
               </div>
@@ -210,7 +210,7 @@ export default function BlogContent({ blog, recentBlogs, nextArticle, ads }: Blo
                       <Calendar size={12} />
                       <time>{new Date(article.published_at).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}</time>
                     </div>
-                    <p className="text-md font-bold text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-2 leading-snug">
+                    <p className="text-md font-bold text-slate-900 group-hover:text-primary transition-colors line-clamp-2 leading-snug">
                       {article.title}
                     </p>
                   </div>

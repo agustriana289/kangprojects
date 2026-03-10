@@ -76,7 +76,8 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* Render CSS variable dinamis */}
+        
+
         <style dangerouslySetInnerHTML={{
           __html: `
             :root {

@@ -64,11 +64,12 @@ export default async function UserDashboard({ name }: { name: string }) {
     <div className="pt-6 px-4">
 
 
-      {/* Top Banner & Stats Area */}
+      
+
       <div className="w-full bg-linear-to-r from-indigo-600 to-indigo-500 rounded-3xl p-6 sm:p-8 mb-6 text-white shadow-lg shadow-indigo-200">
         <div className="mb-8">
           <h1 className="text-2xl font-bold tracking-tight mb-2">Good morning, {name || "User"}</h1>
-          <p className="text-sm font-medium text-indigo-100">Here&apos;s what&apos;s happening with your projects today.</p>
+          <p className="text-sm font-medium text-primary">Here&apos;s what&apos;s happening with your projects today.</p>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
@@ -79,7 +80,7 @@ export default async function UserDashboard({ name }: { name: string }) {
             { title: "Total Investment", value: `Rp ${totalInvestment.toLocaleString("id-ID")}`, tag: "↗ Thank you", icon: DollarSign },
           ].map((stat, i) => (
             <div key={i} className="bg-white/10 backdrop-blur-md rounded-2xl p-5 ring-1 ring-white/20 transition-all hover:bg-white/20">
-              <div className="flex items-center gap-2 mb-3 text-indigo-100">
+              <div className="flex items-center gap-2 mb-3 text-primary">
                 <stat.icon className="w-4 h-4" />
                 <h3 className="text-sm font-medium">{stat.title}</h3>
               </div>
@@ -90,11 +91,13 @@ export default async function UserDashboard({ name }: { name: string }) {
         </div>
       </div>
 
-      {/* Main Content Areas */}
+      
+
       <div className="w-full grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-4 mt-4">
         <div className="2xl:col-span-2 space-y-4">
           
-          {/* Support Center */}
+          
+
           <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-4 sm:p-6 xl:p-8">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4">
               <div>
@@ -116,12 +119,13 @@ export default async function UserDashboard({ name }: { name: string }) {
             <p className="text-sm font-medium text-slate-500 mb-6">
               You have {openTicketsCount || 0} active support request{Number(openTicketsCount) !== 1 ? 's' : ''}. Our team is processing your reports to ensure everything stays on track.
             </p>
-            <a href="#" className="flex items-center text-xs font-bold uppercase tracking-wider text-indigo-600 hover:text-indigo-700 transition-colors inline-block hover:translate-x-1 transform duration-200">
+            <a href="#" className="flex items-center text-xs font-bold uppercase tracking-wider text-primary hover:text-primary transition-colors inline-block hover:translate-x-1 transform duration-200">
               PROCEED TO TICKET MANAGEMENT &rarr;
             </a>
           </div>
 
-          {/* Recent Orders */}
+          
+
           <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-4 sm:p-6 xl:p-8">
             <div className="mb-6 flex items-center justify-between">
               <div>
@@ -129,7 +133,7 @@ export default async function UserDashboard({ name }: { name: string }) {
                 <span className="text-sm font-medium text-slate-500">Your latest transactions</span>
               </div>
               <div className="shrink-0">
-                <a href="#" className="text-xs font-bold uppercase tracking-wider text-indigo-600 hover:bg-slate-50 rounded-lg px-3 py-2 transition-colors">View All</a>
+                <a href="#" className="text-xs font-bold uppercase tracking-wider text-primary hover:bg-slate-50 rounded-lg px-3 py-2 transition-colors">View All</a>
               </div>
             </div>
             
@@ -176,7 +180,7 @@ export default async function UserDashboard({ name }: { name: string }) {
                                   <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded shadow-sm border ${
                                     order.status === 'completed' ? 'bg-emerald-50 text-emerald-600 border-emerald-200' :
                                     order.status === 'cancelled' ? 'bg-red-50 text-red-600 border-red-200' :
-                                    order.status === 'processing' ? 'bg-indigo-50 text-indigo-600 border-indigo-200' :
+                                    order.status === 'processing' ? 'bg-indigo-50 text-primary border-indigo-200' :
                                     'bg-amber-50 text-amber-600 border-amber-200'
                                   }`}>
                                     {order.status.replace('_', ' ')}
@@ -210,7 +214,8 @@ export default async function UserDashboard({ name }: { name: string }) {
         </div>
 
         <div className="space-y-4 flex flex-col">
-          {/* Announcements */}
+          
+
           <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-4 sm:p-6 xl:p-8">
             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-8 border-b border-slate-100 pb-4">Announcements</h3>
             
@@ -244,7 +249,8 @@ export default async function UserDashboard({ name }: { name: string }) {
             </div>
           </div>
 
-          {/* Timeline */}
+          
+
           <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-4 sm:p-6 xl:p-8 flex-1">
             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-8 border-b border-slate-100 pb-4">Timeline</h3>
             <div className="flow-root">

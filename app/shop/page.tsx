@@ -5,23 +5,36 @@ import FadeIn from "@/components/landing/FadeIn";
 import Link from "next/link";
 import { ArrowRight, ShoppingBag, Eye } from "lucide-react";
 
+import Pagination from "@/components/landing/Pagination";
+
 export const metadata = {
   title: "Shop",
   description: "Browse premium design assets, templates, and digital resources.",
 };
 
-async function getProducts() {
+async function getProducts(page: number, limit: number) {
   const supabase = await createClient();
-  const { data } = await supabase
+  const from = (page - 1) * limit;
+  const to = from + limit - 1;
+
+  const { data, count } = await supabase
     .from("store_products")
-    .select("id, title, slug, description, category, images, packages")
+    .select("id, title, slug, description, category, images, packages", { count: "exact" })
     .eq("is_published", true)
-    .order("created_at", { ascending: false });
-  return data || [];
+    .order("created_at", { ascending: false })
+    .range(from, to);
+    
+  return { data: data || [], total: count || 0 };
 }
 
-export default async function ShopPage() {
-  const products = await getProducts();
+export default async function ShopPage(props: { searchParams?: Promise<{ [key: string]: string | string[] | undefined }> }) {
+  const searchParams = await props.searchParams;
+  const pageStr = searchParams?.page;
+  const page = typeof pageStr === "string" ? parseInt(pageStr, 10) : 1;
+  const limit = 9;
+
+  const { data: products, total } = await getProducts(page, limit);
+  const totalPages = Math.ceil(total / limit);
 
   return (
     <div className="min-h-screen bg-white text-slate-900 font-sans">
@@ -30,7 +43,7 @@ export default async function ShopPage() {
       <div className="pt-8 pb-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <FadeIn delay={100} className="max-w-2xl mb-16">
-            <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-sm font-medium text-indigo-700 mb-6">
+            <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-sm font-medium text-primary mb-6">
               <ShoppingBag size={14} />
               <span>Digital Products</span>
             </div>
@@ -65,10 +78,12 @@ export default async function ShopPage() {
                           <ShoppingBag className="w-10 h-10" />
                         </div>
                       )}
-                      {/* Overlay */}
+                      
+
                       <div className="absolute inset-0 bg-slate-900/10 group-hover:bg-transparent transition-colors duration-500" />
                       
-                      {/* Category Badge */}
+                      
+
                       {prod.category && (
                         <div className="absolute top-4 left-4 flex flex-wrap gap-1">
                           <span className="rounded-full bg-white/95 backdrop-blur-md px-3 py-1 text-xs font-semibold text-slate-900 shadow-sm border border-slate-100">
@@ -77,16 +92,17 @@ export default async function ShopPage() {
                         </div>
                       )}
 
-                      {/* View Action */}
+                      
+
                       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                         <div className="flex items-center justify-center h-12 w-12 rounded-full bg-white text-indigo-600 shadow-lg scale-90 group-hover:scale-100 transition-transform duration-300">
+                         <div className="flex items-center justify-center h-12 w-12 rounded-full bg-white text-primary shadow-lg scale-90 group-hover:scale-100 transition-transform duration-300">
                            <Eye size={20} />
                          </div>
                       </div>
                     </Link>
 
                     <div className="flex flex-col flex-1 p-6">
-                      <h2 className="text-xl font-bold text-slate-900 leading-snug mb-3 group-hover:text-indigo-600 transition-colors line-clamp-2">
+                      <h2 className="text-xl font-bold text-slate-900 leading-snug mb-3 group-hover:text-primary transition-colors line-clamp-2">
                         <Link href={`/shop/${prod.slug}`}>
                           <span className="absolute inset-0 z-10" />
                           {prod.title}
@@ -104,7 +120,7 @@ export default async function ShopPage() {
                             Rp {Number(prod.packages?.[0]?.price || 0).toLocaleString('id-ID')}
                           </span>
                         </div>
-                        <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-indigo-600 z-20 relative">
+                        <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary z-20 relative">
                            View Details <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
                         </div>
                       </div>
@@ -113,6 +129,10 @@ export default async function ShopPage() {
                 </FadeIn>
               ))}
             </div>
+          )}
+
+          {totalPages > 1 && (
+            <Pagination totalPages={totalPages} currentPage={page} />
           )}
         </div>
       </div>

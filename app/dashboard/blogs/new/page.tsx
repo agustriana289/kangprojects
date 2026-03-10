@@ -55,7 +55,7 @@ export default function NewBlogPage() {
   return (
     <div className="pt-6 px-4 pb-16 max-w-7xl mx-auto">
       <div className="flex items-center justify-between mb-6">
-        <Link href="/dashboard/blogs" className="inline-flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors">
+        <Link href="/dashboard/blogs" className="inline-flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-primary transition-colors">
           <ArrowLeft className="w-4 h-4" /> Back to List
         </Link>
         <button
@@ -107,7 +107,7 @@ export default function NewBlogPage() {
 
           <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-6 space-y-5">
             <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
-              <Search className="w-4 h-4 text-indigo-600" />
+              <Search className="w-4 h-4 text-primary" />
               <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">SEO Optimization</h3>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -138,7 +138,7 @@ export default function NewBlogPage() {
         <div className="space-y-5">
           <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-6 space-y-4">
             <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
-              <ImageIcon className="w-4 h-4 text-indigo-600" />
+              <ImageIcon className="w-4 h-4 text-primary" />
               <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Featured Image</h3>
             </div>
             <div className="aspect-video w-full rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 overflow-hidden flex items-center justify-center text-slate-300">
@@ -158,7 +158,7 @@ export default function NewBlogPage() {
 
           <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-6 space-y-4">
             <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
-              <Globe className="w-4 h-4 text-indigo-600" />
+              <Globe className="w-4 h-4 text-primary" />
               <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Category & URL</h3>
             </div>
             <div>
@@ -179,7 +179,7 @@ export default function NewBlogPage() {
                   required
                   value={formData.slug}
                   onChange={e => setFormData(prev => ({ ...prev, slug: e.target.value }))}
-                  className="bg-transparent border-none p-0 text-sm font-bold text-indigo-600 focus:ring-0 w-full outline-none"
+                  className="bg-transparent border-none p-0 text-sm font-bold text-primary focus:ring-0 w-full outline-none"
                 />
               </div>
             </div>
@@ -187,7 +187,7 @@ export default function NewBlogPage() {
 
           <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-6 space-y-4">
             <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
-              <CheckCircle className="w-4 h-4 text-indigo-600" />
+              <CheckCircle className="w-4 h-4 text-primary" />
               <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Publishing</h3>
             </div>
             <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200">

@@ -76,7 +76,7 @@ export default function EditPagePage() {
   if (fetching) {
     return (
       <div className="flex items-center justify-center py-32">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -84,7 +84,7 @@ export default function EditPagePage() {
   return (
     <div className="pt-6 px-4 pb-16 max-w-7xl mx-auto">
       <div className="flex items-center justify-between mb-6">
-        <Link href="/dashboard/pages" className="inline-flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors">
+        <Link href="/dashboard/pages" className="inline-flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-primary transition-colors">
           <ArrowLeft className="w-4 h-4" /> Back to List
         </Link>
         <button
@@ -130,7 +130,7 @@ export default function EditPagePage() {
         <div className="space-y-5">
           <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-6 space-y-4">
             <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
-              <Globe className="w-4 h-4 text-indigo-600" />
+              <Globe className="w-4 h-4 text-primary" />
               <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">SEO & URL</h3>
             </div>
             <div>
@@ -141,7 +141,7 @@ export default function EditPagePage() {
                   required
                   value={formData.slug}
                   onChange={e => setFormData(prev => ({ ...prev, slug: e.target.value }))}
-                  className="bg-transparent border-none p-0 text-sm font-bold text-indigo-600 focus:ring-0 w-full outline-none"
+                  className="bg-transparent border-none p-0 text-sm font-bold text-primary focus:ring-0 w-full outline-none"
                 />
               </div>
             </div>
@@ -159,7 +159,7 @@ export default function EditPagePage() {
 
           <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-6 space-y-4">
             <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
-              <CheckCircle className="w-4 h-4 text-indigo-600" />
+              <CheckCircle className="w-4 h-4 text-primary" />
               <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Visibility</h3>
             </div>
             <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200">

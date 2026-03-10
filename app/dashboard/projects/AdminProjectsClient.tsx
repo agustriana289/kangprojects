@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   Search, Package, Calendar, Briefcase, Loader2,
   CheckCircle2, Clock, XCircle, CreditCard,
   X, Edit, MessageSquare, ChevronLeft, ChevronRight, Eye,
-  Phone, Mail, FileText, Hash, User, Trash2, Wallet, Users, TrendingUp, PartyPopper
+  Phone, Mail, FileText, Hash, User, Trash2, Wallet, Users, TrendingUp, PartyPopper, Star,
+  Upload, Plus
 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { useToast } from "@/components/ToastProvider";
@@ -39,6 +40,9 @@ export default function AdminProjectsClient() {
   const [servicesList, setServicesList] = useState<any[]>([]);
   const [productsList, setProductsList] = useState<any[]>([]);
 
+  const [uploadingPortfolio, setUploadingPortfolio] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const fetchOrders = useCallback(async () => {
     setLoading(true);
     try {
@@ -59,14 +63,19 @@ export default function AdminProjectsClient() {
       const { data: products } = await supabase.from("store_products").select("id, title, packages");
       setProductsList(products || []);
 
-      const { data: testimonials } = await supabase.from("store_testimonials").select("id, order_id");
+      const { data: testimonials } = await supabase.from("store_testimonials").select("id, order_id, comment");
       const testimonialMap = new Map();
       (testimonials || []).forEach((t: any) => testimonialMap.set(t.order_id, t));
+
+      const { data: portfolios } = await supabase.from("store_portfolios").select("id, order_id, images");
+      const portfolioMap = new Map();
+      (portfolios || []).forEach((p: any) => { if (p.order_id) portfolioMap.set(p.order_id, p); });
 
       setOrders((data || []).map((o: any) => ({ 
         ...o, 
         client: profileMap[o.user_id] || null,
-        testimonial: testimonialMap.get(o.id) || null
+        testimonial: testimonialMap.get(o.id) || null,
+        portfolio: portfolioMap.get(o.id) || null
       })));
       setUsersList(profiles || []);
     } catch (error: any) {
@@ -125,6 +134,68 @@ export default function AdminProjectsClient() {
     if (error) return showToast("Failed to update status", "error");
     showToast(`Status updated to ${status}`, "success");
     fetchOrders();
+  };
+
+  const handleAutoPortfolioUpload = async (e: any) => {
+    const files = e.target.files;
+    if (!files || files.length === 0 || !selectedProject) return;
+    
+    setUploadingPortfolio(true);
+    const uploadedImages: string[] = [];
+    
+    try {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const fileExt = file.name.split('.').pop();
+        const fileName = `portfolio-${Date.now()}-${i}.${fileExt}`;
+        const filePath = `portfolios/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('assets')
+          .upload(filePath, file);
+
+        if (uploadError) {
+          showToast(`Error uploading image: ${uploadError.message}`, "error");
+          continue;
+        }
+
+        const { data: { publicUrl } } = supabase.storage.from('assets').getPublicUrl(filePath);
+        uploadedImages.push(publicUrl);
+      }
+
+      if (uploadedImages.length === 0) throw new Error("No images uploaded");
+
+      const title = getProjectTitle(selectedProject).split(' — ')[1] || getProjectTitle(selectedProject);
+      const category = selectedProject.store_services?.category || selectedProject.store_products?.category || "Logo Design";
+      const description = `Portfolio for project ${getProjectTitle(selectedProject)}. Crafted for ${getClientName(selectedProject)}.`;
+      
+      const { error: insertError } = await supabase.from("store_portfolios").insert({
+        order_id: selectedProject.id,
+        user_id: selectedProject.user_id,
+        title,
+        category,
+        description,
+        images: uploadedImages,
+        is_published: true,
+        tags: category ? category.toLowerCase().split(' ') : ["design"]
+      });
+
+      if (insertError) throw insertError;
+
+      showToast("Portfolio published successfully!", "success");
+      
+      const { data: newPortfolio } = await supabase.from("store_portfolios").select("*").eq("order_id", selectedProject.id).single();
+      if (newPortfolio) {
+        setSelectedProject((prev: any) => ({ ...prev, portfolio: newPortfolio }));
+      }
+      
+      fetchOrders();
+    } catch (err: any) {
+      showToast(err.message || "Failed to automate portfolio creation", "error");
+    } finally {
+      setUploadingPortfolio(false);
+      if (e.target) e.target.value = "";
+    }
   };
 
   const deleteOrder = async (id: string) => {
@@ -243,7 +314,7 @@ export default function AdminProjectsClient() {
   const statusColors: Record<string, string> = {
     pending: "bg-amber-50 text-amber-700 border-amber-100",
     waiting_payment: "bg-yellow-50 text-yellow-700 border-yellow-100",
-    paid: "bg-indigo-50 text-indigo-700 border-indigo-100",
+    paid: "bg-indigo-50 text-primary border-indigo-100",
     processing: "bg-blue-50 text-blue-700 border-blue-100",
     completed: "bg-emerald-50 text-emerald-700 border-emerald-100",
     cancelled: "bg-red-50 text-red-700 border-red-100",
@@ -302,7 +373,7 @@ export default function AdminProjectsClient() {
           <div className="flex bg-slate-100 p-1 rounded-xl">
             {(["all", "shop", "service"] as const).map(t => (
               <button key={t} onClick={() => { setTab(t); setPage(1); }}
-                className={`px-4 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wide transition-all ${tab === t ? "bg-white text-indigo-600 shadow-sm" : "text-slate-400 hover:text-slate-600"}`}>
+                className={`px-4 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wide transition-all ${tab === t ? "bg-white text-primary shadow-sm" : "text-slate-400 hover:text-slate-600"}`}>
                 {t}
               </button>
             ))}
@@ -316,7 +387,7 @@ export default function AdminProjectsClient() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
         {[
-          { title: "Top Client", value: topClient.name, tag: `${topClient.count} Order(s) • Rp ${topClient.amount.toLocaleString("id-ID")}`, icon: Users, color: "text-indigo-500" },
+          { title: "Top Client", value: topClient.name, tag: `${topClient.count} Order(s) • Rp ${topClient.amount.toLocaleString("id-ID")}`, icon: Users, color: "text-primary" },
           { title: "Top Service/Shop", value: topItem.name, tag: `${topItem.count} Order(s) • Rp ${topItem.amount.toLocaleString("id-ID")}`, icon: TrendingUp, color: "text-blue-500" },
           { title: "Monthly Orders", value: `${monthlyOrderCount} Order(s)`, tag: `Rp ${monthlyOrderAmount.toLocaleString("id-ID")}`, icon: Calendar, color: "text-emerald-500" },
           { title: "Total Orders", value: `${totalOrderCount} Order(s)`, tag: `Rp ${totalOrderAmount.toLocaleString("id-ID")}`, icon: Wallet, color: "text-amber-500" },
@@ -353,7 +424,7 @@ export default function AdminProjectsClient() {
         </div>
 
         {loading ? (
-          <div className="flex justify-center py-24"><Loader2 className="w-8 h-8 animate-spin text-indigo-600" /></div>
+          <div className="flex justify-center py-24"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-slate-400">
             <Briefcase className="w-10 h-10 mb-3 text-slate-200" />
@@ -391,7 +462,7 @@ export default function AdminProjectsClient() {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center text-[10px] font-bold text-indigo-600 shrink-0">
+                          <div className="w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center text-[10px] font-bold text-primary shrink-0">
                             {getClientInitial(o)}
                           </div>
                           <div>
@@ -414,11 +485,11 @@ export default function AdminProjectsClient() {
                       <td className="px-6 py-4">
                         <div className="flex items-center justify-end gap-1.5">
                           <button onClick={() => openDetailModal(o)}
-                            className="p-2 rounded-lg bg-slate-100 text-slate-500 hover:bg-indigo-50 hover:text-indigo-600 transition-colors" title="View Detail">
+                            className="p-2 rounded-lg bg-slate-100 text-slate-500 hover:bg-indigo-50 hover:text-primary transition-colors" title="View Detail">
                             <Eye className="w-4 h-4" />
                           </button>
                           <Link href={`/workspace/${o.id}`}
-                            className="p-2 rounded-lg bg-slate-100 text-slate-500 hover:bg-indigo-50 hover:text-indigo-600 transition-colors" title="Go to Workspace">
+                            className="p-2 rounded-lg bg-slate-100 text-slate-500 hover:bg-indigo-50 hover:text-primary transition-colors" title="Go to Workspace">
                             <MessageSquare className="w-4 h-4" />
                           </Link>
                         </div>
@@ -504,7 +575,7 @@ export default function AdminProjectsClient() {
                 <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Client Information</p>
                 <div className="bg-slate-50 rounded-xl p-4 space-y-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-xl bg-indigo-100 flex items-center justify-center text-xs font-bold text-indigo-600 shrink-0">
+                    <div className="w-9 h-9 rounded-xl bg-indigo-100 flex items-center justify-center text-xs font-bold text-primary shrink-0">
                       {getClientInitial(selectedProject)}
                     </div>
                     <div>
@@ -533,43 +604,97 @@ export default function AdminProjectsClient() {
                 </div>
               </div>
 
-              <div>
-                <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Selected Package</p>
-                <div className="bg-slate-50 rounded-xl p-4">
-                  {(() => {
-                    const pkg = typeof selectedProject.selected_package === "string"
-                      ? JSON.parse(selectedProject.selected_package)
-                      : selectedProject.selected_package;
-                    return (
-                      <div>
-                        <p className="text-sm font-bold text-slate-900 mb-2">{pkg?.name || "—"}</p>
-                        {pkg?.finalPrice && <p className="text-xs text-slate-500 mb-2">Price: {pkg.finalPrice}</p>}
-                        {pkg?.duration && <p className="text-xs text-slate-500 mb-2">Duration: {pkg.duration} days</p>}
-                        {Array.isArray(pkg?.features) && pkg.features.length > 0 && (
-                          <ul className="space-y-1 mt-2">
-                            {pkg.features.map((f: string, i: number) => (
-                              <li key={i} className="text-xs text-slate-600 flex items-center gap-2">
-                                <CheckCircle2 className="w-3 h-3 text-emerald-500 shrink-0" /> {f}
-                              </li>
-                            ))}
-                          </ul>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Portfolio</p>
+                  {!selectedProject.portfolio ? (
+                    <div className="relative">
+                      <button 
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={uploadingPortfolio}
+                        className="p-4 rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 text-slate-500 hover:bg-white hover:border-indigo-300 hover:text-primary transition-all flex flex-col items-center justify-center gap-2 group w-full text-left min-h-[120px] relative overflow-hidden"
+                      >
+                        {uploadingPortfolio ? (
+                          <div className="flex flex-col items-center gap-2">
+                            <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                            <p className="text-[10px] font-bold text-slate-400">Uploading...</p>
+                          </div>
+                        ) : (
+                          <>
+                            <div className="w-8 h-8 rounded-full bg-slate-200 group-hover:bg-indigo-100 flex items-center justify-center transition-colors">
+                              <Plus className="w-4 h-4 group-hover:text-primary" />
+                            </div>
+                            <div className="text-center">
+                               <p className="text-xs font-bold">Not Published</p>
+                               <p className="text-[10px] font-medium opacity-80 mt-0.5">Click to upload result</p>
+                            </div>
+                          </>
                         )}
+                      </button>
+                      <input 
+                        type="file" 
+                        multiple 
+                        accept="image/*" 
+                        className="hidden" 
+                        ref={fileInputRef}
+                        onChange={handleAutoPortfolioUpload}
+                      />
+                    </div>
+                  ) : (
+                    <div className="p-4 rounded-xl border border-emerald-100 bg-emerald-50 text-emerald-700 min-h-[120px]">
+                      <div className="space-y-3 w-full">
+                         <div className="flex items-center gap-2 mb-2">
+                           <Briefcase className="w-4 h-4 text-emerald-500 shrink-0" />
+                           <p className="text-xs font-bold leading-none">Published</p>
+                         </div>
+                         {Array.isArray(selectedProject.portfolio.images) && selectedProject.portfolio.images.length > 0 ? (
+                            <div className="w-full aspect-video rounded-lg overflow-hidden border border-emerald-200 shadow-sm relative group">
+                              <img 
+                                src={selectedProject.portfolio.images[0]} 
+                                alt="Portfolio Preview" 
+                                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" 
+                              />
+                              {selectedProject.portfolio.images.length > 1 && (
+                                <div className="absolute bottom-1.5 right-1.5 bg-black/60 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md backdrop-blur-sm">
+                                  +{selectedProject.portfolio.images.length - 1}
+                                </div>
+                              )}
+                            </div>
+                         ) : (
+                           <div className="w-full aspect-video rounded-lg bg-emerald-100/50 flex items-center justify-center border border-emerald-200 border-dashed">
+                             <span className="text-[10px] font-medium opacity-60">No image</span>
+                           </div>
+                         )}
                       </div>
-                    );
-                  })()}
+                    </div>
+                  )}
                 </div>
-              </div>
 
-              <div>
-                <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Order Reference</p>
-                <div className="bg-slate-50 rounded-xl p-4 space-y-2">
-                  <div className="flex items-center gap-2">
-                    <Hash className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                    <span className="font-mono text-xs text-slate-600">{selectedProject.order_number}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <FileText className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                    <span className="font-mono text-[10px] text-slate-400 break-all">{selectedProject.id}</span>
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Testimonial</p>
+                  <div className={`p-4 rounded-xl border flex flex-col justify-center gap-3 ${selectedProject.testimonial ? 'bg-indigo-50 border-indigo-100 text-primary' : 'bg-slate-50 border-slate-100 text-slate-500'} min-h-[120px]`}>
+                    {selectedProject.testimonial ? (
+                      <div className="space-y-3 w-full">
+                        <div className="flex items-center gap-2 mb-2">
+                           <Star className="w-4 h-4 text-indigo-500 shrink-0 fill-indigo-500" />
+                           <p className="text-xs font-bold leading-none">Received</p>
+                        </div>
+                        <div className="bg-white/60 p-3 rounded-lg border border-indigo-100/50 relative">
+                           <span className="absolute -top-2 -left-1 text-2xl text-indigo-300 font-serif leading-none">&ldquo;</span>
+                           <p className="text-xs font-medium text-slate-600 italic line-clamp-3 relative z-10 pl-2">
+                             {selectedProject.testimonial.comment || "Empty testimonial text."}
+                           </p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-3">
+                        <Star className="w-5 h-5 text-slate-400 shrink-0" />
+                        <div>
+                           <p className="text-xs font-bold">Not Received</p>
+                           <p className="text-[10px] font-medium opacity-80 mt-0.5">Waiting for rating</p>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -581,7 +706,6 @@ export default function AdminProjectsClient() {
                   onClick={async () => {
                     setUpdating(true);
                     try {
-                      // Update record that link was generated today
                       const now = new Date().toISOString();
                       const { error } = await supabase
                         .from("store_orders")
@@ -592,7 +716,7 @@ export default function AdminProjectsClient() {
                       
                       navigator.clipboard.writeText(`${window.location.origin}/testimonials/submit/${selectedProject.id}`);
                       showToast("Testimonial link generated and copied! Expires in 7 days.", "success");
-                      fetchOrders(); // refresh data
+                      fetchOrders();
                     } catch (err: any) {
                       showToast(err.message || "Failed to generate link", "error");
                     } finally {

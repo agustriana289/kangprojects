@@ -71,13 +71,13 @@ export default function Sidebar({ isAdmin }: { isAdmin: boolean }) {
                         href={item.href}
                         className={`text-sm font-bold rounded-xl flex items-center p-3 group transition-all duration-200 ${
                           isActive 
-                            ? "bg-indigo-50 text-indigo-700 pointer-events-none ring-1 ring-indigo-100 shadow-sm" 
+                            ? "bg-indigo-50 text-primary pointer-events-none ring-1 ring-indigo-100 shadow-sm" 
                             : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                         }`}
                       >
                         <item.icon className={`w-5 h-5 shrink-0 transition duration-75 ${
                           isActive 
-                            ? "text-indigo-600" 
+                            ? "text-primary" 
                             : "text-slate-400 group-hover:text-slate-600"
                         }`} />
                         <span className="ml-3 flex-1 whitespace-nowrap">{item.name}</span>

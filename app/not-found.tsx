@@ -23,7 +23,7 @@ export default function NotFound() {
         </div>
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-32 lg:py-48 text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-indigo-50/50 px-3 py-1 text-sm font-medium text-indigo-600 mb-8 backdrop-blur-sm">
+          <div className="inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-indigo-50/50 px-3 py-1 text-sm font-medium text-primary mb-8 backdrop-blur-sm">
             <Search size={16} />
             <span>Page Not Found</span>
           </div>
@@ -61,7 +61,7 @@ export default function NotFound() {
               href="/#portfolio"
               className="relative overflow-hidden rounded-3xl bg-slate-50 p-6 text-left transition-shadow hover:shadow-md"
             >
-              <p className="text-xs font-semibold uppercase tracking-wider text-indigo-600 mb-1">Portfolio</p>
+              <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-1">Portfolio</p>
               <p className="text-sm font-semibold text-slate-900">View Our Work</p>
               <p className="text-xs text-slate-500 mt-1">Browse logo designs we&apos;ve crafted</p>
             </Link>
@@ -69,7 +69,7 @@ export default function NotFound() {
               href="/#pricing"
               className="relative overflow-hidden rounded-3xl bg-slate-50 p-6 text-left transition-shadow hover:shadow-md"
             >
-              <p className="text-xs font-semibold uppercase tracking-wider text-indigo-600 mb-1">Pricing</p>
+              <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-1">Pricing</p>
               <p className="text-sm font-semibold text-slate-900">Our Packages</p>
               <p className="text-xs text-slate-500 mt-1">Find the plan that fits your brand</p>
             </Link>
@@ -77,7 +77,7 @@ export default function NotFound() {
               href="/blog"
               className="relative overflow-hidden rounded-3xl bg-slate-50 p-6 text-left transition-shadow hover:shadow-md"
             >
-              <p className="text-xs font-semibold uppercase tracking-wider text-indigo-600 mb-1">Blog</p>
+              <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-1">Blog</p>
               <p className="text-sm font-semibold text-slate-900">Read Articles</p>
               <p className="text-xs text-slate-500 mt-1">Design tips & branding insights</p>
             </Link>

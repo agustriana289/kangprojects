@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { Plus, Search, Edit, Trash2, Image as ImageIcon, Loader2, X, Eye, EyeOff, Star } from "lucide-react";
+import React, { useState, useEffect, useCallback } from "react";
+import { Plus, Search, Edit, Trash2, Image as ImageIcon, Loader2, X, Eye, EyeOff, Star, ChevronLeft, ChevronRight } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { useToast } from "@/components/ToastProvider";
 import ImageUploader from "@/components/admin/ImageUploader";
@@ -17,30 +17,111 @@ const EMPTY_FORM = {
   order_id: null as string | null,
 };
 
+const PAGE_SIZE = 12;
+
 export default function PortfoliosClient() {
   const supabase = createClient();
   const { showToast } = useToast();
   const [portfolios, setPortfolios] = useState<any[]>([]);
+  const [projects, setProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingProjects, setLoadingProjects] = useState(false);
   const [search, setSearch] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState(EMPTY_FORM);
   const [tagInput, setTagInput] = useState("");
+  const [page, setPage] = useState(1);
+
+  const getFormData = (o: any) => {
+    try { return typeof o.form_data === "string" ? JSON.parse(o.form_data) : (o.form_data || {}); }
+    catch { return {}; }
+  };
+
+  const getProjectTitle = (o: any) => {
+    const fd = getFormData(o);
+    const baseTitle = o.store_services?.title || o.store_products?.title;
+    try {
+      const pkg = typeof o.selected_package === "string" ? JSON.parse(o.selected_package) : (o.selected_package || {});
+      const pkgName = pkg?.name || "";
+      const projectNote = fd["Project Title"] || fd["Nama Logo"] || fd["nama_logo"] || "";
+      if (baseTitle && projectNote) return `${baseTitle} — ${projectNote}`;
+      if (baseTitle && pkgName) return `${baseTitle} (${pkgName})`;
+      if (baseTitle) return baseTitle;
+      if (pkgName && projectNote) return `${pkgName} — ${projectNote}`;
+      return pkgName || fd.customer_name || "Project";
+    } catch {
+      return baseTitle || "Project";
+    }
+  };
+
+  const getClientName = (o: any) => {
+    if (o.client?.full_name) return o.client.full_name;
+    if (o.client?.email) return o.client.email.split("@")[0];
+    const fd = getFormData(o);
+    return fd.customer_name || fd["Client Name"] || "Unknown Client";
+  };
 
   const fetchPortfolios = useCallback(async () => {
     setLoading(true);
     const { data, error } = await supabase
       .from("store_portfolios")
-      .select("*, store_orders(order_number)")
+      .select("*, store_orders(order_number, id, form_data, selected_package, store_services(title, category), store_products(title, category))")
       .order("created_at", { ascending: false });
     if (error) showToast(error.message, "error");
     else setPortfolios(data || []);
     setLoading(false);
   }, [supabase, showToast]);
 
-  useEffect(() => { fetchPortfolios(); }, [fetchPortfolios]);
+  const fetchProjects = useCallback(async () => {
+    setLoadingProjects(true);
+    const { data: profiles } = await supabase.from("users").select("id, full_name, email");
+    const profileMap: Record<string, any> = {};
+    (profiles || []).forEach((p: any) => { if (p.id) profileMap[p.id] = p; });
+
+    const { data, error } = await supabase
+      .from("store_orders")
+      .select("*, store_services(title, category), store_products(title, category)")
+      .order("created_at", { ascending: false });
+    
+    if (!error && data) {
+      setProjects(data.map((o: any) => ({
+        ...o,
+        client: profileMap[o.user_id] || null
+      })));
+    }
+    setLoadingProjects(false);
+  }, [supabase]);
+
+  useEffect(() => { 
+    fetchPortfolios(); 
+    fetchProjects();
+  }, [fetchPortfolios, fetchProjects]);
+
+  const handleProjectSelect = (projectId: string) => {
+    if (!projectId) {
+      setFormData(prev => ({ ...prev, order_id: null }));
+      return;
+    }
+
+    const project = projects.find(p => p.id === projectId);
+    if (!project) return;
+
+    const title = getProjectTitle(project).split(' — ')[1] || getProjectTitle(project);
+    const category = project.store_services?.category || project.store_products?.category || "";
+    const description = `Portfolio for project ${getProjectTitle(project)}. Crafted for ${getClientName(project)}.`;
+    const tags = category ? category.toLowerCase().split(' ') : [];
+
+    setFormData(prev => ({
+      ...prev,
+      order_id: projectId,
+      title: title || prev.title,
+      category: category || prev.category,
+      description: description || prev.description,
+      tags: tags.length > 0 ? tags : prev.tags
+    }));
+  };
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -91,6 +172,9 @@ export default function PortfoliosClient() {
     p.category?.toLowerCase().includes(search.toLowerCase())
   );
 
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
   const inputClass = "w-full bg-slate-50 border-0 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-indigo-500/20 p-3 transition-all outline-none";
 
   return (
@@ -108,20 +192,21 @@ export default function PortfoliosClient() {
 
       <div className="relative mb-6">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-        <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by title or category..."
+        <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} placeholder="Search by title or category..."
           className="w-full bg-white shadow-sm ring-1 ring-slate-100 border-0 rounded-2xl pl-9 pr-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500/20" />
       </div>
 
       {loading ? (
-        <div className="flex justify-center py-24"><Loader2 className="w-8 h-8 animate-spin text-indigo-600" /></div>
+        <div className="flex justify-center py-24"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
       ) : filtered.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-24 text-slate-300">
-          <ImageIcon className="w-12 h-12 mb-3" />
-          <p className="text-sm font-bold text-slate-400">No portfolios yet</p>
+        <div className="flex flex-col items-center justify-center py-24 text-slate-300 ring-1 ring-slate-100 rounded-2xl bg-white shadow-sm">
+          <ImageIcon className="w-12 h-12 mb-3 text-slate-100" />
+          <p className="text-sm font-bold text-slate-400 italic">No portfolios found</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-          {filtered.map(p => (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+            {paginated.map(p => (
             <div key={p.id} className="group bg-white rounded-2xl ring-1 ring-slate-100 overflow-hidden shadow-sm hover:shadow-lg transition-all flex flex-col">
               <div className="aspect-square relative overflow-hidden bg-slate-100">
                 {p.images?.[0] ? (
@@ -139,7 +224,14 @@ export default function PortfoliosClient() {
                 </div>
               </div>
               <div className="p-4 flex-1 flex flex-col">
-                <p className="text-[10px] font-bold text-indigo-500 uppercase tracking-wider mb-1">{p.category || "Uncategorized"}</p>
+                <div className="flex items-center justify-between mb-1">
+                  <p className="text-[10px] font-bold text-primary uppercase tracking-wider">{p.category || "Uncategorized"}</p>
+                  {p.store_orders?.order_number && (
+                    <span className="text-[9px] font-bold bg-indigo-50 text-indigo-500 px-1.5 py-0.5 rounded border border-indigo-100 uppercase tracking-tighter">
+                      ORD-{p.store_orders.order_number.toString().padStart(4, '0')}
+                    </span>
+                  )}
+                </div>
                 <h4 className="text-sm font-bold text-slate-900 leading-tight mb-2 line-clamp-1">{p.title}</h4>
                 <p className="text-xs font-medium text-slate-400 line-clamp-2 flex-1">{p.description || "No description."}</p>
                 {p.tags?.length > 0 && (
@@ -150,7 +242,7 @@ export default function PortfoliosClient() {
                   </div>
                 )}
                 <div className="flex items-center gap-2 pt-4 mt-auto border-t border-slate-100">
-                  <button onClick={() => openEdit(p)} className="flex-1 p-2 bg-slate-50 text-slate-500 hover:bg-indigo-50 hover:text-indigo-600 rounded-xl transition-all flex items-center justify-center">
+                  <button onClick={() => openEdit(p)} className="flex-1 p-2 bg-slate-50 text-slate-500 hover:bg-indigo-50 hover:text-primary rounded-xl transition-all flex items-center justify-center">
                     <Edit className="w-4 h-4" />
                   </button>
                   <button onClick={() => deletePortfolio(p.id)} className="flex-1 p-2 bg-slate-50 text-slate-400 hover:bg-red-50 hover:text-red-500 rounded-xl transition-all flex items-center justify-center">
@@ -161,7 +253,41 @@ export default function PortfoliosClient() {
             </div>
           ))}
         </div>
-      )}
+
+        {totalPages > 1 && (
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 pt-6 border-t border-slate-100">
+            <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">
+              Showing {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filtered.length)} of {filtered.length} items
+            </p>
+            <div className="flex items-center gap-2">
+              <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
+                className="p-2 rounded-xl bg-white ring-1 ring-slate-100 shadow-sm hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed text-slate-600 transition-all">
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .filter(p => p === 1 || p === totalPages || Math.abs(p - page) <= 1)
+                .reduce<(number | "...")[]>((acc, p, i, arr) => {
+                  if (i > 0 && (p as number) - (arr[i - 1] as number) > 1) acc.push("...");
+                  acc.push(p);
+                  return acc;
+                }, [])
+                .map((p, i) => p === "..." ? (
+                  <span key={`ellipsis-${i}`} className="px-2 text-slate-400 text-sm font-bold">…</span>
+                ) : (
+                  <button key={p} onClick={() => setPage(p as number)}
+                    className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${page === p ? "bg-indigo-600 text-white shadow-indigo-200 shadow-lg" : "bg-white ring-1 ring-slate-100 text-slate-600 hover:bg-slate-50"}`}>
+                    {p}
+                  </button>
+                ))}
+              <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
+                className="p-2 rounded-xl bg-white ring-1 ring-slate-100 shadow-sm hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed text-slate-600 transition-all">
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
+      </>
+    )}
 
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
@@ -180,6 +306,23 @@ export default function PortfoliosClient() {
                 value={formData.images[0] || ""}
                 onChange={url => setFormData(f => ({ ...f, images: url ? [url] : [] }))}
               />
+
+              <div>
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Relate to Project (Auto-fill)</label>
+                <select 
+                  value={formData.order_id || ""} 
+                  onChange={e => handleProjectSelect(e.target.value)}
+                  className={inputClass}
+                >
+                  <option value="">-- No Relation / Manual Input --</option>
+                  {projects.map(prj => (
+                    <option key={prj.id} value={prj.id}>
+                      {prj.order_number} - {getProjectTitle(prj)} ({getClientName(prj)})
+                    </option>
+                  ))}
+                </select>
+                <p className="text-[10px] text-slate-400 font-medium mt-1.5 ml-1 italic">Selecting a project will auto-fill the fields below.</p>
+              </div>
 
               <div>
                 <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Title <span className="text-red-500">*</span></label>
@@ -220,12 +363,12 @@ export default function PortfoliosClient() {
                   <input type="text" value={tagInput} onChange={e => setTagInput(e.target.value)}
                     onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); addTag(); } }}
                     placeholder="Add tag & press Enter" className={inputClass} />
-                  <button type="button" onClick={addTag} className="px-3 py-2 bg-indigo-50 text-indigo-600 font-bold text-xs rounded-xl hover:bg-indigo-100 transition-colors shrink-0">Add</button>
+                  <button type="button" onClick={addTag} className="px-3 py-2 bg-indigo-50 text-primary font-bold text-xs rounded-xl hover:bg-indigo-100 transition-colors shrink-0">Add</button>
                 </div>
                 {formData.tags.length > 0 && (
                   <div className="flex flex-wrap gap-1.5 mt-2">
                     {formData.tags.map(t => (
-                      <span key={t} className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-1 bg-indigo-50 text-indigo-600 rounded-full">
+                      <span key={t} className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-1 bg-indigo-50 text-primary rounded-full">
                         {t}
                         <button type="button" onClick={() => setFormData(f => ({ ...f, tags: f.tags.filter(x => x !== t) }))} className="hover:text-red-500">
                           <X className="w-3 h-3" />

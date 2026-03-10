@@ -12,7 +12,7 @@ export default function LatestPostsClient({ blogs }: { blogs: any[] }) {
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">Latest Posts</h1>
           <p className="text-sm font-medium text-slate-500 mt-1">Read our latest news, articles, and insights.</p>
         </div>
-        <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center shrink-0">
+        <div className="w-12 h-12 bg-indigo-50 text-primary rounded-2xl flex items-center justify-center shrink-0">
           <Rss className="w-6 h-6" />
         </div>
       </div>
@@ -35,7 +35,7 @@ export default function LatestPostsClient({ blogs }: { blogs: any[] }) {
             >
                <div className="w-full sm:w-64 h-48 sm:h-auto relative overflow-hidden bg-slate-100 shrink-0">
                   <div className="absolute inset-0 bg-indigo-50 flex items-center justify-center">
-                     <BookOpen className="w-8 h-8 text-indigo-200" />
+                     <BookOpen className="w-8 h-8 text-primary" />
                   </div>
                   {b.featured_image && (
                     <img 
@@ -49,7 +49,7 @@ export default function LatestPostsClient({ blogs }: { blogs: any[] }) {
                <div className="p-6 flex-1 flex flex-col justify-center">
                  <div className="flex items-center gap-3 mb-3">
                    {b.category && (
-                     <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded shadow-sm border border-indigo-100">
+                     <span className="text-[10px] font-bold uppercase tracking-wider text-primary bg-indigo-50 px-2.5 py-1 rounded shadow-sm border border-indigo-100">
                        {b.category}
                      </span>
                    )}
@@ -59,11 +59,11 @@ export default function LatestPostsClient({ blogs }: { blogs: any[] }) {
                    </div>
                  </div>
 
-                 <h3 className="text-xl font-bold text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-2 leading-tight mb-2">
+                 <h3 className="text-xl font-bold text-slate-900 group-hover:text-primary transition-colors line-clamp-2 leading-tight mb-2">
                    {b.title}
                  </h3>
 
-                 <div className="mt-4 flex items-center gap-2 text-sm font-bold text-indigo-600 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all duration-300">
+                 <div className="mt-4 flex items-center gap-2 text-sm font-bold text-primary opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all duration-300">
                     <span>Read Article</span>
                     <ArrowRight className="w-4 h-4" />
                  </div>

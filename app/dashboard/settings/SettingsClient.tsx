@@ -270,7 +270,7 @@ export default function SettingsClient() {
       <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-sm font-bold text-slate-900">{title}</h3>
-          <button type="button" onClick={() => addLink(field)} className="text-xs font-bold uppercase tracking-wider text-indigo-600 hover:bg-slate-50 px-3 py-1.5 rounded-lg transition-colors inline-flex items-center">
+          <button type="button" onClick={() => addLink(field)} className="text-xs font-bold uppercase tracking-wider text-primary hover:bg-slate-50 px-3 py-1.5 rounded-lg transition-colors inline-flex items-center">
             <Plus className="w-3.5 h-3.5 mr-1.5" /> Add Link
           </button>
         </div>
@@ -357,7 +357,7 @@ export default function SettingsClient() {
       <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-sm font-bold text-slate-900">{title}</h3>
-          <button type="button" onClick={() => addListItem(field, { title: "New Feature", desc: "Feature description...", icon: "Star" })} className="text-xs font-bold uppercase tracking-wider text-indigo-600 hover:bg-slate-50 px-3 py-1.5 rounded-lg transition-colors inline-flex items-center">
+          <button type="button" onClick={() => addListItem(field, { title: "New Feature", desc: "Feature description...", icon: "Star" })} className="text-xs font-bold uppercase tracking-wider text-primary hover:bg-slate-50 px-3 py-1.5 rounded-lg transition-colors inline-flex items-center">
             <Plus className="w-3.5 h-3.5 mr-1.5" /> Add Item
           </button>
         </div>
@@ -417,7 +417,7 @@ export default function SettingsClient() {
       <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-sm font-bold text-slate-900">{title}</h3>
-          <button type="button" onClick={() => addListItem(field, { value: "0", suffix: "+", label: "New Stat" })} className="text-xs font-bold uppercase tracking-wider text-indigo-600 hover:bg-slate-50 px-3 py-1.5 rounded-lg transition-colors inline-flex items-center">
+          <button type="button" onClick={() => addListItem(field, { value: "0", suffix: "+", label: "New Stat" })} className="text-xs font-bold uppercase tracking-wider text-primary hover:bg-slate-50 px-3 py-1.5 rounded-lg transition-colors inline-flex items-center">
             <Plus className="w-3.5 h-3.5 mr-1.5" /> Add Stat
           </button>
         </div>
@@ -475,7 +475,7 @@ export default function SettingsClient() {
       <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-sm font-bold text-slate-900">{title}</h3>
-          <button type="button" onClick={() => addListItem(field, { platform: "Instagram", url: "https://instagram.com/kanglogo" })} className="text-xs font-bold uppercase tracking-wider text-indigo-600 hover:bg-slate-50 px-3 py-1.5 rounded-lg transition-colors inline-flex items-center">
+          <button type="button" onClick={() => addListItem(field, { platform: "Instagram", url: "https://instagram.com/kanglogo" })} className="text-xs font-bold uppercase tracking-wider text-primary hover:bg-slate-50 px-3 py-1.5 rounded-lg transition-colors inline-flex items-center">
             <Plus className="w-3.5 h-3.5 mr-1.5" /> Add Social Profile
           </button>
         </div>
@@ -529,7 +529,7 @@ export default function SettingsClient() {
       <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-sm font-bold text-slate-900">{title}</h3>
-          <button type="button" onClick={() => addListItem(field, { bank_name: "BANK BCA", account_name: "John Doe", account_number: "1234567890" })} className="text-xs font-bold uppercase tracking-wider text-indigo-600 hover:bg-slate-50 px-3 py-1.5 rounded-lg transition-colors inline-flex items-center">
+          <button type="button" onClick={() => addListItem(field, { bank_name: "BANK BCA", account_name: "John Doe", account_number: "1234567890" })} className="text-xs font-bold uppercase tracking-wider text-primary hover:bg-slate-50 px-3 py-1.5 rounded-lg transition-colors inline-flex items-center">
             <Plus className="w-3.5 h-3.5 mr-1.5" /> Add Payment Method
           </button>
         </div>
@@ -630,7 +630,7 @@ export default function SettingsClient() {
   if (loading) {
     return (
       <div className="flex-1 bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl flex flex-col items-center justify-center py-20">
-        <Loader2 className="w-10 h-10 animate-spin text-indigo-600 mb-4" />
+        <Loader2 className="w-10 h-10 animate-spin text-primary mb-4" />
         <p className="text-sm font-bold text-slate-500 tracking-wider uppercase">Loading Config...</p>
       </div>
     );
@@ -639,7 +639,8 @@ export default function SettingsClient() {
   return (
     <div className="flex-1 bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl overflow-hidden flex flex-col xl:flex-row">
       
-      {/* Sidebar Tabs */}
+      
+
       <div className="w-full xl:w-72 shrink-0 bg-slate-50/50 border-b xl:border-b-0 xl:border-r border-slate-100 p-4 sm:p-6 overflow-x-auto">
         <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4 px-2">Settings Menu</h3>
         <nav className="flex xl:flex-col gap-2 min-w-max xl:min-w-0 pb-2">
@@ -651,11 +652,11 @@ export default function SettingsClient() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${
                   isActive 
-                    ? "bg-white text-indigo-700 shadow-sm ring-1 ring-slate-200/50" 
+                    ? "bg-white text-primary shadow-sm ring-1 ring-slate-200/50" 
                     : "text-slate-600 hover:bg-slate-100/70 hover:text-slate-900"
                 }`}
               >
-                <tab.icon className={`w-5 h-5 ${isActive ? "text-indigo-600" : "text-slate-400"}`} />
+                <tab.icon className={`w-5 h-5 ${isActive ? "text-primary" : "text-slate-400"}`} />
                 {tab.label}
               </button>
             );
@@ -663,10 +664,12 @@ export default function SettingsClient() {
         </nav>
       </div>
 
-      {/* Content Form */}
+      
+
       <div className="flex-1 p-4 sm:p-6 lg:p-8 xl:p-10 relative">
         
-        {/* Tab contents routing */}
+        
+
         {activeTab === "website" && (
           <form onSubmit={handleSave} className="space-y-8 max-w-4xl">
             <div>
@@ -723,7 +726,8 @@ export default function SettingsClient() {
               </div>
             </div>
 
-            {/* Assets */}
+            
+
             <div>
               <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-1">Brand Assets</h2>
               <p className="text-sm font-medium text-slate-500 mb-6 border-b border-slate-100 pb-4">
@@ -787,7 +791,8 @@ export default function SettingsClient() {
               </div>
             </div>
 
-            {/* Colors */}
+            
+
             <div>
               <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-1">Color Tokens</h2>
               <p className="text-sm font-medium text-slate-500 mb-6 border-b border-slate-100 pb-4">
@@ -814,7 +819,8 @@ export default function SettingsClient() {
                          className="h-9 w-10 border-0 rounded cursor-pointer bg-transparent p-0"
                        />
                         <span className="text-xs font-bold text-slate-500 ml-2 uppercase tracking-wide">
-                          {/* @ts-ignore */}
+                          
+
                           {settings[col.id]}
                         </span>
                      </div>
@@ -823,7 +829,8 @@ export default function SettingsClient() {
               </div>
             </div>
 
-            {/* Security controls */}
+            
+
             <div>
               <h2 className="text-lg font-bold text-rose-600 tracking-tight mb-1">Danger Zone</h2>
               <p className="text-sm font-medium text-slate-500 mb-6 border-b border-rose-100 pb-4">
@@ -855,7 +862,8 @@ export default function SettingsClient() {
           </form>
         )}
 
-        {/* Tab content: Navigation */}
+        
+
         {activeTab === "navigation" && (
            <form onSubmit={handleSave} className="space-y-8 max-w-4xl">
              <div>
@@ -886,11 +894,13 @@ export default function SettingsClient() {
            </form>
         )}
 
-        {/* Tab content: Landing Page */}
+        
+
         {activeTab === "landing" && (
            <form onSubmit={handleSave} className="space-y-8 max-w-4xl">
              
-             {/* Hero Section */}
+             
+
              <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-4 border-b border-slate-100 pb-2">Hero Section</h2>
                {renderTextInput("Hero Badge / Subtitle", "hero_badge", "Fast, Premium Logo Design")}
@@ -901,7 +911,8 @@ export default function SettingsClient() {
                </div>
              </div>
 
-             {/* Trusted By & Stats Section */}
+             
+
              <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-4 border-b border-slate-100 pb-2">Social Proof & Stats</h2>
                {renderTextInput("Trusted By Title", "trusted_by_title", "Trusted by 5,000+ ambitious brands")}
@@ -914,7 +925,8 @@ export default function SettingsClient() {
                </div>
              </div>
 
-             {/* Portfolio Section */}
+             
+
              <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-4 border-b border-slate-100 pb-2">Portfolio Gallery</h2>
                {renderTextInput("Portfolio Badge", "portfolio_badge", "View Our Work")}
@@ -926,7 +938,8 @@ export default function SettingsClient() {
                </div>
              </div>
 
-             {/* Pricing Section */}
+             
+
              <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-4 border-b border-slate-100 pb-2">Pricing</h2>
                {renderTextInput("Pricing Badge", "pricing_badge", "Clear Pricing")}
@@ -934,7 +947,8 @@ export default function SettingsClient() {
                {renderTextInput("Pricing Description", "pricing_description", "No hidden fees...", true)}
              </div>
 
-             {/* Process Steps Section */}
+             
+
              <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-4 border-b border-slate-100 pb-2">Workflow Process</h2>
                {renderTextInput("Process Badge", "process_badge", "Our Process")}
@@ -945,7 +959,8 @@ export default function SettingsClient() {
                </div>
              </div>
 
-             {/* FAQ & CTA Sections */}
+             
+
              <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-4 border-b border-slate-100 pb-2">FAQ & Footer Call-To-Action</h2>
                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -985,7 +1000,8 @@ export default function SettingsClient() {
         )}
 
 
-        {/* Tab content: Header */}
+        
+
         {activeTab === "header" && (
            <form onSubmit={handleSave} className="space-y-8 max-w-4xl">
              <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
@@ -1010,7 +1026,7 @@ export default function SettingsClient() {
                     id="header_sticky"
                     checked={settings.header_sticky}
                     onChange={(e) => setSettings({ ...settings, header_sticky: e.target.checked })}
-                    className="w-5 h-5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                    className="w-5 h-5 rounded border-slate-300 text-primary focus:ring-indigo-500"
                   />
                   <label htmlFor="header_sticky" className="text-sm font-semibold text-slate-700">Enable Sticky Header (Fixed on Scroll)</label>
                </div>
@@ -1021,7 +1037,7 @@ export default function SettingsClient() {
                     id="header_transparent"
                     checked={settings.header_transparent}
                     onChange={(e) => setSettings({ ...settings, header_transparent: e.target.checked })}
-                    className="w-5 h-5 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                    className="w-5 h-5 rounded border-slate-300 text-primary focus:ring-indigo-500"
                   />
                   <label htmlFor="header_transparent" className="text-sm font-semibold text-slate-700">Transparent Background</label>
                </div>
@@ -1049,7 +1065,7 @@ export default function SettingsClient() {
                     <div>
                       <div className="flex justify-between items-center mb-2">
                         <label className="block text-xs font-bold uppercase tracking-wider text-slate-500">Background Opacity</label>
-                        <span className="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md">{settings.header_bg_opacity}%</span>
+                        <span className="text-xs font-semibold text-primary bg-indigo-50 px-2 py-1 rounded-md">{settings.header_bg_opacity}%</span>
                       </div>
                       <input 
                         type="range"
@@ -1097,7 +1113,8 @@ export default function SettingsClient() {
            </form>
         )}
 
-        {/* Tab content: Footer */}
+        
+
         {activeTab === "footer" && (
            <form onSubmit={handleSave} className="space-y-8 max-w-4xl">
              <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
@@ -1140,7 +1157,8 @@ export default function SettingsClient() {
            </form>
         )}
 
-        {/* Tab content: SEO Engine */}
+        
+
         {activeTab === "seo" && (
            <form onSubmit={handleSave} className="space-y-8 max-w-4xl">
              <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
@@ -1234,7 +1252,8 @@ export default function SettingsClient() {
            </form>
         )}
 
-        {/* Tab content: Payment Method */}
+        
+
         {activeTab === "payment" && (
            <form onSubmit={handleSave} className="space-y-8 max-w-4xl">
              <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
@@ -1261,12 +1280,13 @@ export default function SettingsClient() {
            </form>
         )}
 
-        {/* Placeholder for other tabs */}
+        
+
         {activeTab !== "website" && activeTab !== "navigation" && activeTab !== "landing" && activeTab !== "header" && activeTab !== "footer" && activeTab !== "seo" && activeTab !== "payment" && (
            <div className="flex flex-col items-center justify-center py-20 bg-slate-50 rounded-2xl border border-slate-100 border-dashed">
              <Settings className="w-12 h-12 text-slate-300 mb-4" />
              <h3 className="text-lg font-bold text-slate-900 tracking-tight">Configuration Under Construction</h3>
-             <p className="text-sm font-medium text-slate-500 mt-2">The <span className="text-indigo-600 font-bold uppercase">{activeTab}</span> module is currently disabled pending updates.</p>
+             <p className="text-sm font-medium text-slate-500 mt-2">The <span className="text-primary font-bold uppercase">{activeTab}</span> module is currently disabled pending updates.</p>
            </div>
         )}
 

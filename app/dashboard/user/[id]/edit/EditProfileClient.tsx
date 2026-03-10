@@ -53,7 +53,7 @@ export default function EditProfileClient({ profile }: { profile: any }) {
       <div className="flex items-center gap-3 mb-8">
         <Link 
           href={`/dashboard/user/${profile.id}`}
-          className="w-10 h-10 bg-white rounded-xl shadow-sm ring-1 ring-slate-100 flex items-center justify-center text-slate-500 hover:text-indigo-600 hover:bg-slate-50 transition-colors"
+          className="w-10 h-10 bg-white rounded-xl shadow-sm ring-1 ring-slate-100 flex items-center justify-center text-slate-500 hover:text-primary hover:bg-slate-50 transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
         </Link>
@@ -64,7 +64,8 @@ export default function EditProfileClient({ profile }: { profile: any }) {
       </div>
 
       <div className="bg-white rounded-2xl shadow-sm ring-1 ring-slate-100 overflow-hidden relative">
-        {/* Dekorasi kecil estetis */}
+        
+
         <div className="absolute top-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-indigo-600"></div>
 
         <div className="p-6 sm:p-8 border-b border-slate-100 flex flex-col sm:flex-row gap-6 items-center sm:items-start">
@@ -73,7 +74,7 @@ export default function EditProfileClient({ profile }: { profile: any }) {
                 url={avatarUrl}
                 name={fullName || profile.email || "U"}
                 imageClassName="w-24 h-24 sm:w-28 sm:h-28 rounded-xl object-cover"
-                fallbackClassName="w-24 h-24 sm:w-28 sm:h-28 rounded-xl bg-indigo-100 flex items-center justify-center text-indigo-500 text-4xl font-bold"
+                fallbackClassName="w-24 h-24 sm:w-28 sm:h-28 rounded-xl bg-indigo-100 flex items-center justify-center text-primary text-4xl font-bold"
               />
           </div>
           <div className="flex-1 text-center sm:text-left space-y-2">
@@ -93,7 +94,8 @@ export default function EditProfileClient({ profile }: { profile: any }) {
           )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {/* Full Name */}
+            
+
             <div className="space-y-2">
               <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Full Name</label>
               <div className="relative">
@@ -111,7 +113,8 @@ export default function EditProfileClient({ profile }: { profile: any }) {
               </div>
             </div>
 
-            {/* Avatar URL */}
+            
+
             <div className="space-y-2">
               <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Avatar URL</label>
               <div className="relative">
@@ -128,7 +131,8 @@ export default function EditProfileClient({ profile }: { profile: any }) {
               </div>
             </div>
 
-            {/* Company / Organization */}
+            
+
             <div className="space-y-2">
               <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Company / Organization</label>
               <div className="relative">
@@ -145,7 +149,8 @@ export default function EditProfileClient({ profile }: { profile: any }) {
               </div>
             </div>
 
-            {/* Location */}
+            
+
             <div className="space-y-2">
               <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Location</label>
               <div className="relative">
@@ -162,7 +167,8 @@ export default function EditProfileClient({ profile }: { profile: any }) {
               </div>
             </div>
             
-            {/* Account Email (Disabled) */}
+            
+
             <div className="sm:col-span-2 space-y-2">
                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
                  Account Email 

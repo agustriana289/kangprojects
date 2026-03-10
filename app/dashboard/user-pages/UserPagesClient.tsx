@@ -12,7 +12,7 @@ export default function UserPagesClient({ pages }: { pages: any[] }) {
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">Explore Pages</h1>
           <p className="text-sm font-medium text-slate-500 mt-1">Useful resources and references available for you.</p>
         </div>
-        <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center shrink-0">
+        <div className="w-12 h-12 bg-indigo-50 text-primary rounded-2xl flex items-center justify-center shrink-0">
           <LayoutTemplate className="w-6 h-6" />
         </div>
       </div>
@@ -36,7 +36,7 @@ export default function UserPagesClient({ pages }: { pages: any[] }) {
                <div className="absolute -right-6 -top-6 w-24 h-24 rounded-full blur-2xl opacity-10 bg-indigo-500" />
                
                <div className="flex items-center gap-4 p-6 shrink-0 relative z-10 sm:w-80">
-                 <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0 border border-indigo-100">
+                 <div className="w-12 h-12 rounded-xl bg-indigo-50 text-primary flex items-center justify-center shrink-0 border border-indigo-100">
                    <FileText className="w-6 h-6" />
                  </div>
                  <div className="min-w-0">
@@ -50,7 +50,7 @@ export default function UserPagesClient({ pages }: { pages: any[] }) {
                    Access detailed information regarding <strong>{p.title}</strong> directly from this page document.
                  </p>
 
-                 <div className="shrink-0 flex items-center gap-2 text-sm font-bold text-indigo-600 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all duration-300 pr-6">
+                 <div className="shrink-0 flex items-center gap-2 text-sm font-bold text-primary opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all duration-300 pr-6">
                     <span>Visit Page</span>
                     <ArrowRight className="w-4 h-4" />
                  </div>

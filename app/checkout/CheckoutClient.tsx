@@ -139,7 +139,7 @@ export default function CheckoutClient({ user, item, type, selectedPlan, initial
         user_id: user.id,
         title: `${type === "service" ? "Service request" : "Product purchase"} submitted for`,
         highlight: `#${orderData.id.split('-')[0].toUpperCase()}`,
-        highlight_color: 'text-indigo-600',
+        highlight_color: 'text-primary',
       });
 
       const tokenRes = await fetch("/api/midtrans/create-token", {
@@ -187,10 +187,11 @@ export default function CheckoutClient({ user, item, type, selectedPlan, initial
     <FadeIn delay={150}>
       <div className="bg-white rounded-3xl shadow-sm ring-1 ring-slate-100 overflow-hidden mb-6 flex flex-col md:flex-row">
         
-        {/* Order Details Left */}
+        
+
         <div className="flex-1 p-8 border-b md:border-b-0 md:border-r border-slate-100 bg-slate-50/50">
           <h2 className="text-lg font-bold tracking-tight text-slate-900 flex items-center gap-2 mb-6 border-b border-slate-200 pb-4">
-             <Package size={20} className="text-indigo-600" />
+             <Package size={20} className="text-primary" />
              Order Summary
           </h2>
 
@@ -203,7 +204,7 @@ export default function CheckoutClient({ user, item, type, selectedPlan, initial
                 )}
             </div>
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-600 mb-1 block bg-indigo-50 px-2 py-0.5 rounded-md w-fit ring-1 ring-indigo-100">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-primary mb-1 block bg-indigo-50 px-2 py-0.5 rounded-md w-fit ring-1 ring-indigo-100">
                 {type === "service" ? "Service" : "Product"}
               </span>
               <h3 className="text-lg font-bold text-slate-900 leading-snug">{item.title}</h3>
@@ -232,15 +233,16 @@ export default function CheckoutClient({ user, item, type, selectedPlan, initial
                 {appliedDiscount && (
                   <span className="text-xs text-slate-400 line-through mr-2 font-medium">Rp {Number(originalPrice).toLocaleString('id-ID')}</span>
                 )}
-                <span className="font-extrabold text-indigo-600 tracking-tight">Rp {Number(discountedPrice).toLocaleString('id-ID')}</span>
+                <span className="font-extrabold text-primary tracking-tight">Rp {Number(discountedPrice).toLocaleString('id-ID')}</span>
               </div>
             </div>
           </div>
           
-          {/* Promo Code Section */}
+          
+
           <div className="mt-8 bg-white rounded-2xl p-5 ring-1 ring-slate-200">
             <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 mb-3 flex items-center gap-2">
-              <Ticket size={16} className="text-indigo-500" /> Have a promo code?
+              <Ticket size={16} className="text-primary" /> Have a promo code?
             </h4>
             <div className="flex gap-2">
               <input 
@@ -281,11 +283,12 @@ export default function CheckoutClient({ user, item, type, selectedPlan, initial
           )}
         </div>
 
-        {/* Customer Information Right */}
+        
+
         <div className="w-full md:w-[55%] p-8 flex flex-col justify-between">
           <div>
             <h2 className="text-lg font-bold tracking-tight text-slate-900 flex items-center gap-2 mb-6 border-b border-slate-100 pb-4">
-              <Mail size={20} className="text-indigo-600" />
+              <Mail size={20} className="text-primary" />
               Information
             </h2>
             
@@ -300,7 +303,8 @@ export default function CheckoutClient({ user, item, type, selectedPlan, initial
             </div>
           </div>
 
-          {/* Dynamic Form Fields */}
+          
+
           {item.form_fields && item.form_fields.length > 0 && (
             <div className="mt-4 border-t border-slate-100 pt-6">
               <h2 className="text-sm font-bold tracking-tight text-slate-900 mb-5 uppercase">

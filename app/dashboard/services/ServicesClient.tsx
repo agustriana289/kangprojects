@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { Plus, Pencil, Trash2, Loader2, ArrowLeft, Save, Globe, Clock, Star, Box, Check, X, Layers, MessageSquare } from "lucide-react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { Plus, Pencil, Trash2, Loader2, ArrowLeft, Save, Globe, Clock, Star, Box, Check, X, Layers, MessageSquare, BriefcaseBusiness, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { useToast } from "@/components/ToastProvider";
 import ImageUploader from "@/components/admin/ImageUploader";
@@ -41,6 +41,7 @@ interface Service {
   is_featured: boolean;
   sort_order: number;
   created_at?: string;
+  portfolio_ids?: string[];
 }
 
 const emptyForm: Omit<Service, "id"> = { 
@@ -55,7 +56,8 @@ const emptyForm: Omit<Service, "id"> = {
   key_features: [],
   is_published: true, 
   is_featured: false, 
-  sort_order: 0 
+  sort_order: 0,
+  portfolio_ids: [] 
 };
 
 export default function ServicesClient() {
@@ -68,6 +70,19 @@ export default function ServicesClient() {
   const [editingService, setEditingService] = useState<Service | null>(null);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState<Omit<Service, "id">>(emptyForm);
+  const [portfolios, setPortfolios] = useState<any[]>([]);
+  const [showPortfolioModal, setShowPortfolioModal] = useState(false);
+  const [portfolioSearch, setPortfolioSearch] = useState("");
+  const [portfolioPage, setPortfolioPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const PORTFOLIOS_PER_PAGE = 18;
+  const PAGE_SIZE = 10;
+
+  const fetchPortfolios = useCallback(async () => {
+    const { data } = await supabase.from("store_portfolios").select("id, title, images").eq("is_published", true).order("created_at", { ascending: false });
+    if (data) setPortfolios(data);
+  }, [supabase]);
 
   const fetchServices = useCallback(async () => {
     setLoading(true);
@@ -80,7 +95,7 @@ export default function ServicesClient() {
     setLoading(false);
   }, [supabase, showToast]);
 
-  useEffect(() => { fetchServices(); }, [fetchServices]);
+  useEffect(() => { fetchServices(); fetchPortfolios(); }, [fetchServices, fetchPortfolios]);
 
   const openNew = () => {
     setEditingService(null);
@@ -102,7 +117,8 @@ export default function ServicesClient() {
       key_features: svc.key_features || [],
       is_published: svc.is_published,  
       is_featured: svc.is_featured, 
-      sort_order: svc.sort_order 
+      sort_order: svc.sort_order,
+      portfolio_ids: svc.portfolio_ids || []
     });
     setView("form");
   };
@@ -116,7 +132,7 @@ export default function ServicesClient() {
       if (error) showToast("Failed to update service", "error");
       else { showToast("Service updated", "success"); setView("list"); fetchServices(); }
     } else {
-      const newOrder = services.length > 0 ? Math.max(...services.map(s => s.sort_order || 0)) + 1 : 1;
+      const newOrder = services.length > 0 ? Math.max(...services.map((s: any) => s.sort_order || 0)) + 1 : 1;
       const { error } = await supabase.from("store_services").insert({ ...form, sort_order: newOrder });
       if (error) showToast("Failed to create service", "error");
       else { showToast("Service created", "success"); setView("list"); fetchServices(); }
@@ -178,16 +194,24 @@ export default function ServicesClient() {
     setForm({ ...form, key_features: kfs });
   };
 
+  const filtered = services.filter(svc => 
+    svc.title.toLowerCase().includes(search.toLowerCase()) || 
+    svc.category.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
   const inputClass = "w-full bg-white border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 p-3 transition-all outline-none";
 
   if (view === "form") {
     return (
-      <div className="pt-6 px-4 pb-16 max-w-6xl mx-auto">
+      <div className="pt-6 px-4 pb-16">
         <div className="flex items-center justify-between mb-6">
           <button
             type="button"
             onClick={() => setView("list")}
-            className="inline-flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors"
+            className="inline-flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-primary transition-colors"
           >
             <ArrowLeft className="w-4 h-4" /> Back to Services
           </button>
@@ -206,13 +230,14 @@ export default function ServicesClient() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
             <div className="lg:col-span-2 space-y-6">
-              {/* Basic Info */}
+              
+
               <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-6 space-y-5">
                 <h3 className="text-lg font-bold text-slate-800 mb-4 border-b border-slate-100 pb-3">Basic Information</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Service Title</label>
-                    <input required value={form.title} onChange={e => {
+                    <input required value={form.title} onChange={(e: any) => {
                         const title = e.target.value;
                         const slug = title.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
                         setForm(p => ({ ...p, title, slug }));
@@ -250,10 +275,11 @@ export default function ServicesClient() {
                 />
               </div>
 
-              {/* Pricing Packages */}
+              
+
               <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-6">
                 <div className="flex items-center justify-between mb-6 border-b border-slate-100 pb-3">
-                  <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2"><Layers className="w-5 h-5 text-indigo-500" /> Pricing Packages</h3>
+                  <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2"><Layers className="w-5 h-5 text-primary" /> Pricing Packages</h3>
                   <button type="button" onClick={addPackage} className="text-xs font-bold bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg hover:bg-slate-200 inline-flex items-center gap-1"><Plus className="w-3 h-3"/> Add Plan</button>
                 </div>
                 
@@ -268,7 +294,7 @@ export default function ServicesClient() {
                         </div>
                         <div>
                           <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Price (IDR)</label>
-                          <input type="number" value={pkg.price} onChange={e => updatePackage(pIdx, 'price', parseInt(e.target.value) || 0)} className="w-full bg-white border border-slate-200 rounded-lg p-2 text-sm font-bold text-indigo-600" />
+                          <input type="number" value={pkg.price} onChange={e => updatePackage(pIdx, 'price', parseInt(e.target.value) || 0)} className="w-full bg-white border border-slate-200 rounded-lg p-2 text-sm font-bold text-primary" />
                         </div>
                       </div>
                       <div className="mb-4">
@@ -278,7 +304,7 @@ export default function ServicesClient() {
                       <div>
                         <div className="flex items-center justify-between mb-2">
                            <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Features Checklist</label>
-                           <button type="button" onClick={() => addFeature(pIdx)} className="text-[10px] text-indigo-600 font-bold hover:underline bg-indigo-50 px-2 py-1 rounded">Add Feature</button>
+                           <button type="button" onClick={() => addFeature(pIdx)} className="text-[10px] text-primary font-bold hover:underline bg-indigo-50 px-2 py-1 rounded">Add Feature</button>
                         </div>
                         <div className="space-y-2">
                            {pkg.features.map((feat, fIdx) => (
@@ -299,7 +325,8 @@ export default function ServicesClient() {
             </div>
 
             <div className="space-y-6">
-              {/* Publishing Status */}
+              
+
               <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-6">
                  <h3 className="text-lg font-bold text-slate-800 mb-4 border-b border-slate-100 pb-3">Status</h3>
                  <div className="space-y-4">
@@ -308,7 +335,7 @@ export default function ServicesClient() {
                         <p className="text-sm font-bold text-slate-900 flex items-center gap-2">{form.is_published ? <Globe className="w-4 h-4 text-emerald-500" /> : <Clock className="w-4 h-4 text-slate-400" />} {form.is_published ? "Published" : "Draft"}</p>
                         <p className="text-xs text-slate-400">Visibility on site</p>
                       </div>
-                      <button type="button" onClick={() => setForm(p => ({ ...p, is_published: !p.is_published }))} className={`w-11 h-6 rounded-full relative transition-all ${form.is_published ? "bg-emerald-500" : "bg-slate-300"}`}>
+                      <button type="button" onClick={() => setForm((p: any) => ({ ...p, is_published: !p.is_published }))} className={`w-11 h-6 rounded-full relative transition-all ${form.is_published ? "bg-emerald-500" : "bg-slate-300"}`}>
                         <div className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow-sm transition-all ${form.is_published ? "right-1" : "left-1"}`} />
                       </button>
                     </div>
@@ -317,28 +344,29 @@ export default function ServicesClient() {
                         <p className="text-sm font-bold text-slate-900 flex items-center gap-2"><Star className={`w-4 h-4 ${form.is_featured ? 'text-yellow-500 fill-yellow-500' : 'text-slate-400'}`} /> Featured</p>
                         <p className="text-xs text-slate-400">Show on landing page</p>
                       </div>
-                      <button type="button" onClick={() => setForm(p => ({ ...p, is_featured: !p.is_featured }))} className={`w-11 h-6 rounded-full relative transition-all ${form.is_featured ? "bg-yellow-500" : "bg-slate-300"}`}>
+                      <button type="button" onClick={() => setForm((p: any) => ({ ...p, is_featured: !p.is_featured }))} className={`w-11 h-6 rounded-full relative transition-all ${form.is_featured ? "bg-yellow-500" : "bg-slate-300"}`}>
                         <div className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow-sm transition-all ${form.is_featured ? "right-1" : "left-1"}`} />
                       </button>
                     </div>
                  </div>
               </div>
 
-              {/* Requirement Form Builder */}
+              
+
               <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-6">
                 <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
-                  <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2"><MessageSquare className="w-4 h-4 text-indigo-500" /> Client Requirements</h3>
+                  <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2"><MessageSquare className="w-4 h-4 text-primary" /> Client Requirements</h3>
                   <button type="button" onClick={addField} className="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-1 rounded hover:bg-slate-200">+ Add</button>
                 </div>
                 
                 <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
-                   {form.form_fields.map((f, i) => (
+                   {form.form_fields.map((f: any, i: number) => (
                      <div key={i} className="bg-slate-50 p-3 rounded-xl border border-slate-200 relative">
                         <button type="button" onClick={() => removeField(i)} className="absolute top-2 right-2 text-slate-400 hover:text-red-500"><X className="w-3 h-3"/></button>
                         <div className="space-y-3 pr-6">
                            <div>
                               <label className="text-[9px] font-bold uppercase text-slate-500">Question</label>
-                              <input value={f.label} onChange={e => updateField(i, 'label', e.target.value)} className="w-full bg-white border border-slate-200 p-1.5 rounded text-xs font-semibold" />
+                              <input value={f.label} onChange={(e: any) => updateField(i, 'label', e.target.value)} className="w-full bg-white border border-slate-200 p-1.5 rounded text-xs font-semibold" />
                            </div>
                            <div className="flex gap-2">
                               <div className="flex-1">
@@ -352,7 +380,7 @@ export default function ServicesClient() {
                               </div>
                               <div className="w-16 flex flex-col items-center">
                                  <label className="text-[9px] font-bold uppercase text-slate-500 pb-1">Req.</label>
-                                 <input type="checkbox" checked={f.required} onChange={e => updateField(i, 'required', e.target.checked)} className="rounded border-slate-300 text-indigo-600" />
+                                 <input type="checkbox" checked={f.required} onChange={e => updateField(i, 'required', e.target.checked)} className="rounded border-slate-300 text-primary" />
                               </div>
                            </div>
                            {f.type === "select" && (
@@ -368,31 +396,32 @@ export default function ServicesClient() {
                 </div>
               </div>
 
-              {/* Service Highlights / Key Features */}
+              
+
               <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-6 mt-6">
                 <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
-                  <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2"><Star className="w-4 h-4 text-indigo-500 fill-indigo-500" /> Service Highlights</h3>
+                  <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2"><Star className="w-4 h-4 text-primary fill-indigo-500" /> Service Highlights</h3>
                   <button type="button" onClick={addKeyFeature} className="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-1 rounded hover:bg-slate-200">+ Add</button>
                 </div>
                 
                 <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
-                   {(form.key_features || []).map((kf, i) => (
+                   {(form.key_features || []).map((kf: any, i: number) => (
                      <div key={i} className="bg-slate-50 p-3 rounded-xl border border-slate-200 relative mt-3">
                         <button type="button" onClick={() => removeKeyFeature(i)} className="absolute top-2 right-2 text-slate-400 hover:text-red-500"><X className="w-3 h-3"/></button>
                         <div className="space-y-3 pr-6">
                            <div className="grid grid-cols-3 gap-2">
                              <div className="col-span-2">
                                 <label className="text-[9px] font-bold uppercase text-slate-500">Highlight Title</label>
-                                <input value={kf.title} onChange={e => updateKeyFeature(i, 'title', e.target.value)} className="w-full bg-white border border-slate-200 p-1.5 rounded text-xs font-semibold" placeholder="e.g. Quality Assured" />
+                                <input value={kf.title} onChange={(e: any) => updateKeyFeature(i, 'title', e.target.value)} className="w-full bg-white border border-slate-200 p-1.5 rounded text-xs font-semibold" placeholder="e.g. Quality Assured" />
                              </div>
                              <div>
                                 <label className="text-[9px] font-bold uppercase text-slate-500">Icon Name</label>
-                                <input value={kf.icon} onChange={e => updateKeyFeature(i, 'icon', e.target.value)} className="w-full bg-white border border-slate-200 p-1.5 rounded text-xs" placeholder="CheckCircle2" />
+                                <input value={kf.icon} onChange={(e: any) => updateKeyFeature(i, 'icon', e.target.value)} className="w-full bg-white border border-slate-200 p-1.5 rounded text-xs" placeholder="CheckCircle2" />
                              </div>
                            </div>
                            <div>
                               <label className="text-[9px] font-bold uppercase text-slate-500">Description</label>
-                              <textarea rows={2} value={kf.description} onChange={e => updateKeyFeature(i, 'description', e.target.value)} className="w-full bg-white border border-slate-200 p-1.5 rounded text-xs resize-none" placeholder="Short detail..." />
+                              <textarea rows={2} value={kf.description} onChange={(e: any) => updateKeyFeature(i, 'description', e.target.value)} className="w-full bg-white border border-slate-200 p-1.5 rounded text-xs resize-none" placeholder="Short detail..." />
                            </div>
                         </div>
                      </div>
@@ -401,9 +430,162 @@ export default function ServicesClient() {
                 </div>
               </div>
 
+              <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-6 mt-6">
+                <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
+                  <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2"><BriefcaseBusiness className="w-4 h-4 text-primary" /> Connected Portfolios</h3>
+                  <button type="button" onClick={() => setShowPortfolioModal(true)} className="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-1 rounded hover:bg-slate-200">+ Add Portfolio</button>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4 max-h-[400px] overflow-y-auto">
+                  {(form.portfolio_ids || []).map((pid: any) => {
+                    const port = portfolios.find((p: any) => p.id === pid);
+                    if (!port) return null;
+                    const portImage = Array.isArray(port.images) && port.images.length > 0 ? port.images[0] : (typeof port.images === 'string' && port.images ? port.images : "");
+                    
+                    return (
+                      <div key={pid} className="relative group rounded-xl overflow-hidden border border-slate-200 shadow-sm">
+                        {portImage ? (
+                          <img src={portImage} alt={port.title || "Portfolio"} className="w-full h-24 object-cover bg-slate-100" />
+                        ) : (
+                          <div className="w-full h-24 bg-slate-100 flex items-center justify-center text-slate-300">
+                            <BriefcaseBusiness className="w-6 h-6 opacity-20" />
+                          </div>
+                        )}
+                        <div className="p-2 bg-white border-t border-slate-100">
+                          <p className="text-xs font-bold truncate text-slate-800">{port.title || "Untitled"}</p>
+                        </div>
+                        <button type="button" onClick={() => setForm((p: any) => ({ ...p, portfolio_ids: (p.portfolio_ids || []).filter((id: any) => id !== pid) }))} className="absolute top-1 right-1 bg-white/90 backdrop-blur rounded p-1 text-slate-500 hover:text-red-500 hover:bg-white shadow">
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    )
+                  })}
+                  {(!form.portfolio_ids || form.portfolio_ids.length === 0) && (
+                    <div className="col-span-2 text-xs text-slate-400 text-center py-4">No portfolios connected.</div>
+                  )}
+                </div>
+              </div>
+
             </div>
           </div>
         </form>
+
+        {showPortfolioModal && (
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[85vh] flex flex-col">
+              <div className="flex items-center justify-between p-4 border-b border-slate-100">
+                <h3 className="font-bold text-slate-900">Select Portfolios (Max 9)</h3>
+                <button onClick={() => setShowPortfolioModal(false)} className="text-slate-400 hover:text-slate-600"><X className="w-5 h-5"/></button>
+              </div>
+
+              <div className="px-4 py-3 border-b border-slate-100 bg-slate-50/50">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+                  <input 
+                    type="text"
+                    value={portfolioSearch}
+                    onChange={(e) => {
+                      setPortfolioSearch(e.target.value);
+                      setPortfolioPage(1); // Reset page on search
+                    }}
+                    placeholder="Search portfolios..."
+                    className="w-full bg-white border border-slate-200 pl-9 pr-4 py-2 rounded-lg text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                  />
+                </div>
+              </div>
+
+              <div className="p-4 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 flex-1">
+                {(() => {
+                  const filteredPortfolios = portfolios.filter((p: any) => !portfolioSearch || p.title?.toLowerCase().includes(portfolioSearch.toLowerCase()));
+                  const totalPages = Math.ceil(filteredPortfolios.length / PORTFOLIOS_PER_PAGE);
+                  const pagedPortfolios = filteredPortfolios.slice((portfolioPage - 1) * PORTFOLIOS_PER_PAGE, portfolioPage * PORTFOLIOS_PER_PAGE);
+
+                  if (filteredPortfolios.length === 0) {
+                    return (
+                      <div className="col-span-full text-center py-12 text-slate-400">
+                        <BriefcaseBusiness className="w-8 h-8 mx-auto mb-3 opacity-20" />
+                        <p>No portfolios found.</p>
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <>
+                      {pagedPortfolios.map((port: any) => {
+                        const isSelected = (form.portfolio_ids || []).includes(port.id);
+                        
+                        return (
+                          <div 
+                            key={port.id} 
+                            onClick={() => {
+                              const current = form.portfolio_ids || [];
+                              if (isSelected) {
+                                setForm((p: any) => ({ ...p, portfolio_ids: current.filter((id: any) => id !== port.id) }));
+                              } else if (current.length < 9) {
+                                setForm((p: any) => ({ ...p, portfolio_ids: [...current, port.id] }));
+                              }
+                            }}
+                            className={`cursor-pointer border rounded-lg overflow-hidden transition-all flex items-center p-3 ${
+                              isSelected 
+                                ? 'border-primary bg-primary/5 shadow-sm' 
+                                : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                            }`}
+                          >
+                            <div className="flex-1 min-w-0 pr-2">
+                              <p className="text-sm font-semibold truncate text-slate-800">{port.title || "Untitled Portfolio"}</p>
+                            </div>
+                            <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 border ${isSelected ? 'bg-primary border-primary' : 'bg-white border-slate-300'}`}>
+                              {isSelected && <Check className="w-3 h-3 text-white" />}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </>
+                  );
+                })()}
+              </div>
+
+              {/* Pagination controls & Footer */}
+              <div className="p-4 border-t border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-4 bg-slate-50/50 rounded-b-2xl">
+                {(() => {
+                  const filteredLength = portfolios.filter((p: any) => !portfolioSearch || p.title?.toLowerCase().includes(portfolioSearch.toLowerCase())).length;
+                  const totalPages = Math.max(1, Math.ceil(filteredLength / PORTFOLIOS_PER_PAGE));
+                  
+                  return (
+                    <div className="flex items-center gap-4 w-full sm:w-auto overflow-x-auto">
+                      <div className="text-xs text-slate-500 whitespace-nowrap">
+                        Showing {Math.min(filteredLength, (portfolioPage - 1) * PORTFOLIOS_PER_PAGE + 1)} - {Math.min(filteredLength, portfolioPage * PORTFOLIOS_PER_PAGE)} of {filteredLength}
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <button 
+                          onClick={() => setPortfolioPage(p => Math.max(1, p - 1))}
+                          disabled={portfolioPage === 1}
+                          className="p-1 rounded text-slate-500 hover:bg-slate-200 disabled:opacity-50 disabled:hover:bg-transparent"
+                        >
+                          <ChevronLeft className="w-4 h-4" />
+                        </button>
+                        <span className="text-xs font-medium px-2 py-1 bg-white border border-slate-200 rounded min-w-[32px] text-center">
+                          {portfolioPage} / {totalPages}
+                        </span>
+                        <button 
+                          onClick={() => setPortfolioPage(p => Math.min(totalPages, p + 1))}
+                          disabled={portfolioPage >= totalPages}
+                          className="p-1 rounded text-slate-500 hover:bg-slate-200 disabled:opacity-50 disabled:hover:bg-transparent"
+                        >
+                          <ChevronRight className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })()}
+
+                <button onClick={() => setShowPortfolioModal(false)} className="w-full sm:w-auto bg-primary text-white text-sm font-bold px-6 py-2 rounded-lg hover:bg-primary/90 shadow-sm">
+                  Save Selection ({(form.portfolio_ids || []).length}/9)
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -422,78 +604,124 @@ export default function ServicesClient() {
           <Plus className="w-4 h-4" /> New Service
         </button>
       </div>
+      
+      <div className="relative mb-6">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+        <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} placeholder="Search services by title or category..."
+          className="w-full bg-white shadow-sm ring-1 ring-slate-100 border-0 rounded-2xl pl-9 pr-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500/20" />
+      </div>
 
       <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl overflow-hidden">
         {loading ? (
           <div className="flex items-center justify-center py-32">
-            <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
-        ) : services.length === 0 ? (
+        ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-32 text-slate-400">
             <Box className="w-10 h-10 mb-3 text-slate-200" />
             <p className="text-sm font-bold">No services defined</p>
-            <p className="text-xs mt-1">Add your first service offering</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead>
-                <tr className="text-slate-400 text-xs font-bold uppercase tracking-wider border-b border-slate-100 bg-slate-50/50">
-                  <th className="px-6 py-4">Service Details</th>
-                  <th className="px-6 py-4">Packages</th>
-                  <th className="px-6 py-4">Visibility</th>
-                  <th className="px-6 py-4 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {services.map(svc => (
-                  <tr key={svc.id} className="hover:bg-slate-50/60 transition-colors group">
-                    <td className="px-6 py-4">
-                       <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden shrink-0 flex items-center justify-center">
-                             {svc.thumbnail_url ? <img src={svc.thumbnail_url} className="w-full h-full object-cover" alt={svc.title}/> : <Box className="w-5 h-5 text-slate-400" />}
-                          </div>
-                          <div>
-                             <p className="font-bold text-slate-900">{svc.title}</p>
-                             <div className="flex gap-2 items-center mt-1">
-                               <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">{svc.category}</span>
-                               {svc.is_featured && <span className="text-[9px] bg-yellow-100 text-yellow-700 px-1.5 rounded uppercase font-bold tracking-widest flex items-center"><Star className="w-2.5 h-2.5 mr-0.5 fill-yellow-500" /> Featured</span>}
-                             </div>
-                          </div>
-                       </div>
-                    </td>
-                    <td className="px-6 py-4">
-                       <div className="flex -space-x-1.5">
-                         {svc.packages?.map((p, i) => (
-                           <div key={i} className="w-7 h-7 rounded-full border-2 border-white bg-indigo-50 flex items-center justify-center text-[9px] font-bold text-indigo-600 shadow-sm" title={p.name}>
-                             {p.name.charAt(0).toUpperCase()}
-                           </div>
-                         ))}
-                       </div>
-                       <p className="text-xs text-slate-400 mt-1.5">{svc.packages?.length || 0} Pricing plans</p>
-                    </td>
-                    <td className="px-6 py-4">
-                       <button onClick={() => togglePublished(svc)} className="flex items-center gap-1.5 text-xs font-semibold py-1.5 px-3 rounded-lg hover:bg-slate-100 transition-colors">
-                         {svc.is_published 
-                           ? <><div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div> <span className="text-emerald-700">Published</span></>
-                           : <><div className="w-2 h-2 rounded-full bg-slate-300"></div> <span className="text-slate-500">Draft</span></>}
-                       </button>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center justify-end gap-2">
-                        <button onClick={() => openEdit(svc)} className="p-2 rounded-lg bg-slate-100 text-slate-500 hover:bg-indigo-50 hover:text-indigo-600 transition-colors" title="Edit">
-                          <Pencil className="w-4 h-4" />
-                        </button>
-                        <button onClick={() => handleDelete(svc.id)} className="p-2 rounded-lg bg-slate-100 text-rose-400 hover:bg-rose-50 hover:text-rose-600 transition-colors" title="Delete">
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
+          <>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="text-slate-400 text-xs font-bold uppercase tracking-wider border-b border-slate-100 bg-slate-50/50">
+                    <th className="px-6 py-4">Service Info</th>
+                    <th className="px-6 py-4">Pricing</th>
+                    <th className="px-6 py-4">Status</th>
+                    <th className="px-6 py-4 text-right">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {paginated.map(svc => (
+                    <tr key={svc.id} className="hover:bg-slate-50/60 transition-colors group">
+                      <td className="px-6 py-4">
+                         <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-xl bg-slate-100 overflow-hidden shrink-0 border border-slate-200">
+                              {svc.thumbnail ? (
+                                <img src={svc.thumbnail} alt={svc.title} className="w-full h-full object-cover" />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center text-slate-400">
+                                  <Globe className="w-5 h-5" />
+                                </div>
+                              )}
+                            </div>
+                            <div>
+                               <p className="text-sm font-bold text-slate-900 line-clamp-1">{svc.title}</p>
+                               <div className="flex items-center gap-2 mt-1">
+                                 <span className="text-[10px] font-bold text-primary bg-indigo-50 px-2 py-0.5 rounded uppercase tracking-wider border border-indigo-100">{svc.category}</span>
+                                 {svc.is_popular && <span className="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded uppercase tracking-wider border border-amber-100 flex items-center gap-1"><Star className="w-3 h-3 fill-amber-500" /> Popular</span>}
+                               </div>
+                            </div>
+                         </div>
+                      </td>
+                      <td className="px-6 py-4">
+                         <div className="flex -space-x-1.5">
+                           {svc.packages?.map((p, i) => (
+                             <div key={i} className="w-7 h-7 rounded-full border-2 border-white bg-indigo-50 flex items-center justify-center text-[9px] font-bold text-primary shadow-sm" title={p.name}>
+                               {p.name.charAt(0).toUpperCase()}
+                             </div>
+                           ))}
+                         </div>
+                         <p className="text-xs text-slate-400 mt-1.5">{svc.packages?.length || 0} Pricing plans</p>
+                      </td>
+                      <td className="px-6 py-4">
+                         <button onClick={() => togglePublished(svc)} className="flex items-center gap-1.5 text-xs font-semibold py-1.5 px-3 rounded-lg hover:bg-slate-100 transition-colors">
+                           {svc.is_published 
+                             ? <><div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div> <span className="text-emerald-700">Published</span></>
+                             : <><div className="w-2 h-2 rounded-full bg-slate-300"></div> <span className="text-slate-500">Draft</span></>}
+                         </button>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center justify-end gap-2">
+                          <button onClick={() => openEdit(svc)} className="p-2 rounded-lg bg-slate-100 text-slate-500 hover:bg-indigo-50 hover:text-primary transition-colors" title="Edit">
+                            <Pencil className="w-4 h-4" />
+                          </button>
+                          <button onClick={() => handleDelete(svc.id)} className="p-2 rounded-lg bg-slate-100 text-rose-400 hover:bg-rose-50 hover:text-rose-600 transition-colors" title="Delete">
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {totalPages > 1 && (
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-4 border-t border-slate-100">
+                <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">
+                  Showing {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filtered.length)} of {filtered.length} services
+                </p>
+                <div className="flex items-center gap-2">
+                  <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
+                    className="p-2 rounded-xl border border-slate-200 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed text-slate-600 transition-all">
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+                  {Array.from({ length: totalPages }, (_, i) => i + 1)
+                    .filter(p => p === 1 || p === totalPages || Math.abs(p - page) <= 1)
+                    .reduce<(number | "...")[]>((acc, p, i, arr) => {
+                      if (i > 0 && (p as number) - (arr[i - 1] as number) > 1) acc.push("...");
+                      acc.push(p);
+                      return acc;
+                    }, [])
+                    .map((p, i) => p === "..." ? (
+                      <span key={`ellipsis-${i}`} className="px-2 text-slate-400 text-sm font-bold">…</span>
+                    ) : (
+                      <button key={p} onClick={() => setPage(p as number)}
+                        className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${page === p ? "bg-indigo-600 text-white shadow-indigo-200 shadow-md" : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"}`}>
+                        {p}
+                      </button>
+                    ))}
+                  <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
+                    className="p-2 rounded-xl border border-slate-200 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed text-slate-600 transition-all">
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

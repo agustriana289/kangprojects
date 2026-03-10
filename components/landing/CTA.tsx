@@ -21,12 +21,13 @@ export default function CTA({ settings }: { settings?: any }) {
                 {settings?.cta_button1_text || "Let's get started"}
                 <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
               </a>
-              <a href="#" className="flex items-center justify-center gap-2 text-base font-semibold leading-6 text-white transition-colors hover:text-indigo-300 w-full sm:w-auto py-2">
+              <a href="#" className="flex items-center justify-center gap-2 text-base font-semibold leading-6 text-white transition-colors hover:text-primary w-full sm:w-auto py-2">
                 {settings?.cta_button2_text || "Talk to our team"}
               </a>
             </div>
             
-            {/* Background decoration */}
+            
+
             <svg
               viewBox="0 0 1024 1024"
               className="absolute left-1/2 top-1/2 -z-10 h-256 w-5xl -translate-x-1/2 mask-[radial-gradient(closest-side,white,transparent)]"

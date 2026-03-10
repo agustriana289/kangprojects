@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Plus, Pencil, Trash2, Loader2, ArrowLeft, Save, Globe, Clock, Box, Check, X, Layers, MessageSquare, Image as ImageIcon, Star } from "lucide-react";
+import { Plus, Pencil, Trash2, Loader2, ArrowLeft, Save, Globe, Clock, Box, Check, X, Layers, MessageSquare, Image as ImageIcon, Star, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { useToast } from "@/components/ToastProvider";
 import ImageUploader from "@/components/admin/ImageUploader";
@@ -67,6 +67,9 @@ export default function ShopClient() {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState<Omit<Product, "id">>(emptyForm);
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 10;
 
   const fetchProducts = useCallback(async () => {
     setLoading(true);
@@ -185,6 +188,14 @@ export default function ShopClient() {
     });
   };
 
+  const filtered = products.filter(prd => 
+    prd.title.toLowerCase().includes(search.toLowerCase()) || 
+    prd.category.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
   const inputClass = "w-full bg-white border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 p-3 transition-all outline-none";
 
   if (view === "form") {
@@ -194,7 +205,7 @@ export default function ShopClient() {
           <button
             type="button"
             onClick={() => setView("list")}
-            className="inline-flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors"
+            className="inline-flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-primary transition-colors"
           >
             <ArrowLeft className="w-4 h-4" /> Back to Products
           </button>
@@ -213,7 +224,8 @@ export default function ShopClient() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
             <div className="lg:col-span-2 space-y-6">
-              {/* Basic Info */}
+              
+
               <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-6 space-y-5">
                 <h3 className="text-lg font-bold text-slate-800 mb-4 border-b border-slate-100 pb-3">Basic Information</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -259,10 +271,11 @@ export default function ShopClient() {
                 </div>
               </div>
 
-              {/* Pricing Packages */}
+              
+
               <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-6">
                 <div className="flex items-center justify-between mb-6 border-b border-slate-100 pb-3">
-                  <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2"><Layers className="w-5 h-5 text-indigo-500" /> Licenses & Pricing</h3>
+                  <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2"><Layers className="w-5 h-5 text-primary" /> Licenses & Pricing</h3>
                   <button type="button" onClick={addPackage} className="text-xs font-bold bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg hover:bg-slate-200 inline-flex items-center gap-1"><Plus className="w-3 h-3"/> Add License</button>
                 </div>
                 
@@ -277,7 +290,7 @@ export default function ShopClient() {
                         </div>
                         <div>
                           <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Price (IDR)</label>
-                          <input type="number" value={pkg.price} onChange={e => updatePackage(pIdx, 'price', parseInt(e.target.value) || 0)} className="w-full bg-white border border-slate-200 rounded-lg p-2 text-sm font-bold text-indigo-600" />
+                          <input type="number" value={pkg.price} onChange={e => updatePackage(pIdx, 'price', parseInt(e.target.value) || 0)} className="w-full bg-white border border-slate-200 rounded-lg p-2 text-sm font-bold text-primary" />
                         </div>
                       </div>
                       <div className="mb-4">
@@ -287,7 +300,7 @@ export default function ShopClient() {
                       <div>
                         <div className="flex items-center justify-between mb-2">
                            <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Included Aspects</label>
-                           <button type="button" onClick={() => addFeature(pIdx)} className="text-[10px] text-indigo-600 font-bold hover:underline bg-indigo-50 px-2 py-1 rounded">Add Row</button>
+                           <button type="button" onClick={() => addFeature(pIdx)} className="text-[10px] text-primary font-bold hover:underline bg-indigo-50 px-2 py-1 rounded">Add Row</button>
                         </div>
                         <div className="space-y-2">
                            {pkg.features.map((feat, fIdx) => (
@@ -308,7 +321,8 @@ export default function ShopClient() {
             </div>
 
             <div className="space-y-6">
-              {/* Publishing Status */}
+              
+
               <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-6">
                  <h3 className="text-lg font-bold text-slate-800 mb-4 border-b border-slate-100 pb-3">Status</h3>
                  <div className="space-y-4">
@@ -324,10 +338,11 @@ export default function ShopClient() {
                  </div>
               </div>
 
-              {/* Product Highlights / Key Features */}
+              
+
               <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-6 mt-6">
                 <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
-                  <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2"><Star className="w-4 h-4 text-indigo-500 fill-indigo-500" /> Product Highlights</h3>
+                  <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2"><Star className="w-4 h-4 text-primary fill-indigo-500" /> Product Highlights</h3>
                   <button type="button" onClick={addKeyFeature} className="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-1 rounded hover:bg-slate-200">+ Add</button>
                 </div>
                 
@@ -357,11 +372,12 @@ export default function ShopClient() {
                 </div>
               </div>
 
-              {/* Advanced Custom Form */}
+              
+
               <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-6">
                 <div className="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
                   <div>
-                    <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2"><MessageSquare className="w-4 h-4 text-indigo-500" /> Checkout Required Data</h3>
+                    <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2"><MessageSquare className="w-4 h-4 text-primary" /> Checkout Required Data</h3>
                   </div>
                   <button type="button" onClick={addField} className="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-1 rounded hover:bg-slate-200">+ Add</button>
                 </div>
@@ -387,7 +403,7 @@ export default function ShopClient() {
                               </div>
                               <div className="w-16 flex flex-col items-center">
                                  <label className="text-[9px] font-bold uppercase text-slate-500 pb-1">Req.</label>
-                                 <input type="checkbox" checked={f.required} onChange={e => updateField(i, 'required', e.target.checked)} className="rounded border-slate-300 text-indigo-600" />
+                                 <input type="checkbox" checked={f.required} onChange={e => updateField(i, 'required', e.target.checked)} className="rounded border-slate-300 text-primary" />
                               </div>
                            </div>
                            {f.type === "select" && (
@@ -425,19 +441,25 @@ export default function ShopClient() {
         </button>
       </div>
 
+      <div className="relative mb-6">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+        <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} placeholder="Search products by title or category..."
+          className="w-full bg-white shadow-sm ring-1 ring-slate-100 border-0 rounded-2xl pl-9 pr-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500/20" />
+      </div>
+
       <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl overflow-hidden">
         {loading ? (
           <div className="flex items-center justify-center py-32">
-            <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
-        ) : products.length === 0 ? (
+        ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-32 text-slate-400">
             <Box className="w-10 h-10 mb-3 text-slate-200" />
-            <p className="text-sm font-bold">No products defined</p>
-            <p className="text-xs mt-1">Add your digital product</p>
+            <p className="text-sm font-bold">No products found</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <>
+            <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
                 <tr className="text-slate-400 text-xs font-bold uppercase tracking-wider border-b border-slate-100 bg-slate-50/50">
@@ -447,8 +469,8 @@ export default function ShopClient() {
                   <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
-                {products.map(prd => (
+                <tbody className="divide-y divide-slate-100">
+                  {paginated.map(prd => (
                   <tr key={prd.id} className="hover:bg-slate-50/60 transition-colors group">
                     <td className="px-6 py-4">
                        <div className="flex items-center gap-4">
@@ -466,7 +488,7 @@ export default function ShopClient() {
                     <td className="px-6 py-4">
                        <div className="flex -space-x-1.5">
                          {prd.packages?.map((p, i) => (
-                           <div key={i} className="w-7 h-7 rounded-full border-2 border-white bg-indigo-50 flex items-center justify-center text-[9px] font-bold text-indigo-600 shadow-sm" title={p.name}>
+                           <div key={i} className="w-7 h-7 rounded-full border-2 border-white bg-indigo-50 flex items-center justify-center text-[9px] font-bold text-primary shadow-sm" title={p.name}>
                              {p.name.charAt(0).toUpperCase()}
                            </div>
                          ))}
@@ -482,7 +504,7 @@ export default function ShopClient() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-end gap-2">
-                        <button onClick={() => openEdit(prd)} className="p-2 rounded-lg bg-slate-100 text-slate-500 hover:bg-indigo-50 hover:text-indigo-600 transition-colors" title="Edit">
+                        <button onClick={() => openEdit(prd)} className="p-2 rounded-lg bg-slate-100 text-slate-500 hover:bg-indigo-50 hover:text-primary transition-colors" title="Edit">
                           <Pencil className="w-4 h-4" />
                         </button>
                         <button onClick={() => handleDelete(prd.id)} className="p-2 rounded-lg bg-slate-100 text-rose-400 hover:bg-rose-50 hover:text-rose-600 transition-colors" title="Delete">
@@ -495,8 +517,42 @@ export default function ShopClient() {
               </tbody>
             </table>
           </div>
-        )}
-      </div>
+
+          {totalPages > 1 && (
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-4 border-t border-slate-100">
+              <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">
+                Showing {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filtered.length)} of {filtered.length} products
+              </p>
+              <div className="flex items-center gap-2">
+                <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
+                  className="p-2 rounded-xl border border-slate-200 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed text-slate-600 transition-all">
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                  .filter(p => p === 1 || p === totalPages || Math.abs(p - page) <= 1)
+                  .reduce<(number | "...")[]>((acc, p, i, arr) => {
+                    if (i > 0 && (p as number) - (arr[i - 1] as number) > 1) acc.push("...");
+                    acc.push(p);
+                    return acc;
+                  }, [])
+                  .map((p, i) => p === "..." ? (
+                    <span key={`ellipsis-${i}`} className="px-2 text-slate-400 text-sm font-bold">…</span>
+                  ) : (
+                    <button key={p} onClick={() => setPage(p as number)}
+                      className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${page === p ? "bg-indigo-600 text-white shadow-indigo-200 shadow-md" : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"}`}>
+                      {p}
+                    </button>
+                  ))}
+                <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
+                  className="p-2 rounded-xl border border-slate-200 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed text-slate-600 transition-all">
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          )}
+        </>
+      )}
+    </div>
     </div>
   );
 }

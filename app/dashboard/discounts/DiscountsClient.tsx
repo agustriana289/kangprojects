@@ -17,7 +17,9 @@ import {
   Tag,
   Percent,
   CircleDollarSign,
-  AlertCircle
+  AlertCircle,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { useToast } from "@/components/ToastProvider";
@@ -30,6 +32,8 @@ export default function DiscountsClient() {
   const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 10;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [saving, setSaving] = useState(false);
 
@@ -170,6 +174,9 @@ export default function DiscountsClient() {
     d.code?.toLowerCase().includes(search.toLowerCase())
   );
 
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
   const inputClass = "w-full bg-white border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 p-3 transition-all outline-none";
 
   return (
@@ -193,7 +200,7 @@ export default function DiscountsClient() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input 
               value={search}
-              onChange={e => setSearch(e.target.value)}
+              onChange={e => { setSearch(e.target.value); setPage(1); }}
               placeholder="Search promo name or code..." 
               className="w-full bg-slate-50 border-0 rounded-xl pl-9 pr-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500/20"
             />
@@ -214,7 +221,7 @@ export default function DiscountsClient() {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {loading ? (
-                <tr><td colSpan={6} className="py-24 text-center"><Loader2 className="w-8 h-8 animate-spin text-indigo-600 mx-auto" /></td></tr>
+                <tr><td colSpan={6} className="py-24 text-center"><Loader2 className="w-8 h-8 animate-spin text-primary mx-auto" /></td></tr>
               ) : filtered.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="py-24 text-center">
@@ -224,17 +231,17 @@ export default function DiscountsClient() {
                     </div>
                   </td>
                 </tr>
-              ) : filtered.map(d => (
+              ) : paginated.map(d => (
                 <tr key={d.id} className="hover:bg-slate-50/60 transition-colors group">
                   <td className="px-6 py-5">
                     <div className="flex items-center gap-4">
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border border-slate-100 shadow-sm ${d.code ? 'bg-indigo-50 text-indigo-500' : 'bg-orange-50 text-orange-500'}`}>
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border border-slate-100 shadow-sm ${d.code ? 'bg-indigo-50 text-primary' : 'bg-orange-50 text-orange-500'}`}>
                         {d.code ? <Ticket className="w-5 h-5" /> : <Zap className="w-5 h-5" />}
                       </div>
                       <div>
                         <p className="text-sm font-bold text-slate-900">{d.name}</p>
                         {d.code && (
-                          <p className="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-md w-fit mt-1 tracking-wider border border-indigo-100">CODE: {d.code}</p>
+                          <p className="text-[10px] font-bold text-primary bg-indigo-50 px-2.5 py-0.5 rounded-md w-fit mt-1 tracking-wider border border-indigo-100">CODE: {d.code}</p>
                         )}
                       </div>
                     </div>
@@ -293,7 +300,7 @@ export default function DiscountsClient() {
                       >
                         {d.is_active ? <CheckCircle2 className="w-4 h-4" /> : <XCircle className="w-4 h-4" />}
                       </button>
-                      <button onClick={() => openEdit(d)} className="p-2 bg-slate-50 text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg transition-colors" title="Edit Discount">
+                      <button onClick={() => openEdit(d)} className="p-2 bg-slate-50 text-slate-400 hover:bg-indigo-50 hover:text-primary rounded-lg transition-colors" title="Edit Discount">
                         <Edit className="w-4 h-4" />
                       </button>
                       <button onClick={() => deleteDiscount(d.id)} className="p-2 bg-slate-50 text-slate-400 hover:bg-red-50 hover:text-red-500 rounded-lg transition-colors" title="Delete Discount">
@@ -306,6 +313,39 @@ export default function DiscountsClient() {
             </tbody>
           </table>
         </div>
+
+        {totalPages > 1 && (
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-4 border-t border-slate-100">
+            <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">
+              Showing {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filtered.length)} of {filtered.length} discounts
+            </p>
+            <div className="flex items-center gap-2">
+              <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
+                className="p-2 rounded-xl border border-slate-200 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed text-slate-600 transition-all">
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .filter(p => p === 1 || p === totalPages || Math.abs(p - page) <= 1)
+                .reduce<(number | "...")[]>((acc, p, i, arr) => {
+                  if (i > 0 && (p as number) - (arr[i - 1] as number) > 1) acc.push("...");
+                  acc.push(p);
+                  return acc;
+                }, [])
+                .map((p, i) => p === "..." ? (
+                  <span key={`ellipsis-${i}`} className="px-2 text-slate-400 text-sm font-bold">…</span>
+                ) : (
+                  <button key={p} onClick={() => setPage(p as number)}
+                    className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${page === p ? "bg-indigo-600 text-white shadow-indigo-200 shadow-md" : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"}`}>
+                    {p}
+                  </button>
+                ))}
+              <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
+                className="p-2 rounded-xl border border-slate-200 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed text-slate-600 transition-all">
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {isModalOpen && (
@@ -331,7 +371,7 @@ export default function DiscountsClient() {
                       <button 
                         type="button"
                         onClick={() => setFormData({...formData, code: "PROMOCODE"})}
-                        className={`flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-bold transition-all ${formData.code !== "" ? 'bg-white text-indigo-600 shadow-sm border border-slate-200' : 'text-slate-500 hover:text-slate-700'}`}
+                        className={`flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-bold transition-all ${formData.code !== "" ? 'bg-white text-primary shadow-sm border border-slate-200' : 'text-slate-500 hover:text-slate-700'}`}
                       >
                         <Ticket className="w-4 h-4" /> VOUCHER
                       </button>
@@ -353,7 +393,7 @@ export default function DiscountsClient() {
                         value={formData.code}
                         onChange={e => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
                         placeholder="e.g. FLASH2026"
-                        className={`${inputClass} font-mono uppercase text-indigo-600`}
+                        className={`${inputClass} font-mono uppercase text-primary`}
                         required={formData.code !== ""}
                       />
                     </div>

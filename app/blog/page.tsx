@@ -5,23 +5,36 @@ import FadeIn from "@/components/landing/FadeIn";
 import Link from "next/link";
 import { Calendar, ArrowRight, BookOpen } from "lucide-react";
 
+import Pagination from "@/components/landing/Pagination";
+
 export const metadata = {
   title: "Blog",
   description: "Read the latest tips, trends, and insights on logo design, branding, and visual identity.",
 };
 
-async function getBlogs() {
+async function getBlogs(page: number, limit: number) {
   const supabase = await createClient();
-  const { data } = await supabase
+  const from = (page - 1) * limit;
+  const to = from + limit - 1;
+
+  const { data, count } = await supabase
     .from("blogs")
-    .select("id, title, slug, excerpt, category, featured_image, published_at")
+    .select("id, title, slug, excerpt, category, featured_image, published_at", { count: "exact" })
     .eq("is_published", true)
-    .order("published_at", { ascending: false });
-  return data || [];
+    .order("published_at", { ascending: false })
+    .range(from, to);
+    
+  return { data: data || [], total: count || 0 };
 }
 
-export default async function BlogPage() {
-  const blogs = await getBlogs();
+export default async function BlogPage(props: { searchParams?: Promise<{ [key: string]: string | string[] | undefined }> }) {
+  const searchParams = await props.searchParams;
+  const pageStr = searchParams?.page;
+  const page = typeof pageStr === "string" ? parseInt(pageStr, 10) : 1;
+  const limit = 9;
+
+  const { data: blogs, total } = await getBlogs(page, limit);
+  const totalPages = Math.ceil(total / limit);
 
   return (
     <div className="min-h-screen bg-white text-slate-900 font-sans">
@@ -30,7 +43,7 @@ export default async function BlogPage() {
       <div className="pt-8 pb-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <FadeIn delay={100} className="max-w-2xl mb-16">
-            <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-sm font-medium text-indigo-700 mb-6">
+            <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-sm font-medium text-primary mb-6">
               <BookOpen size={14} />
               <span>Our Blog</span>
             </div>
@@ -81,7 +94,7 @@ export default async function BlogPage() {
                         <Calendar size={13} />
                         <time>{new Date(blog.published_at).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}</time>
                       </div>
-                      <h2 className="text-lg font-bold text-slate-900 leading-snug mb-3 group-hover:text-indigo-600 transition-colors line-clamp-2">
+                      <h2 className="text-lg font-bold text-slate-900 leading-snug mb-3 group-hover:text-primary transition-colors line-clamp-2">
                         {blog.title}
                       </h2>
                       {blog.excerpt && (
@@ -92,7 +105,7 @@ export default async function BlogPage() {
                       <div className="mt-auto">
                         <Link
                           href={`/blog/${blog.slug}`}
-                          className="inline-flex items-center gap-1.5 text-sm font-semibold text-indigo-600 hover:text-indigo-500 transition-colors"
+                          className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:text-primary transition-colors"
                         >
                           Read article <ArrowRight size={15} className="transition-transform group-hover:translate-x-1" />
                         </Link>
@@ -102,6 +115,10 @@ export default async function BlogPage() {
                 </FadeIn>
               ))}
             </div>
+          )}
+
+          {totalPages > 1 && (
+            <Pagination totalPages={totalPages} currentPage={page} />
           )}
         </div>
       </div>

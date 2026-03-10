@@ -66,7 +66,7 @@ export default function AdminChatListClient() {
 
       {loading ? (
         <div className="flex items-center justify-center py-24">
-          <Loader2 className="w-8 h-8 animate-spin text-indigo-600 opacity-30" />
+          <Loader2 className="w-8 h-8 animate-spin text-primary opacity-30" />
         </div>
       ) : filtered.length === 0 ? (
         <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl flex flex-col items-center justify-center py-20 text-slate-400">
@@ -83,7 +83,7 @@ export default function AdminChatListClient() {
             >
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold text-sm shrink-0 overflow-hidden">
+                  <div className="w-11 h-11 rounded-2xl bg-indigo-50 flex items-center justify-center text-primary font-bold text-sm shrink-0 overflow-hidden">
                     {chat.user?.avatar_url
                       ? <img src={chat.user.avatar_url} alt="" className="w-full h-full object-cover" />
                       : chat.user?.full_name?.charAt(0).toUpperCase() || "?"
@@ -107,7 +107,7 @@ export default function AdminChatListClient() {
                     {formatDistanceToNow(new Date(chat.last_message_at), { addSuffix: true })}
                   </span>
                 </div>
-                <span className="text-xs font-bold text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity">Open →</span>
+                <span className="text-xs font-bold text-primary opacity-0 group-hover:opacity-100 transition-opacity">Open →</span>
               </div>
             </Link>
           ))}

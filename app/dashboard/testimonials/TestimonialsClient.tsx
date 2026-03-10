@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Search, Star, User, Loader2, Trash2, Edit, X } from "lucide-react";
+import { Search, Star, User, Loader2, Trash2, Edit, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { useToast } from "@/components/ToastProvider";
 
@@ -11,6 +11,8 @@ export default function TestimonialsClient() {
   const [testimonials, setTestimonials] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 10;
 
   // Edit Modal States
   const [orders, setOrders] = useState<any[]>([]);
@@ -145,6 +147,9 @@ export default function TestimonialsClient() {
     return name.toLowerCase().includes(s) || comment.toLowerCase().includes(s) || order.toLowerCase().includes(s) || project.toLowerCase().includes(s);
   });
 
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
   const stats = {
     total: testimonials.length,
     avgQuality: testimonials.length ? (testimonials.reduce((a, t) => a + (t.rating_quality || 0), 0) / testimonials.length).toFixed(1) : "–",
@@ -182,14 +187,14 @@ export default function TestimonialsClient() {
         <div className="p-4 border-b border-slate-100">
           <div className="relative max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-            <input value={search} onChange={e => setSearch(e.target.value)}
+            <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }}
               placeholder="Search by client, project, or comment..."
               className="w-full bg-slate-50 border-0 rounded-xl pl-9 pr-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500/20" />
           </div>
         </div>
 
         {loading ? (
-          <div className="flex justify-center py-24"><Loader2 className="w-8 h-8 animate-spin text-indigo-600" /></div>
+          <div className="flex justify-center py-24"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-slate-300">
             <Star className="w-10 h-10 mb-3" />
@@ -208,7 +213,7 @@ export default function TestimonialsClient() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {filtered.map(t => {
+                {paginated.map(t => {
                   const avg = avgRating(t);
                   return (
                     <tr key={t.id} className="hover:bg-slate-50/60 transition-colors">
@@ -237,7 +242,7 @@ export default function TestimonialsClient() {
                           ))}
                         </div>
                         <div>
-                          <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full">
+                          <span className="text-[10px] font-bold text-primary bg-indigo-50 px-2 py-0.5 rounded-full">
                             {avg.toFixed(1)} / 5.0
                           </span>
                         </div>
@@ -255,7 +260,7 @@ export default function TestimonialsClient() {
                       <td className="px-6 py-5 text-right">
                         <div className="flex items-center justify-end gap-2">
                           <button onClick={() => openEditModal(t)}
-                            className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all" title="Edit Properties">
+                            className="p-2 text-slate-400 hover:text-primary hover:bg-indigo-50 rounded-xl transition-all" title="Edit Properties">
                             <Edit className="w-4 h-4" />
                           </button>
                           <button onClick={() => deleteTestimonial(t.id)}
@@ -269,6 +274,39 @@ export default function TestimonialsClient() {
                 })}
               </tbody>
             </table>
+          </div>
+        )}
+
+        {totalPages > 1 && (
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-4 border-t border-slate-100">
+            <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">
+              Showing {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filtered.length)} of {filtered.length} testimonials
+            </p>
+            <div className="flex items-center gap-2">
+              <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
+                className="p-2 rounded-xl border border-slate-200 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed text-slate-600 transition-all">
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .filter(p => p === 1 || p === totalPages || Math.abs(p - page) <= 1)
+                .reduce<(number | "...")[]>((acc, p, i, arr) => {
+                  if (i > 0 && (p as number) - (arr[i - 1] as number) > 1) acc.push("...");
+                  acc.push(p);
+                  return acc;
+                }, [])
+                .map((p, i) => p === "..." ? (
+                  <span key={`ellipsis-${i}`} className="px-2 text-slate-400 text-sm font-bold">…</span>
+                ) : (
+                  <button key={p} onClick={() => setPage(p as number)}
+                    className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${page === p ? "bg-indigo-600 text-white shadow-indigo-200 shadow-md" : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"}`}>
+                    {p}
+                  </button>
+                ))}
+              <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
+                className="p-2 rounded-xl border border-slate-200 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed text-slate-600 transition-all">
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         )}
       </div>

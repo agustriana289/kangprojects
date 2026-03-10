@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Plus, Pencil, Loader2, Save, ArrowLeft, ChevronDown, ChevronUp, HelpCircle, X } from "lucide-react";
+import { Plus, Pencil, Loader2, Save, ArrowLeft, ChevronDown, ChevronUp, HelpCircle, X, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { useToast } from "@/components/ToastProvider";
 
@@ -45,6 +45,9 @@ export default function FAQClient() {
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState<Omit<FAQ, "id">>(emptyForm);
   const [filterTarget, setFilterTarget] = useState<"all" | "landing" | "service" | "shop">("all");
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 10;
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
@@ -119,10 +122,18 @@ export default function FAQClient() {
 
   const inputClass = "w-full bg-white border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 p-3 transition-all outline-none";
 
-  const filtered = faqs.filter(f => filterTarget === "all" || f.target === filterTarget);
+  const filtered = faqs.filter(f => {
+    const matchesTarget = filterTarget === "all" || f.target === filterTarget;
+    const matchesSearch = f.question.toLowerCase().includes(search.toLowerCase()) || 
+                         f.answer.toLowerCase().includes(search.toLowerCase());
+    return matchesTarget && matchesSearch;
+  });
+
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   const targetBadge = (target: string) => {
-    if (target === "landing") return <span className="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-indigo-50 text-indigo-600">Landing</span>;
+    if (target === "landing") return <span className="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-indigo-50 text-primary">Landing</span>;
     if (target === "service") return <span className="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-600">Service</span>;
     return <span className="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-orange-50 text-orange-600">Shop</span>;
   };
@@ -134,7 +145,7 @@ export default function FAQClient() {
           <button
             type="button"
             onClick={() => setView("list")}
-            className="inline-flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors"
+            className="inline-flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-primary transition-colors"
           >
             <ArrowLeft className="w-4 h-4" /> Back to FAQs
           </button>
@@ -270,21 +281,32 @@ export default function FAQClient() {
       </div>
 
       <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl overflow-hidden">
-        <div className="flex items-center gap-2 p-4 border-b border-slate-100">
-          {(["all", "landing", "service", "shop"] as const).map(t => (
-            <button
-              key={t}
-              onClick={() => setFilterTarget(t)}
-              className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${filterTarget === t ? "bg-indigo-600 text-white shadow-sm" : "bg-slate-100 text-slate-500 hover:bg-slate-200"}`}
-            >
-              {t}
-            </button>
-          ))}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 border-b border-slate-100">
+          <div className="relative flex-1">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <input 
+              value={search}
+              onChange={e => { setSearch(e.target.value); setPage(1); }}
+              placeholder="Search by question or answer..." 
+              className="w-full bg-slate-50 border-0 rounded-xl pl-10 pr-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500/20"
+            />
+          </div>
+          <div className="flex items-center gap-1.5 p-1 bg-slate-100 rounded-xl overflow-x-auto">
+            {(["all", "landing", "service", "shop"] as const).map(t => (
+              <button
+                key={t}
+                onClick={() => { setFilterTarget(t); setPage(1); }}
+                className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap ${filterTarget === t ? "bg-white text-primary shadow-sm" : "text-slate-500 hover:text-slate-800"}`}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
         </div>
 
         {loading ? (
           <div className="flex items-center justify-center py-32">
-            <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-32 text-slate-400">
@@ -294,12 +316,12 @@ export default function FAQClient() {
           </div>
         ) : (
           <div className="divide-y divide-slate-100">
-            {filtered.map(faq => (
+            {paginated.map(faq => (
               <div key={faq.id} className="hover:bg-slate-50/60 transition-colors">
                 <div className="flex items-start gap-4 px-6 py-4">
                   <button
                     onClick={() => setExpandedId(expandedId === faq.id ? null : faq.id)}
-                    className="mt-0.5 text-slate-400 hover:text-indigo-600 transition-colors shrink-0"
+                    className="mt-0.5 text-slate-400 hover:text-primary transition-colors shrink-0"
                   >
                     {expandedId === faq.id ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                   </button>
@@ -333,7 +355,7 @@ export default function FAQClient() {
                     </button>
                     <button
                       onClick={() => openEdit(faq)}
-                      className="p-2 rounded-lg bg-slate-100 text-slate-500 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"
+                      className="p-2 rounded-lg bg-slate-100 text-slate-500 hover:bg-indigo-50 hover:text-primary transition-colors"
                     >
                       <Pencil className="w-4 h-4" />
                     </button>
@@ -347,6 +369,39 @@ export default function FAQClient() {
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {totalPages > 1 && (
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-4 border-t border-slate-100">
+            <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">
+              Showing {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filtered.length)} of {filtered.length} FAQs
+            </p>
+            <div className="flex items-center gap-2">
+              <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
+                className="p-2 rounded-xl border border-slate-200 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed text-slate-600 transition-all">
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .filter(p => p === 1 || p === totalPages || Math.abs(p - page) <= 1)
+                .reduce<(number | "...")[]>((acc, p, i, arr) => {
+                  if (i > 0 && (p as number) - (arr[i - 1] as number) > 1) acc.push("...");
+                  acc.push(p);
+                  return acc;
+                }, [])
+                .map((p, i) => p === "..." ? (
+                  <span key={`ellipsis-${i}`} className="px-2 text-slate-400 text-sm font-bold">…</span>
+                ) : (
+                  <button key={p} onClick={() => setPage(p as number)}
+                    className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${page === p ? "bg-indigo-600 text-white shadow-indigo-200 shadow-md" : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"}`}>
+                    {p}
+                  </button>
+                ))}
+              <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
+                className="p-2 rounded-xl border border-slate-200 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed text-slate-600 transition-all">
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         )}
       </div>

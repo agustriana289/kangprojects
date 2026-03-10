@@ -203,7 +203,7 @@ export default function NotificationBell({ role }: { role: "admin" | "user" }) {
     <div className="relative" ref={bellRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`text-slate-500 hover:text-slate-900 hover:bg-slate-50 p-2 rounded-xl mr-1 relative transition-colors ${isOpen ? "bg-slate-50 text-indigo-600" : ""}`}
+        className={`text-slate-500 hover:text-slate-900 hover:bg-slate-50 p-2 rounded-xl mr-1 relative transition-colors ${isOpen ? "bg-slate-50 text-primary" : ""}`}
       >
         <Bell className="w-5 h-5" />
         {unreadCount > 0 && (
@@ -226,7 +226,7 @@ export default function NotificationBell({ role }: { role: "admin" | "user" }) {
                 onClick={markAllRead}
                 disabled={loading}
                 title="Mark all as read"
-                className="p-1.5 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-600 hover:text-white transition-all"
+                className="p-1.5 bg-indigo-50 text-primary rounded-lg hover:bg-indigo-600 hover:text-white transition-all"
               >
                 {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
               </button>
@@ -251,7 +251,7 @@ export default function NotificationBell({ role }: { role: "admin" | "user" }) {
                     <div className="flex items-center gap-2 mt-1.5">
                       <span className="text-[10px] text-slate-400">{formatTime(n.created_at)}</span>
                       {n.link && (
-                        <Link href={n.link} className="text-[10px] font-bold text-indigo-600 hover:underline">
+                        <Link href={n.link} className="text-[10px] font-bold text-primary hover:underline">
                           View
                         </Link>
                       )}

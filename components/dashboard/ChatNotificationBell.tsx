@@ -160,9 +160,9 @@ export default function ChatNotificationBell({ role = "user", userId }: { role?:
     <div className="relative" ref={bellRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`text-slate-500 hover:text-slate-900 hover:bg-slate-50 p-2 rounded-xl mr-1 relative transition-colors ${isOpen ? "bg-slate-50 text-indigo-600" : ""}`}
+        className={`text-slate-500 hover:text-slate-900 hover:bg-slate-50 p-2 rounded-xl mr-1 relative transition-colors ${isOpen ? "bg-slate-50 text-primary" : ""}`}
       >
-        <MessageCircle className={`w-5 h-5 ${unreadCount > 0 ? "text-indigo-600" : ""}`} fill={unreadCount > 0 ? "currentColor" : "none"} />
+        <MessageCircle className={`w-5 h-5 ${unreadCount > 0 ? "text-primary" : ""}`} fill={unreadCount > 0 ? "currentColor" : "none"} />
         {unreadCount > 0 && (
           <span className="absolute top-2 right-2 flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75" />
@@ -181,7 +181,7 @@ export default function ChatNotificationBell({ role = "user", userId }: { role?:
             {unreadCount > 0 && (
               <button
                 onClick={clearAll}
-                className="p-1.5 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-600 hover:text-white transition-all"
+                className="p-1.5 bg-indigo-50 text-primary rounded-lg hover:bg-indigo-600 hover:text-white transition-all"
                 title="Mark all as read"
               >
                 <Check className="w-3.5 h-3.5" />
@@ -201,7 +201,7 @@ export default function ChatNotificationBell({ role = "user", userId }: { role?:
                   <div className={`w-9 h-9 rounded-xl shrink-0 flex items-center justify-center font-bold text-sm ${
                     chat.type === 'support' ? 'bg-orange-50 text-orange-600' :
                     chat.type === 'workspace' ? 'bg-emerald-50 text-emerald-600' :
-                    'bg-indigo-50 text-indigo-600'
+                    'bg-indigo-50 text-primary'
                   }`}>
                     {chat.avatarLetter}
                   </div>
@@ -218,7 +218,7 @@ export default function ChatNotificationBell({ role = "user", userId }: { role?:
                         {format(new Date(chat.time), "HH:mm")} · {format(new Date(chat.time), "dd MMM")}
                       </span>
                       {chat.link && (
-                        <Link href={chat.link} className="text-[10px] font-bold text-indigo-600 hover:underline">
+                        <Link href={chat.link} className="text-[10px] font-bold text-primary hover:underline">
                           Reply
                         </Link>
                       )}

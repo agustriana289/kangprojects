@@ -10,7 +10,7 @@ export default function TestimonialSection({ settings, testimonials = [] }: { se
     <section className="bg-slate-50 py-24 sm:py-32" id="testimonials">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <FadeIn delay={100} className="mb-16 text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-sm font-medium text-indigo-700 mb-4">
+          <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-sm font-medium text-primary mb-4">
             <Star className="w-4 h-4" />
             <span>Success Stories</span>
           </div>
@@ -34,7 +34,7 @@ export default function TestimonialSection({ settings, testimonials = [] }: { se
                 &quot;{t.comment}&quot;
               </p>
               <div className="flex items-center gap-3 pt-6 border-t border-slate-100 mt-auto">
-                <div className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm shrink-0">
+                <div className="w-10 h-10 rounded-full bg-indigo-100 text-primary flex items-center justify-center font-bold text-sm shrink-0">
                   {t.client_name ? t.client_name.substring(0, 2).toUpperCase() : "AA"}
                 </div>
                 <div>

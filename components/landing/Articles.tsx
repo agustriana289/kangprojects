@@ -16,7 +16,7 @@ export default async function Articles({ settings }: { settings?: any }) {
     <section className="bg-slate-50 py-24 sm:py-32" id="articles">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <FadeIn delay={100} className="mx-auto max-w-2xl text-center mb-16">
-          <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-sm font-medium text-indigo-700 mb-4">
+          <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-sm font-medium text-primary mb-4">
             <span>{settings?.blog_badge || "Our Blog"}</span>
           </div>
           <h2 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
@@ -69,7 +69,7 @@ export default async function Articles({ settings }: { settings?: any }) {
                       <time>{new Date(blog.published_at).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}</time>
                     </div>
 
-                    <h3 className="mt-3 text-xl font-semibold leading-6 text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-2">
+                    <h3 className="mt-3 text-xl font-semibold leading-6 text-slate-900 group-hover:text-primary transition-colors line-clamp-2">
                       <Link href={`/blog/${blog.slug}`}>
                         <span className="absolute inset-0" />
                         {blog.title}
@@ -82,7 +82,7 @@ export default async function Articles({ settings }: { settings?: any }) {
                       </p>
                     )}
 
-                    <div className="mt-auto flex items-center text-sm font-semibold text-indigo-600 group-hover:text-indigo-500 transition-colors">
+                    <div className="mt-auto flex items-center text-sm font-semibold text-primary group-hover:text-primary transition-colors">
                       Read article
                       <ArrowRight size={16} className="ml-1 transition-transform group-hover:translate-x-1" />
                     </div>
@@ -96,7 +96,7 @@ export default async function Articles({ settings }: { settings?: any }) {
         <FadeIn delay={400} className="text-center mt-12">
           <Link
             href="/blog"
-            className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-6 py-2.5 text-sm font-semibold text-slate-700 hover:border-indigo-200 hover:text-indigo-600 hover:bg-indigo-50 transition-all shadow-sm"
+            className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-6 py-2.5 text-sm font-semibold text-slate-700 hover:border-indigo-200 hover:text-primary hover:bg-indigo-50 transition-all shadow-sm"
           >
             View all articles <ArrowRight size={15} />
           </Link>

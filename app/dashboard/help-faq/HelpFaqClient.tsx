@@ -51,7 +51,8 @@ export default function HelpFaqClient({ faqs }: { faqs: any[] }) {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 xl:grid-cols-12 gap-8">
-        {/* Left Grid: Categories */}
+        
+
         <div className="lg:col-span-1 xl:col-span-3 space-y-6">
           
           <div className="space-y-2">
@@ -60,11 +61,11 @@ export default function HelpFaqClient({ faqs }: { faqs: any[] }) {
               onClick={() => { setActiveTab("landing"); setExpandedId(null); }}
               className={`w-full text-left px-4 py-3 rounded-xl transition-all duration-300 flex items-center gap-3 ${
                 activeTab === "landing" 
-                  ? "bg-indigo-50 text-indigo-700 font-bold shadow-sm ring-1 ring-indigo-200" 
+                  ? "bg-indigo-50 text-primary font-bold shadow-sm ring-1 ring-indigo-200" 
                   : "bg-transparent text-slate-600 font-medium hover:bg-slate-50 hover:text-slate-900"
               }`}
             >
-              <HelpCircle className={`w-4 h-4 shrink-0 ${activeTab === 'landing' ? 'text-indigo-600' : 'text-slate-400'}`} />
+              <HelpCircle className={`w-4 h-4 shrink-0 ${activeTab === 'landing' ? 'text-primary' : 'text-slate-400'}`} />
               General Information
             </button>
           </div>
@@ -81,11 +82,11 @@ export default function HelpFaqClient({ faqs }: { faqs: any[] }) {
                     onClick={() => { setActiveTab(tabId); setExpandedId(null); }}
                     className={`w-full text-left px-4 py-3 rounded-xl transition-all duration-300 flex items-center gap-3 ${
                       isActive 
-                        ? "bg-indigo-50 text-indigo-700 font-bold shadow-sm ring-1 ring-indigo-200" 
+                        ? "bg-indigo-50 text-primary font-bold shadow-sm ring-1 ring-indigo-200" 
                         : "bg-transparent text-slate-600 font-medium hover:bg-slate-50 hover:text-slate-900"
                     }`}
                   >
-                    <Layers className={`w-4 h-4 shrink-0 ${isActive ? 'text-indigo-600' : 'text-slate-400'}`} />
+                    <Layers className={`w-4 h-4 shrink-0 ${isActive ? 'text-primary' : 'text-slate-400'}`} />
                     {sName}
                   </button>
                 );
@@ -105,11 +106,11 @@ export default function HelpFaqClient({ faqs }: { faqs: any[] }) {
                     onClick={() => { setActiveTab(tabId); setExpandedId(null); }}
                     className={`w-full text-left px-4 py-3 rounded-xl transition-all duration-300 flex items-center gap-3 ${
                       isActive 
-                        ? "bg-indigo-50 text-indigo-700 font-bold shadow-sm ring-1 ring-indigo-200" 
+                        ? "bg-indigo-50 text-primary font-bold shadow-sm ring-1 ring-indigo-200" 
                         : "bg-transparent text-slate-600 font-medium hover:bg-slate-50 hover:text-slate-900"
                     }`}
                   >
-                    <MessagesSquare className={`w-4 h-4 shrink-0 ${isActive ? 'text-indigo-600' : 'text-slate-400'}`} />
+                    <MessagesSquare className={`w-4 h-4 shrink-0 ${isActive ? 'text-primary' : 'text-slate-400'}`} />
                     {sCat}
                   </button>
                 );
@@ -119,7 +120,8 @@ export default function HelpFaqClient({ faqs }: { faqs: any[] }) {
 
         </div>
 
-        {/* Right Grid: Content */}
+        
+
         <div className="lg:col-span-3 xl:col-span-9">
           <div className="bg-white rounded-2xl ring-1 ring-slate-100 p-6 sm:p-8 min-h-[400px]">
             <div className="mb-6 flex items-center justify-between border-b border-slate-100 pb-4">
@@ -148,15 +150,16 @@ export default function HelpFaqClient({ faqs }: { faqs: any[] }) {
                         onClick={() => setExpandedId(isExpanded ? null : faq.id)}
                         className="w-full flex items-center justify-between p-5 text-left"
                       >
-                        <span className={`text-sm font-bold pr-4 transition-colors ${isExpanded ? 'text-indigo-700' : 'text-slate-800'}`}>
+                        <span className={`text-sm font-bold pr-4 transition-colors ${isExpanded ? 'text-primary' : 'text-slate-800'}`}>
                           {faq.question}
                         </span>
-                        <div className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${isExpanded ? 'bg-indigo-100 text-indigo-600' : 'bg-slate-50 text-slate-400'}`}>
+                        <div className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${isExpanded ? 'bg-indigo-100 text-primary' : 'bg-slate-50 text-slate-400'}`}>
                           {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                         </div>
                       </button>
                       
-                      {/* Content Dropdown */}
+                      
+
                       <div 
                         className={`px-5 overflow-hidden transition-all duration-300 origin-top ${
                           isExpanded ? 'max-h-[500px] pb-5 opacity-100 scale-y-100' : 'max-h-0 opacity-0 scale-y-95'

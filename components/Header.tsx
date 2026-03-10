@@ -55,7 +55,7 @@ export default async function Header() {
                 </div>
                 <span className="text-xl font-bold tracking-tight text-slate-900">
                   {settings?.website_name ? settings.website_name.substring(0, 4) : "kang"}
-                  <span className="text-indigo-600">
+                  <span className="text-primary">
                     {settings?.website_name ? settings.website_name.substring(4) : "logo"}
                   </span>
                 </span>

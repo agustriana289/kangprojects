@@ -114,10 +114,11 @@ export default function GlobalSearch({ isAdmin, userId }: { isAdmin: boolean, us
 
   return (
     <div className="relative flex-1 lg:max-w-[320px] xl:max-w-md w-full ml-6" ref={dropdownRef}>
-      {/* Search Input Trigger */}
+      
+
       <div className="relative group">
         <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
-          <Search className={`w-4 h-4 transition-colors ${isOpen ? 'text-indigo-600' : 'text-slate-400'}`} />
+          <Search className={`w-4 h-4 transition-colors ${isOpen ? 'text-primary' : 'text-slate-400'}`} />
         </div>
         <input
           ref={inputRef}
@@ -138,14 +139,15 @@ export default function GlobalSearch({ isAdmin, userId }: { isAdmin: boolean, us
         </div>
       </div>
 
-      {/* Results Dropdown */}
+      
+
       {isOpen && (query.length >= 2 || loading) && (
         <div className="absolute top-full left-0 right-0 mt-3 max-h-[70vh] w-full bg-white rounded-2xl shadow-2xl ring-1 ring-slate-100 overflow-hidden z-[100] transform transition-all animate-in fade-in slide-in-from-top-2">
           
           <div className="overflow-y-auto max-h-[calc(70vh-45px)] divide-y divide-slate-100">
             {loading ? (
               <div className="flex flex-col items-center justify-center py-20 text-slate-400">
-                <Loader2 className="w-8 h-8 animate-spin text-indigo-600 mb-3" />
+                <Loader2 className="w-8 h-8 animate-spin text-primary mb-3" />
                 <p className="text-sm font-bold uppercase tracking-wider text-slate-500">Searching everything...</p>
               </div>
             ) : results.length > 0 ? (
@@ -168,11 +170,11 @@ export default function GlobalSearch({ isAdmin, userId }: { isAdmin: boolean, us
                           }}
                           className="flex items-center gap-3.5 px-3 py-3 rounded-xl hover:bg-slate-50 transition-all group mx-1 border border-transparent hover:border-slate-100 hover:shadow-sm"
                         >
-                          <div className="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center shrink-0 group-hover:bg-white group-hover:text-indigo-600 transition-all border border-slate-200/40 shadow-xs group-hover:shadow-indigo-100/30 group-hover:-translate-y-0.5">
+                          <div className="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center shrink-0 group-hover:bg-white group-hover:text-primary transition-all border border-slate-200/40 shadow-xs group-hover:shadow-indigo-100/30 group-hover:-translate-y-0.5">
                             <Icon size={18} strokeWidth={2.5} />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <h4 className="text-sm font-bold text-slate-800 group-hover:text-indigo-700 transition-colors truncate">
+                            <h4 className="text-sm font-bold text-slate-800 group-hover:text-primary transition-colors truncate">
                               {item.title}
                             </h4>
                             <div className="flex items-center gap-2 mt-0.5">
@@ -204,7 +206,7 @@ export default function GlobalSearch({ isAdmin, userId }: { isAdmin: boolean, us
                 <Link 
                   href={`/dashboard/search?q=${encodeURIComponent(query)}`}
                   onClick={() => setIsOpen(false)}
-                  className="text-[10px] font-bold uppercase tracking-[0.15em] text-indigo-600 hover:text-indigo-800 flex items-center gap-2 transition-all group/btn"
+                  className="text-[10px] font-bold uppercase tracking-[0.15em] text-primary hover:text-primary flex items-center gap-2 transition-all group/btn"
                 >
                   View all results <ArrowRight className="w-3 h-3 group-hover/btn:translate-x-1 transition-transform" />
                 </Link>

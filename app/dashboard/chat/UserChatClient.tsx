@@ -111,7 +111,7 @@ export default function UserChatClient({ user, profile }: { user: any; profile: 
   if (isInitializing) {
     return (
       <div className="pt-6 px-4 flex items-center justify-center py-24">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-600 opacity-30" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary opacity-30" />
       </div>
     );
   }
@@ -122,13 +122,13 @@ export default function UserChatClient({ user, profile }: { user: any; profile: 
       <div className="xl:col-span-1 flex flex-col gap-4 shrink-0">
         <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-5">
           <div className="flex items-center gap-3 mb-4 pb-4 border-b border-slate-100">
-            <Link href="/dashboard" className="w-8 h-8 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-center text-slate-400 hover:text-indigo-600 transition-all">
+            <Link href="/dashboard" className="w-8 h-8 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-center text-slate-400 hover:text-primary transition-all">
               <ArrowLeft className="w-4 h-4" />
             </Link>
             <h2 className="text-sm font-bold text-slate-900">Live Chat</h2>
           </div>
           <div className="space-y-3">
-            <div className="w-14 h-14 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 font-black text-lg mx-auto">A</div>
+            <div className="w-14 h-14 rounded-2xl bg-indigo-50 flex items-center justify-center text-primary font-black text-lg mx-auto">A</div>
             <div className="text-center">
               <p className="text-sm font-bold text-slate-800">Admin Support</p>
               <div className="flex items-center justify-center gap-1.5 mt-1">
@@ -148,8 +148,8 @@ export default function UserChatClient({ user, profile }: { user: any; profile: 
           </div>
           <div className="space-y-3 text-sm">
             <div className="bg-indigo-50 rounded-xl px-4 py-3">
-              <p className="text-xs font-bold text-indigo-700 uppercase tracking-wider mb-1">Response Time</p>
-              <p className="text-sm font-medium text-indigo-700">Usually within 2 hours</p>
+              <p className="text-xs font-bold text-primary uppercase tracking-wider mb-1">Response Time</p>
+              <p className="text-sm font-medium text-primary">Usually within 2 hours</p>
             </div>
             <div className="bg-slate-50 rounded-xl px-4 py-3">
               <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Support Hours</p>
@@ -157,7 +157,7 @@ export default function UserChatClient({ user, profile }: { user: any; profile: 
             </div>
           </div>
           <div className="mt-4 pt-3 border-t border-slate-100">
-            <Link href="/dashboard/tickets/new" className="flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-indigo-600 transition-colors">
+            <Link href="/dashboard/tickets/new" className="flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-primary transition-colors">
               <HelpCircle className="w-3.5 h-3.5" />
               Submit a formal ticket instead
             </Link>
@@ -178,7 +178,7 @@ export default function UserChatClient({ user, profile }: { user: any; profile: 
             const isMe = m.sender_id === user.id;
             return (
               <div key={m.id ?? idx} className={`flex gap-3 ${isMe ? "flex-row-reverse" : "flex-row"}`}>
-                <div className="w-7 h-7 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold text-xs shrink-0 self-end">
+                <div className="w-7 h-7 rounded-xl bg-indigo-50 flex items-center justify-center text-primary font-bold text-xs shrink-0 self-end">
                   {isMe ? (profile.full_name?.charAt(0) || "Y") : "A"}
                 </div>
                 <div className={`max-w-[75%] space-y-1 ${isMe ? "items-end" : "items-start"} flex flex-col`}>

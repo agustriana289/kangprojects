@@ -36,7 +36,8 @@ export default function BrowseShopClient({ products }: { products: any[] }) {
       </div>
 
       <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl overflow-hidden">
-        {/* Categories Header */}
+        
+
         <div className="flex items-center gap-2 p-4 border-b border-slate-100 overflow-x-auto">
           {categories.map((c: string) => (
             <button
@@ -53,7 +54,8 @@ export default function BrowseShopClient({ products }: { products: any[] }) {
           ))}
         </div>
 
-        {/* Product Grid */}
+        
+
         <div className="p-6 bg-slate-50/50">
           {filteredProducts.length === 0 ? (
             <div className="bg-white rounded-2xl border border-slate-100 p-12 flex flex-col items-center justify-center text-center">
@@ -86,7 +88,7 @@ export default function BrowseShopClient({ products }: { products: any[] }) {
                         )}
                         {p.category && (
                            <div className="absolute top-3 left-3 flex gap-2">
-                             <span className="bg-white/90 backdrop-blur-sm text-indigo-600 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded shadow-sm">
+                             <span className="bg-white/90 backdrop-blur-sm text-primary text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded shadow-sm">
                                {p.category}
                              </span>
                            </div>
@@ -94,7 +96,7 @@ export default function BrowseShopClient({ products }: { products: any[] }) {
                      </div>
 
                      <div className="p-5 flex-1 flex flex-col justify-center">
-                        <h3 className="text-xl font-bold text-slate-900 leading-tight mb-2 group-hover:text-indigo-600 transition-colors line-clamp-2">
+                        <h3 className="text-xl font-bold text-slate-900 leading-tight mb-2 group-hover:text-primary transition-colors line-clamp-2">
                           {p.title}
                         </h3>
                         
@@ -110,7 +112,7 @@ export default function BrowseShopClient({ products }: { products: any[] }) {
                              </span>
                            </div>
 
-                           <div className="flex items-center gap-2 text-sm font-bold text-indigo-600 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all duration-300">
+                           <div className="flex items-center gap-2 text-sm font-bold text-primary opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all duration-300">
                              <span>View Details</span>
                              <ArrowRight className="w-4 h-4" />
                            </div>

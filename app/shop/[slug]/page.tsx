@@ -62,13 +62,14 @@ export default async function ProductDetail({ params }: ProductProps) {
     <div className="min-h-screen font-sans text-slate-900">
       <Header />
       
-      {/* Breadcrumbs */}
+      
+
       <div className="py-4 pt-4">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <nav className="flex" aria-label="Breadcrumb">
             <ol className="flex items-center space-x-2 text-sm text-slate-500 font-medium">
               <li>
-                <Link href="/" className="hover:text-indigo-600 transition-colors">
+                <Link href="/" className="hover:text-primary transition-colors">
                   <Home className="h-4 w-4" />
                   <span className="sr-only">Home</span>
                 </Link>
@@ -76,7 +77,7 @@ export default async function ProductDetail({ params }: ProductProps) {
               <li>
                 <div className="flex items-center">
                   <ChevronRight className="h-4 w-4 shrink-0 text-slate-300" />
-                  <Link href="/shop" className="ml-2 hover:text-indigo-600 transition-colors">
+                  <Link href="/shop" className="ml-2 hover:text-primary transition-colors">
                     Shop
                   </Link>
                 </div>
@@ -98,7 +99,8 @@ export default async function ProductDetail({ params }: ProductProps) {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="lg:grid lg:grid-cols-2 lg:gap-16">
             
-            {/* Left Image & Auto Mockup (Shop typically shows img on left) */}
+            
+
             <FadeIn delay={100} className="mb-12 lg:mb-0">
               <div className="sticky top-24 space-y-6">
                 <div className="overflow-hidden rounded-3xl bg-slate-100 ring-1 ring-slate-200 shadow-2xl">
@@ -115,12 +117,13 @@ export default async function ProductDetail({ params }: ProductProps) {
                   )}
                 </div>
 
-                {/* Key Features below thumbnail */}
+                
+
                 {prod.key_features && prod.key_features.length > 0 && (
                   <div className="space-y-3 pt-2">
                     {prod.key_features.map((kf: { title: string; description: string; icon?: string }, idx: number) => (
                       <div key={idx} className="bg-white rounded-2xl p-4 ring-1 ring-slate-100 shadow-sm flex items-center gap-4">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 shrink-0">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-primary shrink-0">
                           <DynamicIcon name={kf.icon || "Download"} size={20} />
                         </div>
                         <div>
@@ -134,9 +137,10 @@ export default async function ProductDetail({ params }: ProductProps) {
               </div>
             </FadeIn>
 
-            {/* Right Content */}
+            
+
             <FadeIn delay={200} className="flex flex-col">
-              <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-sm font-medium text-indigo-700 mb-6 w-max">
+              <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-sm font-medium text-primary mb-6 w-max">
                 <ShoppingBag size={14} />
                 <span>{prod.category || "Digital Asset"}</span>
               </div>
@@ -151,7 +155,7 @@ export default async function ProductDetail({ params }: ProductProps) {
                    if (appliedDiscount) {
                      return (
                        <div className="flex items-end gap-2">
-                         <span className="text-3xl font-bold tracking-tight text-indigo-600">
+                         <span className="text-3xl font-bold tracking-tight text-primary">
                            Rp {Number(discountedPrice).toLocaleString('id-ID')}
                          </span>
                          <span className="text-slate-400 font-medium pb-1 line-through text-lg">Rp {Number(originalPrice).toLocaleString('id-ID')}</span>
@@ -168,14 +172,16 @@ export default async function ProductDetail({ params }: ProductProps) {
                  <span className="text-slate-500 font-medium pb-1.5 ml-2">starting price</span>
               </div>
               
-              {/* Description */}
+              
+
               <div 
-                className="prose prose-slate prose-lg max-w-none prose-headings:font-bold prose-headings:tracking-tight prose-a:text-indigo-600 hover:prose-a:text-indigo-500 mb-12 whitespace-pre-wrap"
+                className="prose prose-slate prose-lg max-w-none prose-headings:font-bold prose-headings:tracking-tight prose-a:text-primary hover:prose-a:text-primary mb-12 whitespace-pre-wrap"
               >
                 {prod.description}
               </div>
 
-              {/* Purchase Options */}
+              
+
               <div className="mt-8 pt-8 border-t border-slate-100">
                  {prod.packages && prod.packages.length > 0 ? (
                     <div className="space-y-4">
@@ -209,10 +215,10 @@ export default async function ProductDetail({ params }: ProductProps) {
                                     {appliedDiscount ? (
                                       <div className="flex flex-col items-end">
                                         <span className="text-sm text-slate-400 line-through font-medium mb-0.5">Rp {Number(originalPrice).toLocaleString('id-ID')}</span>
-                                        <span className="block text-xl font-extrabold text-indigo-600">Rp {Number(discountedPrice).toLocaleString('id-ID')}</span>
+                                        <span className="block text-xl font-extrabold text-primary">Rp {Number(discountedPrice).toLocaleString('id-ID')}</span>
                                       </div>
                                     ) : (
-                                      <span className="block text-xl font-extrabold text-indigo-600">Rp {Number(originalPrice).toLocaleString('id-ID')}</span>
+                                      <span className="block text-xl font-extrabold text-primary">Rp {Number(originalPrice).toLocaleString('id-ID')}</span>
                                     )}
                                  </div>
                                  <Link href={`/checkout?type=product&slug=${prod.slug}&plan=${encodeURIComponent(pkg.name)}`} className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl shadow-sm transition-all focus:ring-2 focus:ring-indigo-500/50 whitespace-nowrap">

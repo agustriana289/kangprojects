@@ -32,7 +32,8 @@ export default function HighlightedPortfolio({ settings, portfolios = [] }: { se
             </p>
           </FadeIn>
 
-          {/* Bento Grid Layout */}
+          
+
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 auto-rows-[150px] sm:auto-rows-[200px] md:auto-rows-[250px]">
             {portfolios.slice(0, 13).map((item, idx) => {
               // The first item is large (2 columns wide, 2 rows high on md+ screens)
@@ -49,7 +50,8 @@ export default function HighlightedPortfolio({ settings, portfolios = [] }: { se
                 >
                   <div className="absolute inset-0 bg-linear-to-br from-indigo-50 to-purple-50 animate-pulse -z-10" />
                   
-                  {/* Optimized Next.js Image Component */}
+                  
+
                   <Image
                     src={imageUrl}
                     alt={item.title}
@@ -59,7 +61,8 @@ export default function HighlightedPortfolio({ settings, portfolios = [] }: { se
                     priority={isLarge}
                   />
                   
-                  {/* Hover Overlay */}
+                  
+
                   <div className="absolute inset-0 bg-linear-to-t from-slate-900/80 via-slate-900/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 flex flex-col justify-end p-6">
                     <div className="transform translate-y-4 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
                       <div className="mb-3 inline-block rounded-full bg-white/20 backdrop-blur-md p-2 text-white shadow-lg">
@@ -76,7 +79,8 @@ export default function HighlightedPortfolio({ settings, portfolios = [] }: { se
         </div>
       </section>
 
-      {/* Lightbox / Modal */}
+      
+
       {selectedImage && (
         <div 
           className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-950/95 backdrop-blur-xl transition-opacity" 

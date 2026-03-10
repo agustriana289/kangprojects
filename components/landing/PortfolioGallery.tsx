@@ -26,7 +26,7 @@ export default function PortfolioGallery({ settings, portfolios = [] }: { settin
       <section className="bg-slate-50 py-24 sm:py-32" id="portfolio">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <FadeIn delay={100} className="mb-16 text-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-sm font-medium text-indigo-700 mb-4">
+            <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-sm font-medium text-primary mb-4">
               <span>{settings?.portfolio_badge || "View Our Work"}</span>
             </div>
             <h2 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
@@ -47,10 +47,12 @@ export default function PortfolioGallery({ settings, portfolios = [] }: { settin
                   onClick={() => setSelectedImage(imageUrl)}
                 >
                   <div className="aspect-4/3 w-full overflow-hidden bg-slate-100 relative">
-                    {/* Placeholder colored fallback while image loads */}
+                    
+
                     <div className="absolute inset-0 bg-linear-to-br from-indigo-50 to-purple-50 animate-pulse -z-10" />
                     
-                    {/* Optimized Next.js Image Component */}
+                    
+
                     <Image
                       src={imageUrl}
                       alt={item.title}
@@ -59,7 +61,8 @@ export default function PortfolioGallery({ settings, portfolios = [] }: { settin
                       className="object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                     
-                    {/* Hover Overlay */}
+                    
+
                     <div className="absolute inset-0 bg-slate-900/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100 flex items-center justify-center">
                       <div className="transform translate-y-4 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 flex items-center justify-center h-14 w-14 rounded-full bg-white/20 backdrop-blur-md text-white border border-white/30 shadow-lg">
                         <ZoomIn size={24} />
@@ -68,7 +71,7 @@ export default function PortfolioGallery({ settings, portfolios = [] }: { settin
                   </div>
                   
                   <div className="p-6">
-                    <h3 className="text-lg font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-1">
+                    <h3 className="text-lg font-semibold text-slate-900 group-hover:text-primary transition-colors line-clamp-1">
                       {item.title}
                     </h3>
                     <p className="text-sm font-medium text-slate-500 mt-1 line-clamp-1">
@@ -82,7 +85,8 @@ export default function PortfolioGallery({ settings, portfolios = [] }: { settin
         </div>
       </section>
 
-      {/* Lightbox / Modal */}
+      
+
       {selectedImage && (
         <div 
           className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-900/90 backdrop-blur-md transition-opacity" 

@@ -98,7 +98,7 @@ export default function AdminChatRoomClient({ roomId, user }: { roomId: string; 
   };
 
   if (isInitializing) {
-    return <div className="pt-6 px-4 flex items-center justify-center py-24"><Loader2 className="w-8 h-8 animate-spin text-indigo-600 opacity-30" /></div>;
+    return <div className="pt-6 px-4 flex items-center justify-center py-24"><Loader2 className="w-8 h-8 animate-spin text-primary opacity-30" /></div>;
   }
 
   return (
@@ -106,7 +106,7 @@ export default function AdminChatRoomClient({ roomId, user }: { roomId: string; 
 
       <div className="xl:col-span-2 bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl overflow-hidden flex flex-col flex-1 min-h-0 xl:order-none order-last">
         <div className="px-5 py-4 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between shrink-0">
-          <Link href="/dashboard/chat" className="flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors">
+          <Link href="/dashboard/chat" className="flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-primary transition-colors">
             <ArrowLeft className="w-4 h-4" /> All Chats
           </Link>
           <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">{messages.length} messages</p>
@@ -120,7 +120,7 @@ export default function AdminChatRoomClient({ roomId, user }: { roomId: string; 
             const isMe = m.sender_id === user.id;
             return (
               <div key={m.id ?? idx} className={`flex gap-3 ${isMe ? "flex-row-reverse" : "flex-row"}`}>
-                <div className="w-7 h-7 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold text-xs shrink-0 self-end">
+                <div className="w-7 h-7 rounded-xl bg-indigo-50 flex items-center justify-center text-primary font-bold text-xs shrink-0 self-end">
                   {isMe ? "A" : chat?.user?.full_name?.charAt(0)?.toUpperCase() || "?"}
                 </div>
                 <div className={`max-w-[75%] space-y-1 ${isMe ? "items-end" : "items-start"} flex flex-col`}>
@@ -155,7 +155,7 @@ export default function AdminChatRoomClient({ roomId, user }: { roomId: string; 
         <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-5">
           <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 pb-3 border-b border-slate-100">Client Profile</p>
           <div className="flex flex-col items-center text-center gap-2 mb-4">
-            <div className="w-14 h-14 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 font-black text-lg overflow-hidden">
+            <div className="w-14 h-14 rounded-2xl bg-indigo-50 flex items-center justify-center text-primary font-black text-lg overflow-hidden">
               {chat?.user?.avatar_url
                 ? <img src={chat.user.avatar_url} alt="" className="w-full h-full object-cover" />
                 : chat?.user?.full_name?.charAt(0)?.toUpperCase() || "?"

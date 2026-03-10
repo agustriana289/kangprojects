@@ -28,7 +28,7 @@ interface Order {
 const STATUS_COLORS: Record<string, string> = {
   pending: "bg-amber-50 text-amber-700 border-amber-200",
   waiting_payment: "bg-yellow-50 text-yellow-700 border-yellow-200",
-  paid: "bg-indigo-50 text-indigo-700 border-indigo-200",
+  paid: "bg-indigo-50 text-primary border-indigo-200",
   processing: "bg-blue-50 text-blue-700 border-blue-200",
   completed: "bg-emerald-50 text-emerald-700 border-emerald-200",
   cancelled: "bg-red-50 text-red-700 border-red-200",
@@ -151,13 +151,13 @@ export default function UserProjectsClient({ userId }: { userId: string }) {
         </div>
 
         {loading ? (
-          <div className="flex justify-center py-24"><Loader2 className="w-8 h-8 animate-spin text-indigo-600" /></div>
+          <div className="flex justify-center py-24"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-slate-400">
             <Briefcase className="w-10 h-10 mb-3 text-slate-200" />
             <p className="text-sm font-bold">No projects yet</p>
             <p className="text-xs mt-1">Place an order from our Services or Shop to get started</p>
-            <Link href="/services" className="mt-4 text-xs font-bold text-indigo-600 hover:underline">Browse Services →</Link>
+            <Link href="/services" className="mt-4 text-xs font-bold text-primary hover:underline">Browse Services →</Link>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -202,11 +202,11 @@ export default function UserProjectsClient({ userId }: { userId: string }) {
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-end gap-1.5">
                         <button onClick={() => openDetail(o)}
-                          className="p-2 rounded-lg bg-slate-100 text-slate-500 hover:bg-indigo-50 hover:text-indigo-600 transition-colors" title="View Detail">
+                          className="p-2 rounded-lg bg-slate-100 text-slate-500 hover:bg-indigo-50 hover:text-primary transition-colors" title="View Detail">
                           <Eye className="w-4 h-4" />
                         </button>
                         <Link href={`/workspace/${o.id}`}
-                          className="p-2 rounded-lg bg-slate-100 text-slate-500 hover:bg-indigo-50 hover:text-indigo-600 transition-colors" title="Go to Workspace">
+                          className="p-2 rounded-lg bg-slate-100 text-slate-500 hover:bg-indigo-50 hover:text-primary transition-colors" title="Go to Workspace">
                           <MessageSquare className="w-4 h-4" />
                         </Link>
                       </div>
@@ -262,7 +262,8 @@ export default function UserProjectsClient({ userId }: { userId: string }) {
                 <span className="font-mono text-xs text-slate-500 break-all">{selected.id}</span>
               </div>
 
-              {/* UPLOAD BUKTI BAYAR */}
+              
+
               {(selected.status === "pending" || selected.status === "waiting_payment") && (
                 <div className="space-y-3">
                   <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Payment Proof</p>
@@ -284,7 +285,7 @@ export default function UserProjectsClient({ userId }: { userId: string }) {
                       )}
                       <div className="relative">
                         <input type="file" accept="image/*" onChange={handleUploadProof} disabled={uploadingProof} className="absolute inset-0 opacity-0 cursor-pointer disabled:cursor-not-allowed z-10" />
-                        <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl px-4 py-3 flex items-center justify-center gap-2 text-slate-400 hover:bg-indigo-50 hover:border-indigo-200 hover:text-indigo-600 transition-all cursor-pointer">
+                        <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl px-4 py-3 flex items-center justify-center gap-2 text-slate-400 hover:bg-indigo-50 hover:border-indigo-200 hover:text-primary transition-all cursor-pointer">
                           {uploadingProof ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
                           <span className="text-xs font-bold">{uploadingProof ? "Uploading..." : "Upload Transfer Proof"}</span>
                         </div>
@@ -300,7 +301,8 @@ export default function UserProjectsClient({ userId }: { userId: string }) {
                 </div>
               )}
 
-              {/* DOWNLOAD FILE AKHIR (Shop, completed, ada delivery_file) */}
+              
+
               {selected.product_id && selected.status === "completed" && selected.delivery_file && (
                 <div className="space-y-2">
                   <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Your File is Ready</p>

@@ -71,10 +71,12 @@ export default function UserListClient() {
   return (
     <div className="flex flex-col flex-1 bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl overflow-hidden">
       
-      {/* Header / Tools Area */}
+      
+
       <div className="p-4 sm:p-6 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50/50">
         
-        {/* Search */}
+        
+
         <div className="relative w-full sm:w-80 shrink-0">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <Search className="w-4 h-4 text-slate-400" />
@@ -91,7 +93,8 @@ export default function UserListClient() {
           />
         </div>
 
-        {/* Filters */}
+        
+
         <div className="flex items-center gap-2 w-full sm:w-auto">
           <div className="bg-white border border-slate-200 rounded-xl p-1 shrink-0 flex items-center shadow-sm">
             <button 
@@ -102,7 +105,7 @@ export default function UserListClient() {
             </button>
             <button 
               onClick={() => { setRoleFilter("client"); setPage(1); }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors space-x-1.5 ${roleFilter === "client" ? "bg-indigo-50 text-indigo-700" : "text-slate-500 hover:text-slate-700 hover:bg-slate-50"}`}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors space-x-1.5 ${roleFilter === "client" ? "bg-indigo-50 text-primary" : "text-slate-500 hover:text-slate-700 hover:bg-slate-50"}`}
             >
               Client
             </button>
@@ -116,11 +119,12 @@ export default function UserListClient() {
         </div>
       </div>
 
-      {/* Main Table Content */}
+      
+
       <div className="flex-1 overflow-x-auto relative">
         {loading && (
           <div className="absolute inset-0 z-10 bg-white/50 backdrop-blur-[1px] flex items-center justify-center">
-             <div className="bg-white p-3 rounded-2xl shadow-lg ring-1 ring-slate-100 text-indigo-600 flex items-center gap-3 font-bold text-sm tracking-wide">
+             <div className="bg-white p-3 rounded-2xl shadow-lg ring-1 ring-slate-100 text-primary flex items-center gap-3 font-bold text-sm tracking-wide">
                <Loader2 className="w-5 h-5 animate-spin" /> Fetching Users...
              </div>
           </div>
@@ -152,7 +156,7 @@ export default function UserListClient() {
                           url={u.avatar_url}
                           name={u.full_name || u.email || "U"}
                           imageClassName="w-10 h-10 rounded-full object-cover"
-                          fallbackClassName="w-10 h-10 rounded-full bg-indigo-50 flex flex-col items-center justify-center text-indigo-600 font-bold"
+                          fallbackClassName="w-10 h-10 rounded-full bg-indigo-50 flex flex-col items-center justify-center text-primary font-bold"
                         />
                       </div>
                       <div className="flex flex-col">
@@ -190,7 +194,7 @@ export default function UserListClient() {
                   <td className="p-4 pr-6 whitespace-nowrap text-right">
                     <Link 
                       href={`/dashboard/user/${u.id}`}
-                      className="inline-flex items-center justify-center bg-white text-indigo-600 border border-slate-200 hover:bg-indigo-50 hover:border-indigo-200 hover:shadow-sm text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg transition-all"
+                      className="inline-flex items-center justify-center bg-white text-primary border border-slate-200 hover:bg-indigo-50 hover:border-indigo-200 hover:shadow-sm text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg transition-all"
                     >
                       <ExternalLink className="w-3.5 h-3.5 mr-1.5" /> Details
                     </Link>
@@ -202,10 +206,11 @@ export default function UserListClient() {
         </table>
       </div>
 
-      {/* Pagination Footer */}
+      
+
       <div className="p-4 sm:p-5 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-50/50">
         <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-          Showing <span className="text-slate-900">{(page - 1) * PAGE_SIZE + (users.length > 0 ? 1 : 0)}</span> to <span className="text-slate-900">{Math.min(page * PAGE_SIZE, totalCount)}</span> of <span className="text-slate-900">{totalCount}</span> Users
+          Showing <span className="text-slate-900">{(page - 1) * PAGE_SIZE + (users.length > 0 ? 1 : 0)}</span>–<span className="text-slate-900">{Math.min(page * PAGE_SIZE, totalCount)}</span> of <span className="text-slate-900">{totalCount}</span> Users
         </span>
 
         <div className="flex items-center gap-2">
@@ -217,9 +222,24 @@ export default function UserListClient() {
             <ChevronLeft className="w-4 h-4" />
           </button>
           
-          <div className="px-4 py-1.5 text-xs font-bold uppercase tracking-wider bg-slate-100 text-slate-600 rounded-lg">
-            Page {page} of {maxPages}
-          </div>
+          {Array.from({ length: maxPages }, (_, i) => i + 1)
+            .filter(p => p === 1 || p === maxPages || Math.abs(p - page) <= 1)
+            .reduce<(number | "...")[]>((acc, p, i, arr) => {
+              if (i > 0 && (p as number) - (arr[i - 1] as number) > 1) acc.push("...");
+              acc.push(p);
+              return acc;
+            }, [])
+            .map((p, i) => p === "..." ? (
+              <span key={`ellipsis-${i}`} className="px-2 text-slate-400 text-sm font-bold">…</span>
+            ) : (
+              <button
+                key={p}
+                onClick={() => setPage(p as number)}
+                className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${page === p ? "bg-indigo-600 text-white shadow-indigo-200 shadow-md" : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shadow-sm"}`}
+              >
+                {p}
+              </button>
+            ))}
 
           <button 
             disabled={page >= maxPages}

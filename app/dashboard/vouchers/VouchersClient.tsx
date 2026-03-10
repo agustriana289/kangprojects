@@ -40,11 +40,12 @@ export default function VouchersClient({ discounts }: { discounts: any[] }) {
                 key={d.id} 
                 className={`relative bg-white rounded-2xl p-6 shadow-sm border-2 overflow-hidden transition-all hover:-translate-y-1 hover:shadow-md ${isVoucher ? 'border-indigo-100' : 'border-orange-100'}`}
               >
-                {/* Decorative Background */}
+                
+
                 <div className={`absolute -right-6 -top-6 w-24 h-24 rounded-full blur-2xl opacity-20 ${isVoucher ? 'bg-indigo-500' : 'bg-orange-500'}`} />
 
                 <div className="flex items-start justify-between mb-4 relative z-10">
-                  <div className={`p-3 rounded-xl shrink-0 ${isVoucher ? 'bg-indigo-50 text-indigo-600' : 'bg-orange-50 text-orange-500'}`}>
+                  <div className={`p-3 rounded-xl shrink-0 ${isVoucher ? 'bg-indigo-50 text-primary' : 'bg-orange-50 text-orange-500'}`}>
                     {isVoucher ? <Ticket className="w-6 h-6" /> : <Zap className="w-6 h-6" />}
                   </div>
                   <div className="text-right">
@@ -95,7 +96,8 @@ export default function VouchersClient({ discounts }: { discounts: any[] }) {
                   )}
                 </div>
 
-                {/* Expiry indicator */}
+                
+
                 {d.end_date && (
                    <div className="absolute top-0 right-0 left-0 h-1 bg-slate-100">
                       <div className={`h-full ${isVoucher ? 'bg-indigo-500' : 'bg-orange-500'} w-full`}></div>

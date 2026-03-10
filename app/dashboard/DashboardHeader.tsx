@@ -58,34 +58,38 @@ export default function DashboardHeader({ user, profile, settings }: { user: Use
               ) : (
                 <span className="self-center flex items-center gap-1 whitespace-nowrap text-slate-900">
                   {settings?.website_name ? settings.website_name.substring(0, 4) : "kang"}
-                  <span className="text-indigo-600">
+                  <span className="text-primary">
                     {settings?.website_name ? settings.website_name.substring(4) : "logo"}
                   </span>
                 </span>
               )}
             </Link>
             <div className="flex flex-1 items-center justify-between gap-4">
-              {/* Global Search Component */}
+              
+
               <GlobalSearch isAdmin={isAdmin} userId={user?.id || ''} />
             </div>
           </div>
           <div className="flex items-center">
-            {/* Notification and Apps shortcuts */}
+            
+
             <div className="hidden lg:flex items-center">
               <ChatNotificationBell role={isAdmin ? 'admin' : 'user'} userId={user?.id} />
               <NotificationBell role={isAdmin ? 'admin' : 'user'} />
 
-              {/* Apps Dropdown Container */}
+              
+
               <div className="relative">
                 <button 
                   type="button" 
                   onClick={() => toggleDropdown("apps")}
-                  className={`text-slate-500 hover:text-slate-900 hover:bg-slate-50 p-2 rounded-xl mr-4 group transition-colors ${openDropdown === 'apps' ? 'bg-slate-50 text-indigo-600' : ''}`}
+                  className={`text-slate-500 hover:text-slate-900 hover:bg-slate-50 p-2 rounded-xl mr-4 group transition-colors ${openDropdown === 'apps' ? 'bg-slate-50 text-primary' : ''}`}
                 >
                   <Grid className="w-5 h-5" />
                 </button>
                 
-                {/* Apps Dropdown */}
+                
+
                 {openDropdown === "apps" && (
                   <div className="absolute right-0 mt-3 w-72 bg-white rounded-2xl shadow-lg ring-1 ring-slate-100 overflow-hidden transform opacity-100 scale-100 origin-top-right transition-all">
                     <div className="px-4 py-3 bg-slate-50 border-b border-slate-100 text-xs font-bold uppercase tracking-wider text-slate-700 text-center">
@@ -104,9 +108,9 @@ export default function DashboardHeader({ user, profile, settings }: { user: Use
                           key={i}
                           href={app.href}
                           onClick={() => setOpenDropdown(null)}
-                          className="flex flex-col items-center justify-center p-3 rounded-xl hover:bg-indigo-50 hover:text-indigo-700 cursor-pointer text-slate-500 group transition-colors"
+                          className="flex flex-col items-center justify-center p-3 rounded-xl hover:bg-indigo-50 hover:text-primary cursor-pointer text-slate-500 group transition-colors"
                         >
-                          <app.icon className="w-5 h-5 mb-2 text-slate-400 group-hover:text-indigo-600 transition-colors" />
+                          <app.icon className="w-5 h-5 mb-2 text-slate-400 group-hover:text-primary transition-colors" />
                           <span className="text-sm font-bold">{app.name}</span>
                         </Link>
                       ))}
@@ -116,7 +120,8 @@ export default function DashboardHeader({ user, profile, settings }: { user: Use
               </div>
             </div>
             
-            {/* User Dropdown Container */}
+            
+
             <div className="relative ml-2 sm:ml-4">
               <div 
                 className={`flex h-9 w-9 items-center justify-center rounded-full bg-linear-to-tr from-indigo-600 to-indigo-500 text-sm font-bold text-white cursor-pointer hover:shadow-md transition-shadow ring-2 ring-white shadow-sm border border-indigo-200 ${openDropdown === 'profile' ? 'ring-indigo-100' : ''}`}
@@ -126,7 +131,8 @@ export default function DashboardHeader({ user, profile, settings }: { user: Use
                 {(profile?.full_name || user?.email || "U").charAt(0).toUpperCase()}
               </div>
 
-              {/* Profile Dropdown */}
+              
+
               {openDropdown === "profile" && (
                 <div className="absolute right-0 mt-3 w-56 bg-white rounded-2xl shadow-lg border border-slate-100 divide-y divide-slate-100 transform opacity-100 scale-100 origin-top-right transition-all">
                   <div className="px-4 py-4 rounded-t-2xl bg-slate-50">

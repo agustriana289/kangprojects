@@ -90,20 +90,23 @@ export default async function UserProfilePage({ params }: { params: Promise<{ id
   return (
     <div className="pt-6 px-4 pb-10">
       
-      {/* Profil Header Banner */}
+      
+
       <div className="w-full bg-gradient-to-r from-indigo-600 to-indigo-500 rounded-3xl p-6 sm:p-10 mb-6 text-white shadow-lg shadow-indigo-200 relative overflow-hidden">
-        {/* Dekorasi Background */}
+        
+
         <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-white opacity-10 blur-3xl"></div>
         <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-48 h-48 rounded-full bg-indigo-300 opacity-20 blur-2xl"></div>
 
         <div className="relative z-10 flex flex-col sm:flex-row items-center sm:items-end gap-6">
-          {/* Avatar Besar */}
+          
+
           <div className="shrink-0 p-1 bg-white/20 rounded-2xl backdrop-blur-md shadow-sm">
             <Avatar 
               url={profile.avatar_url}
               name={profile.full_name || profile.email || "U"}
               imageClassName="w-24 h-24 sm:w-32 sm:h-32 rounded-xl object-cover"
-              fallbackClassName="w-24 h-24 sm:w-32 sm:h-32 rounded-xl bg-indigo-100 flex items-center justify-center text-indigo-500 text-4xl sm:text-5xl font-bold"
+              fallbackClassName="w-24 h-24 sm:w-32 sm:h-32 rounded-xl bg-indigo-100 flex items-center justify-center text-primary text-4xl sm:text-5xl font-bold"
             />
           </div>
 
@@ -121,7 +124,7 @@ export default async function UserProfilePage({ params }: { params: Promise<{ id
               )}
             </div>
             
-            <div className="flex flex-col sm:flex-row sm:items-center gap-4 text-indigo-100 text-sm font-medium">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4 text-primary text-sm font-medium">
               <div className="flex items-center justify-center sm:justify-start gap-1.5">
                 <Mail className="w-4 h-4 opacity-70" /> {profile.email}
               </div>
@@ -148,10 +151,12 @@ export default async function UserProfilePage({ params }: { params: Promise<{ id
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         
-        {/* Kolom Kiri: Informasi Pribadi & Proyek */}
+        
+
         <div className="xl:col-span-2 space-y-6">
           
-          {/* Box Tentang Klien */}
+          
+
           <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-6">
             <h3 className="text-lg font-bold text-slate-900 mb-4 tracking-tight">Client Information</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -174,7 +179,7 @@ export default async function UserProfilePage({ params }: { params: Promise<{ id
                 <div>
                   <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-1">Total Projects</span>
                   <div className="text-sm font-medium text-slate-900">
-                    <span className="font-bold">{completedProjects}</span> Completed, <span className="font-bold text-indigo-600">{ongoingProjects}</span> Ongoing
+                    <span className="font-bold">{completedProjects}</span> Completed, <span className="font-bold text-primary">{ongoingProjects}</span> Ongoing
                   </div>
                 </div>
                 <div>
@@ -187,7 +192,8 @@ export default async function UserProfilePage({ params }: { params: Promise<{ id
             </div>
           </div>
 
-          {/* Tabel Latest Projects Khusus Klien Ini */}
+          
+
           <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-6">
             <div className="mb-6 flex items-center justify-between">
               <div>
@@ -220,7 +226,7 @@ export default async function UserProfilePage({ params }: { params: Promise<{ id
                         <tr key={order.id} className="hover:bg-slate-50/80 transition-colors">
                           <td className="p-4 whitespace-nowrap text-left">
                             <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600 shrink-0">
+                              <div className="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center text-primary shrink-0">
                                 <BriefcaseBusiness className="w-4 h-4" />
                               </div>
                               <span className="text-sm font-bold text-slate-900">{title}</span>
@@ -250,7 +256,8 @@ export default async function UserProfilePage({ params }: { params: Promise<{ id
           </div>
         </div>
 
-        {/* Kolom Kanan: Timeline Aktivitas Klien */}
+        
+
         <div className="space-y-6">
           <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-6">
             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-6 border-b border-slate-100 pb-4">Activity Timeline</h3>
@@ -273,7 +280,8 @@ export default async function UserProfilePage({ params }: { params: Promise<{ id
                   </li>
                 ))}
                 
-                {/* Entri Default / Terakhir: Pembuatan Akun */}
+                
+
                 <li className="mb-7 ml-6 relative last:mb-0">
                   <span className="absolute flex items-center justify-center w-6 h-6 bg-slate-50 border border-slate-200 rounded-full -left-[37px] ring-4 ring-white shadow-sm">
                     <Clock className="w-3 h-3 text-slate-400" />

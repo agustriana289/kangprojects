@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { Plus, Megaphone, Trash2, Pencil, Loader2, Check, X } from "lucide-react";
+import React, { useState, useEffect, useCallback } from "react";
+import { Plus, Megaphone, Trash2, Pencil, Loader2, Check, X, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { useToast } from "@/components/ToastProvider";
 import { format } from "date-fns";
@@ -22,6 +22,9 @@ export default function AnnouncementsClient() {
   const { showToast } = useToast();
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 10;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -120,10 +123,18 @@ export default function AnnouncementsClient() {
   };
 
   const TYPE_STYLES: Record<string, string> = {
-    info: "bg-indigo-50 text-indigo-700 border border-indigo-100",
+    info: "bg-indigo-50 text-primary border border-indigo-100",
     success: "bg-emerald-50 text-emerald-700 border border-emerald-100",
     warning: "bg-amber-50 text-amber-700 border border-amber-100",
   };
+
+  const filtered = announcements.filter(ann => 
+    ann.title.toLowerCase().includes(search.toLowerCase()) || 
+    ann.content?.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   const inputClass =
     "w-full bg-white border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 p-3 transition-all outline-none";
@@ -149,15 +160,26 @@ export default function AnnouncementsClient() {
       </div>
 
       <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl overflow-hidden">
+        <div className="p-4 border-b border-slate-100">
+          <div className="relative max-w-md">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <input 
+              value={search}
+              onChange={e => { setSearch(e.target.value); setPage(1); }}
+              placeholder="Search announcements..." 
+              className="w-full bg-slate-50 border-0 rounded-xl pl-9 pr-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500/20"
+            />
+          </div>
+        </div>
         {loading ? (
           <div className="flex items-center justify-center py-32">
-            <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
-        ) : announcements.length === 0 ? (
+        ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-32 text-slate-400">
             <Megaphone className="w-10 h-10 mb-3 text-slate-200" />
-            <p className="text-sm font-bold">No announcements yet</p>
-            <p className="text-xs mt-1">Create your first announcement to get started.</p>
+            <p className="text-sm font-bold">{search ? "No results found" : "No announcements yet"}</p>
+            {!search && <p className="text-xs mt-1">Create your first announcement to get started.</p>}
           </div>
         ) : (
           <table className="w-full text-left">
@@ -171,7 +193,7 @@ export default function AnnouncementsClient() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {announcements.map((ann) => (
+              {paginated.map((ann) => (
                 <tr key={ann.id} className="hover:bg-slate-50/60 transition-colors group">
                   <td className="px-6 py-4">
                     {ann.is_active ? (
@@ -202,7 +224,7 @@ export default function AnnouncementsClient() {
                     <div className="flex items-center justify-end gap-2">
                       <button
                         onClick={() => handleEdit(ann)}
-                        className="p-2 rounded-lg bg-slate-100 text-slate-500 hover:bg-indigo-50 hover:text-indigo-600 transition-colors"
+                        className="p-2 rounded-lg bg-slate-100 text-slate-500 hover:bg-indigo-50 hover:text-primary transition-colors"
                         title="Edit"
                       >
                         <Pencil className="w-4 h-4" />
@@ -220,6 +242,39 @@ export default function AnnouncementsClient() {
               ))}
             </tbody>
           </table>
+        )}
+
+        {totalPages > 1 && (
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-4 border-t border-slate-100">
+            <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">
+              Showing {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filtered.length)} of {filtered.length} items
+            </p>
+            <div className="flex items-center gap-2">
+              <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
+                className="p-2 rounded-xl border border-slate-200 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed text-slate-600 transition-all">
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .filter(p => p === 1 || p === totalPages || Math.abs(p - page) <= 1)
+                .reduce<(number | "...")[]>((acc, p, i, arr) => {
+                  if (i > 0 && (p as number) - (arr[i - 1] as number) > 1) acc.push("...");
+                  acc.push(p);
+                  return acc;
+                }, [])
+                .map((p, i) => p === "..." ? (
+                  <span key={`ellipsis-${i}`} className="px-2 text-slate-400 text-sm font-bold">…</span>
+                ) : (
+                  <button key={p} onClick={() => setPage(p as number)}
+                    className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${page === p ? "bg-indigo-600 text-white shadow-indigo-200 shadow-md" : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"}`}>
+                    {p}
+                  </button>
+                ))}
+              <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
+                className="p-2 rounded-xl border border-slate-200 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed text-slate-600 transition-all">
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
         )}
       </div>
 

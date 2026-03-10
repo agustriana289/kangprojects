@@ -14,11 +14,30 @@ import DynamicIcon from "@/components/dashboard/DynamicIcon";
 import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 
+export const revalidate = 60; // Cache the page for 60 seconds
+
 export default async function Home() {
   const supabase = await createClient();
 
-  // 1. Fetch settings
-  const { data: settingsData } = await supabase.from("settings").select("*").eq("id", 1).single();
+  // Fetch all data in parallel
+  const [
+    { data: settingsData },
+    { data: landingFaqs },
+    { data: portfoliosNewData },
+    { data: portfoliosFavData },
+    { data: testimonialsData },
+    { data: usersData },
+    { data: featuredService },
+  ] = await Promise.all([
+    supabase.from("settings").select("*").eq("id", 1).single(),
+    supabase.from("faqs").select("*").eq("target", "landing").eq("is_published", true).order("sort_order", { ascending: true }),
+    supabase.from("store_portfolios").select("id, title, category, images, is_favorite").eq("is_published", true).order("created_at", { ascending: false }).limit(13),
+    supabase.from("store_portfolios").select("id, title, category, images, is_favorite").eq("is_published", true).eq("is_favorite", true).order("created_at", { ascending: false }).limit(6),
+    supabase.from("store_testimonials").select("*").not("rating_quality", "is", null).order("created_at", { ascending: false }).limit(6),
+    supabase.from("users").select("id, full_name, email, avatar_url"),
+    supabase.from("store_services").select("*").eq("is_published", true).eq("is_featured", true).order("sort_order", { ascending: true }).limit(1).maybeSingle(),
+  ]);
+
   const settings = settingsData || {};
 
   const featuresList = settings.features_list && settings.features_list.length > 0 
@@ -38,58 +57,19 @@ export default async function Home() {
         { value: "99", suffix: "%", label: "Client Satisfaction" },
       ];
 
-  // 2. Fetch FAQs
-  const { data: landingFaqs } = await supabase
-    .from("faqs")
-    .select("*")
-    .eq("target", "landing")
-    .eq("is_published", true)
-    .order("sort_order", { ascending: true });
-
-  // 3. Fetch Portfolios
-  // A. Fetch only newest
-  const { data: portfoliosNewData } = await supabase
-    .from("store_portfolios")
-    .select("id, title, category, images, is_favorite")
-    .eq("is_published", true)
-    .order("created_at", { ascending: false })
-    .limit(13);
-    
   const portfoliosNew = portfoliosNewData || [];
-
-  // B. Fetch explicit favorites
-  const { data: portfoliosFavData } = await supabase
-    .from("store_portfolios")
-    .select("id, title, category, images, is_favorite")
-    .eq("is_published", true)
-    .eq("is_favorite", true)
-    .order("created_at", { ascending: false })
-    .limit(6);
-    
   const portfoliosFav = portfoliosFavData || [];
 
-  // 4. Fetch Testimonials
-  const { data: testimonialsData } = await supabase
-    .from("store_testimonials")
-    .select("*, users(id, full_name, email, avatar_url)")
-    .eq("is_published", true)
-    .order("created_at", { ascending: false })
-    .limit(6);
+  const profileMap: Record<string, any> = {};
+  (usersData || []).forEach((u: any) => { profileMap[u.id] = u; });
 
-  const testimonials = (testimonialsData || []).map((t: any) => ({
-    ...t,
-    client_name: t.client_name || t.users?.full_name || t.users?.email?.split("@")[0] || "Client",
-  }));
-
-  // 5. Fetch Featured Service for Pricing
-  const { data: featuredService } = await supabase
-    .from("store_services")
-    .select("*")
-    .eq("is_published", true)
-    .eq("is_featured", true)
-    .order("sort_order", { ascending: true })
-    .limit(1)
-    .maybeSingle();
+  const testimonials = (testimonialsData || []).map((t: any) => {
+    const user = t.user_id ? profileMap[t.user_id] : null;
+    return {
+      ...t,
+      client_name: t.client_name || user?.full_name || user?.email?.split("@")[0] || "Client",
+    };
+  });
 
   // Hero Splitting
   const heroTitleWords = settings?.hero_title ? settings.hero_title.split(" ") : "Design your brand's perfect identity".split(" ");
@@ -97,10 +77,11 @@ export default async function Home() {
   const heroTitleEnd = heroTitleWords.slice(-2).join(" ");
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 font-sans selection:bg-indigo-100 selection:text-indigo-900">
+    <div className="min-h-screen bg-white text-slate-900 font-sans selection:bg-indigo-100 selection:text-primary">
       <Header />
       
-      {/* 1. Hero Section (Original Restored) */}
+      
+
       <main className="relative overflow-hidden pt-16 pb-32 lg:pt-32">
         <div
           className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
@@ -116,7 +97,7 @@ export default async function Home() {
         </div>
         
         <FadeIn delay={100} className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-indigo-50/50 px-3 py-1 text-sm font-medium text-indigo-600 mb-8 backdrop-blur-sm">
+          <div className="inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-indigo-50/50 px-3 py-1 text-sm font-medium text-primary mb-8 backdrop-blur-sm">
             <DynamicIcon name="Sparkles" size={16} />
             <span>{settings?.hero_badge || "Fast, Premium Logo Design"}</span>
           </div>
@@ -143,7 +124,6 @@ export default async function Home() {
           </div>
         </FadeIn>
 
-        {/* Features Preview */}
         <div className="mx-auto mt-20 max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
             {featuresList.map((feature: any, idx: number) => (
@@ -152,7 +132,7 @@ export default async function Home() {
                 delay={idx * 150}
                 className="relative overflow-hidden rounded-3xl bg-slate-50 p-8 sm:p-10 transition-shadow hover:shadow-md h-full"
               >
-                <div className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-sm text-indigo-600">
+                <div className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-sm text-primary">
                   <DynamicIcon name={feature.icon || "Sparkles"} size={24} />
                 </div>
                 <h3 className="mb-3 text-xl font-semibold text-slate-900">
@@ -165,12 +145,10 @@ export default async function Home() {
         </div>
       </main>
 
-      {/* 2. Rating Card (Proof Section from original file) */}
       <section className="bg-white py-16 sm:py-24 border-t border-slate-100">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <FadeIn delay={200} className="flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between rounded-3xl bg-slate-50 p-8 sm:p-12">
+          <FadeIn delay={200} className="flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between rounded-3xl bg-primary p-8 sm:p-12">
             
-            {/* Left: Rating & Trust */}
             <div className="max-w-xl">
               <div className="flex items-center gap-2 mb-4">
                 <div className="flex text-amber-400">
@@ -178,39 +156,40 @@ export default async function Home() {
                     <Star key={i} size={18} fill="currentColor" strokeWidth={0} />
                   ))}
                 </div>
-                <span className="text-sm font-semibold text-slate-700">4.9/5 Average Rating</span>
+                <span className="text-sm font-semibold text-white">4.9/5 Average Rating</span>
               </div>
-              <h2 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+              <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
                 {settings?.trusted_by_title || "Trusted by 5,000+ ambitious brands"}
               </h2>
-              <p className="mt-4 text-lg text-slate-600">
+              <p className="mt-4 text-lg text-white">
                 {settings?.trusted_by_description || "From stealth startups to global enterprises, we deliver world-class visual identities that command attention."}
               </p>
               
               <div className="mt-8 flex items-center gap-x-4">
                 <div className="flex -space-x-3">
                   {['A', 'J', 'S', 'M'].map((letter, i) => (
-                    <div key={i} className="flex h-10 w-10 items-center justify-center rounded-full ring-2 ring-slate-50 bg-indigo-100 text-indigo-700 font-bold text-sm">
+                    <div key={i} className="flex h-10 w-10 items-center justify-center rounded-full ring-2 ring-slate-50 bg-indigo-100 text-primary font-bold text-sm">
                       {letter}
                     </div>
                   ))}
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full ring-2 ring-slate-50 bg-white border border-slate-200 text-slate-600 font-medium text-xs">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full ring-2 ring-slate-50 bg-white border border-slate-200 text-primary font-medium text-xs">
                     +5k
                   </div>
                 </div>
-                <p className="text-sm text-slate-500 font-medium">{settings?.stats_title || "Join the club"}</p>
+                <p className="text-sm text-white font-medium">{settings?.stats_title || "Join the club"}</p>
               </div>
             </div>
             
-            {/* Right: Clean Stats Grid */}
+            
+
             <div className="grid grid-cols-2 gap-8 sm:grid-cols-2 lg:gap-12 pl-0 lg:pl-12 lg:border-l lg:border-slate-200">
               {statsList.map((stat: any, idx: number) => (
                 <div key={idx} className="flex flex-col">
-                  <span className="text-4xl font-bold tracking-tight text-slate-900">
+                  <span className="text-4xl font-bold tracking-tight text-white">
                     {stat.value}
-                    {stat.suffix && <span className="text-2xl text-slate-400">{stat.suffix}</span>}
+                    {stat.suffix && <span className="text-2xl text-white">{stat.suffix}</span>}
                   </span>
-                  <span className="mt-2 text-sm font-medium text-slate-500">{stat.label}</span>
+                  <span className="mt-2 text-sm font-medium text-white">{stat.label}</span>
                 </div>
               ))}
             </div>
@@ -218,35 +197,18 @@ export default async function Home() {
           </FadeIn>
         </div>
       </section>
-
-      {/* 3. PortfolioGallery (Favorites only) */}
       <PortfolioGallery settings={settings} portfolios={portfoliosFav} />
-
-      {/* 4. TestimonialSection */}
       <TestimonialSection settings={settings} testimonials={testimonials} />
-
-      {/* 5. Pricing */}
       <Pricing settings={settings} featuredService={featuredService} />
-
-      {/* 6. Steps */}
       <Steps settings={settings} />
-
-      {/* 7. HighlightedPortfolio (All Newest Portfolios) */}
       <HighlightedPortfolio settings={settings} portfolios={portfoliosNew} />
-
-      {/* 8. FAQSection */}
       <FAQSection 
         faqs={landingFaqs || []} 
         title={settings?.faq_title || "Frequently Asked Questions"}
         badge={settings?.faq_badge || "FAQ"}
       />
-
-      {/* 9. CTA */}
       <CTA settings={settings} />
-
-      {/* 10. Articles */}
       <Articles settings={settings} />
-
       <Footer />
     </div>
   );

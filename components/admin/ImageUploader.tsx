@@ -61,7 +61,7 @@ export default function ImageUploader({ value, onChange, label = "Image", folder
               </button>
             </>
           ) : (
-            uploading ? <Loader2 className="w-7 h-7 text-indigo-500 animate-spin" /> : <ImageIcon className="w-7 h-7 text-slate-300" />
+            uploading ? <Loader2 className="w-7 h-7 text-primary animate-spin" /> : <ImageIcon className="w-7 h-7 text-slate-300" />
           )}
         </div>
 
@@ -74,7 +74,7 @@ export default function ImageUploader({ value, onChange, label = "Image", folder
               disabled={uploading}
               className="absolute inset-0 opacity-0 cursor-pointer disabled:cursor-not-allowed"
             />
-            <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl px-4 py-4 flex items-center justify-center gap-2 text-slate-400 hover:bg-slate-100 hover:border-indigo-200 hover:text-indigo-500 transition-all cursor-pointer">
+            <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl px-4 py-4 flex items-center justify-center gap-2 text-slate-400 hover:bg-slate-100 hover:border-indigo-200 hover:text-primary transition-all cursor-pointer">
               {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
               <span className="text-sm font-medium">{uploading ? "Uploading..." : "Click to Upload"}</span>
             </div>

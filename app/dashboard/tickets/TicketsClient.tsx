@@ -59,7 +59,7 @@ export default function TicketsClient({ initialUser }: { initialUser: any }) {
 
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <Loader2 className="w-8 h-8 animate-spin text-indigo-600 opacity-30" />
+            <Loader2 className="w-8 h-8 animate-spin text-primary opacity-30" />
           </div>
         ) : tickets.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-slate-400">
@@ -83,7 +83,7 @@ export default function TicketsClient({ initialUser }: { initialUser: any }) {
                 {tickets.map(t => (
                   <tr key={t.id} className="hover:bg-slate-50/70 transition-colors group">
                     <td className="px-6 py-4">
-                      <Link href={`/dashboard/tickets/${t.id}`} className="text-sm font-bold text-indigo-600 hover:text-indigo-700">
+                      <Link href={`/dashboard/tickets/${t.id}`} className="text-sm font-bold text-primary hover:text-primary">
                         #{t.id.slice(0, 8)}
                       </Link>
                     </td>
@@ -98,7 +98,7 @@ export default function TicketsClient({ initialUser }: { initialUser: any }) {
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-3">
                         <span className="text-xs font-medium text-slate-400">{format(new Date(t.created_at), "dd MMM yyyy")}</span>
-                        <Link href={`/dashboard/tickets/${t.id}`} className="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 group-hover:text-indigo-600 group-hover:bg-indigo-50 transition-all">
+                        <Link href={`/dashboard/tickets/${t.id}`} className="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 group-hover:text-primary group-hover:bg-indigo-50 transition-all">
                           <ArrowRight className="w-3.5 h-3.5" />
                         </Link>
                       </div>
@@ -116,7 +116,7 @@ export default function TicketsClient({ initialUser }: { initialUser: any }) {
 
 function StatusBadge({ status }: { status: string }) {
   const map: Record<string, string> = {
-    open: "bg-indigo-50 text-indigo-700",
+    open: "bg-indigo-50 text-primary",
     in_progress: "bg-amber-50 text-amber-700",
     resolved: "bg-emerald-50 text-emerald-700",
     closed: "bg-slate-100 text-slate-500"

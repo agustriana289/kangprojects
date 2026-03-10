@@ -84,7 +84,7 @@ export default function Pricing({ settings, featuredService, type = "service", a
     <section className="bg-white py-24 sm:py-32" id="pricing">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <FadeIn delay={100} className="mx-auto max-w-4xl text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-sm font-medium text-indigo-700 mb-4">
+          <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-sm font-medium text-primary mb-4">
             <span>{settings?.pricing_badge || "Clear Pricing"}</span>
           </div>
           <h2 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-5xl">
@@ -121,7 +121,7 @@ export default function Pricing({ settings, featuredService, type = "service", a
                   {tier.name}
                 </h3>
                 {tier.featured && (
-                  <p className="rounded-full bg-indigo-500/10 px-3 py-1 text-xs font-semibold leading-5 text-indigo-400 border border-indigo-500/20">
+                  <p className="rounded-full bg-indigo-500/10 px-3 py-1 text-xs font-semibold leading-5 text-primary border border-indigo-500/20">
                     Most popular
                   </p>
                 )}
@@ -134,7 +134,7 @@ export default function Pricing({ settings, featuredService, type = "service", a
               <div className="mt-6">
                 {tier.appliedDiscount ? (
                   <div className="flex flex-col">
-                    <span className={`text-sm font-medium line-through mb-1 ${tier.featured ? "text-indigo-300" : "text-slate-400"}`}>
+                    <span className={`text-sm font-medium line-through mb-1 ${tier.featured ? "text-primary" : "text-slate-400"}`}>
                       {tier.originalPriceDisplay}
                     </span>
                     <p className="flex items-baseline gap-x-1">
@@ -181,7 +181,7 @@ export default function Pricing({ settings, featuredService, type = "service", a
                 {tier.features.map((feature: string) => (
                   <li key={feature} className="flex gap-x-3">
                     <Check
-                      className={`h-6 w-5 flex-none ${tier.featured ? "text-indigo-400" : "text-indigo-600"}`}
+                      className={`h-6 w-5 flex-none ${tier.featured ? "text-primary" : "text-primary"}`}
                       aria-hidden="true"
                     />
                     {feature}

@@ -29,7 +29,7 @@ export default async function Footer() {
                   </div>
                   <span className="text-xl font-bold tracking-tight text-white">
                     {settings?.website_name ? settings.website_name.substring(0, 4) : "kang"}
-                    <span className="text-indigo-500">
+                    <span className="text-primary">
                       {settings?.website_name ? settings.website_name.substring(4) : "logo"}
                     </span>
                   </span>

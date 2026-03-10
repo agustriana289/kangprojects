@@ -4,32 +4,45 @@ import Footer from "@/components/Footer";
 import FadeIn from "@/components/landing/FadeIn";
 import { Star, MessageSquareQuote } from "lucide-react";
 
+import Pagination from "@/components/landing/Pagination";
+
 export const metadata = {
   title: "Testimonials",
   description: "Read what our clients have to say about our services.",
 };
 
-async function getTestimonials() {
+async function getTestimonials(page: number, limit: number) {
   const supabase = await createClient();
+  const from = (page - 1) * limit;
+  const to = from + limit - 1;
 
   // Get users for avatar_url
   const { data: profiles } = await supabase.from("users").select("id, full_name, email, avatar_url");
   const profileMap: Record<string, any> = {};
   (profiles || []).forEach((p: any) => { if (p.id) profileMap[p.id] = p; });
 
-  const { data } = await supabase
+  const { data, count } = await supabase
     .from("store_testimonials")
-    .select("*, store_orders(order_number, form_data, store_products(title), store_services(title))")
-    .order("created_at", { ascending: false });
+    .select("*, store_orders(order_number, form_data, store_products(title), store_services(title))", { count: "exact" })
+    .order("created_at", { ascending: false })
+    .range(from, to);
 
-  return (data || []).map((t: any) => ({
+  const mappedData = (data || []).map((t: any) => ({
     ...t,
     client: t.user_id ? profileMap[t.user_id] || null : null
   }));
+
+  return { data: mappedData, total: count || 0 };
 }
 
-export default async function TestimonialsPage() {
-  const testimonials = await getTestimonials();
+export default async function TestimonialsPage(props: { searchParams?: Promise<{ [key: string]: string | string[] | undefined }> }) {
+  const searchParams = await props.searchParams;
+  const pageStr = searchParams?.page;
+  const page = typeof pageStr === "string" ? parseInt(pageStr, 10) : 1;
+  const limit = 9;
+
+  const { data: testimonials, total } = await getTestimonials(page, limit);
+  const totalPages = Math.ceil(total / limit);
 
   const getProjectTitle = (t: any) => {
     if (t.custom_project_title) return t.custom_project_title;
@@ -58,7 +71,7 @@ export default async function TestimonialsPage() {
       <div className="pt-8 pb-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <FadeIn delay={100} className="max-w-2xl mb-16">
-            <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-sm font-medium text-indigo-700 mb-6">
+            <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-sm font-medium text-primary mb-6">
               <MessageSquareQuote size={14} />
               <span>Client Reviews</span>
             </div>
@@ -107,7 +120,7 @@ export default async function TestimonialsPage() {
                             className="w-12 h-12 rounded-full object-cover ring-2 ring-slate-100"
                           />
                         ) : (
-                          <div className="w-12 h-12 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold text-lg">
+                          <div className="w-12 h-12 rounded-full bg-indigo-50 flex items-center justify-center text-primary font-bold text-lg">
                             {clientName.charAt(0).toUpperCase()}
                           </div>
                         )}
@@ -121,6 +134,10 @@ export default async function TestimonialsPage() {
                 );
               })}
             </div>
+          )}
+
+          {totalPages > 1 && (
+            <Pagination totalPages={totalPages} currentPage={page} />
           )}
         </div>
       </div>

@@ -60,7 +60,7 @@ export default function ShareButtons({ title, slug }: ShareButtonsProps) {
         <button
           key={s.label}
           onClick={() => handleShare(s.label)}
-          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-600 text-sm font-medium hover:border-indigo-300 hover:text-indigo-600 hover:bg-indigo-50 transition-all"
+          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-600 text-sm font-medium hover:border-indigo-300 hover:text-primary hover:bg-indigo-50 transition-all"
         >
           {s.icon}
           {s.label}
@@ -71,7 +71,7 @@ export default function ShareButtons({ title, slug }: ShareButtonsProps) {
         className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border text-sm font-medium transition-all ${
           copied
             ? "border-emerald-300 bg-emerald-50 text-emerald-600"
-            : "border-slate-200 bg-white text-slate-600 hover:border-indigo-300 hover:text-indigo-600 hover:bg-indigo-50"
+            : "border-slate-200 bg-white text-slate-600 hover:border-indigo-300 hover:text-primary hover:bg-indigo-50"
         }`}
       >
         {copied ? <Check className="w-4 h-4" /> : <Link2 className="w-4 h-4" />}

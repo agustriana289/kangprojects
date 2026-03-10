@@ -77,7 +77,7 @@ export default function SearchClient({ isAdmin, userId }: { isAdmin: boolean, us
 
       <form onSubmit={handleSubmit} className="relative mb-10 group max-w-2xl">
         <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
-          <Search className="w-5 h-5 text-slate-400 group-focus-within:text-indigo-600 transition-colors" />
+          <Search className="w-5 h-5 text-slate-400 group-focus-within:text-primary transition-colors" />
         </div>
         <input
           type="text"
@@ -99,7 +99,7 @@ export default function SearchClient({ isAdmin, userId }: { isAdmin: boolean, us
 
       {loading ? (
         <div className="flex flex-col items-center justify-center py-32 text-slate-400">
-          <Loader2 className="w-12 h-12 animate-spin text-indigo-600 mb-4" />
+          <Loader2 className="w-12 h-12 animate-spin text-primary mb-4" />
           <p className="text-lg font-bold">Searching through the database...</p>
         </div>
       ) : results.length > 0 ? (
@@ -118,15 +118,15 @@ export default function SearchClient({ isAdmin, userId }: { isAdmin: boolean, us
                     href={item.link}
                     className="group bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-indigo-100 transition-all flex items-start gap-4"
                   >
-                    <div className="w-12 h-12 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center shrink-0 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
+                    <div className="w-12 h-12 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center shrink-0 group-hover:bg-indigo-50 group-hover:text-primary transition-colors">
                       <Command className="w-6 h-6" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">
-                        <h4 className="font-bold text-slate-900 group-hover:text-indigo-700 transition-colors truncate">
+                        <h4 className="font-bold text-slate-900 group-hover:text-primary transition-colors truncate">
                           {item.title}
                         </h4>
-                        <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-indigo-400 transition-all -translate-x-2 group-hover:translate-x-0 opacity-0 group-hover:opacity-100" />
+                        <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-primary transition-all -translate-x-2 group-hover:translate-x-0 opacity-0 group-hover:opacity-100" />
                       </div>
                       <p className="text-sm text-slate-500 mt-1 line-clamp-2">{item.description}</p>
                       <div className="flex items-center gap-3 mt-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
@@ -135,7 +135,7 @@ export default function SearchClient({ isAdmin, userId }: { isAdmin: boolean, us
                           {formatDistanceToNow(new Date(item.created_at), { addSuffix: true })}
                         </span>
                         <span className="w-1 h-1 rounded-full bg-slate-300"></span>
-                        <span className="text-indigo-500">{item.type}</span>
+                        <span className="text-primary">{item.type}</span>
                       </div>
                     </div>
                   </Link>

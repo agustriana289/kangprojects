@@ -75,7 +75,7 @@ export default function RichTextEditor({ value, onChange, placeholder = "Write y
   if (!editor) return null;
 
   const btnBase = "p-2 rounded-lg transition-all text-slate-500 hover:bg-slate-100 hover:text-slate-900";
-  const btnActive = "bg-indigo-50 text-indigo-700 ring-1 ring-indigo-200";
+  const btnActive = "bg-indigo-50 text-primary ring-1 ring-indigo-200";
 
   const isActive = (nameOrAttrs: string | Record<string, unknown>, attrs?: Record<string, unknown>) => {
     if (typeof nameOrAttrs === "string") {

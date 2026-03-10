@@ -33,7 +33,8 @@ export default async function UsersPage() {
         <p className="text-sm font-medium text-slate-500">Monitor and manage all clients and administrative staff accounts directly from this panel.</p>
       </div>
 
-      {/* Main Client Component for Data Fetching & Interactivity */}
+      
+
       <UserListClient />
     </div>
   );
