@@ -44,6 +44,15 @@ export default async function UserProfilePage({ params }: { params: Promise<{ id
     notFound();
   }
 
+  // Cari ID Chat Room dengan user ini
+  const { data: chatRoomData } = await supabase
+    .from("admin_chats")
+    .select("id")
+    .eq("user_id", id)
+    .maybeSingle();
+
+  const existingChatId = chatRoomData?.id;
+
   // Ambil data timeline/aktivitas dari database
   const { data: activitiesData } = await supabase
     .from("user_activities")
@@ -140,9 +149,13 @@ export default async function UserProfilePage({ params }: { params: Promise<{ id
                <Link href={`/dashboard/user/${id}/edit`} className="bg-white/10 text-white hover:bg-white/20 border border-white/20 text-sm font-bold uppercase tracking-wider px-6 py-3 rounded-xl transition-colors flex items-center gap-2">
                  <Settings className="w-4 h-4" /> Edit Profile
                </Link>
-             ) : (
-               <Link href={`/dashboard/chat?user=${id}`} className="bg-white/10 text-white hover:bg-white/20 border border-white/20 text-sm font-bold uppercase tracking-wider px-6 py-3 rounded-xl transition-colors flex items-center gap-2">
+             ) : existingChatId ? (
+               <Link href={`/dashboard/chat/${existingChatId}`} className="bg-white/10 text-white hover:bg-white/20 border border-white/20 text-sm font-bold uppercase tracking-wider px-6 py-3 rounded-xl transition-colors flex items-center gap-2">
                  <Mail className="w-4 h-4" /> Message
+               </Link>
+             ) : (
+               <Link href={`/dashboard/chat?new_chat=${id}`} className="bg-white/10 text-white hover:bg-white/20 border border-white/20 text-sm font-bold uppercase tracking-wider px-6 py-3 rounded-xl transition-colors flex items-center gap-2">
+                 <Mail className="w-4 h-4" /> Start Chat
                </Link>
              )}
           </div>
