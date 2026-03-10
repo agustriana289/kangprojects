@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { ArrowLeft, Save, Loader2, Image as ImageIcon, Type, Globe, CheckCircle, Clock, Search } from "lucide-react";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
 import { useToast } from "@/components/ToastProvider";
 import RichTextEditor from "@/components/RichTextEditor";
+import ImageUploader from "@/components/admin/ImageUploader";
 
 export default function EditBlogPage() {
   const supabase = createClient();
@@ -183,18 +184,11 @@ export default function EditBlogPage() {
               <ImageIcon className="w-4 h-4 text-primary" />
               <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Featured Image</h3>
             </div>
-            <div className="aspect-video w-full rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 overflow-hidden flex items-center justify-center text-slate-300">
-              {formData.featured_image ? (
-                <img src={formData.featured_image} alt="Preview" className="w-full h-full object-cover" />
-              ) : (
-                <ImageIcon className="w-8 h-8" />
-              )}
-            </div>
-            <input
-              value={formData.featured_image}
-              onChange={e => setFormData(prev => ({ ...prev, featured_image: e.target.value }))}
-              className={inputClass}
-              placeholder="Paste image URL..."
+            <ImageUploader 
+              label="Blog Thumbnail"
+              value={formData.featured_image} 
+              onChange={(url) => setFormData(prev => ({ ...prev, featured_image: url }))} 
+              folder="blogs"
             />
           </div>
 
