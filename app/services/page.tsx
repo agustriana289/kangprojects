@@ -89,7 +89,6 @@ export default async function ServicesPage(props: { searchParams?: Promise<{ [ke
                     <div className="flex flex-col flex-1 p-6">
                       <Link
                           href={`/services/${service.slug}`}
-                          className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-50 text-slate-600 group-hover:bg-indigo-600 group-hover:text-white transition-all shadow-sm group-hover:shadow-md"
                         >
                           <h2 className="text-xl font-bold text-slate-900 leading-snug mb-3 group-hover:text-primary transition-colors line-clamp-2">
                             {service.title}
