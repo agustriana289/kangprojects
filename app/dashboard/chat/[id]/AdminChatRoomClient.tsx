@@ -49,7 +49,7 @@ export default function AdminChatRoomClient({ roomId, user }: { roomId: string; 
         }
         setMessages((msgs ?? []).map((m: any) => ({ ...m, sender: pm[m.sender_id] ?? null })));
         if (chatRoom.user_id) await sb.from("admin_chat_messages").update({ is_read: true }).eq("chat_id", roomId).eq("sender_id", chatRoom.user_id).eq("is_read", false);
-      } catch (err: any) { showToast(err.message || "Failed to load chat", "error"); }
+      } catch (err: any) { showToast(err.message || "Gagal memuat chat", "error"); }
       finally { setIsInitializing(false); }
     }
     init();
@@ -107,14 +107,14 @@ export default function AdminChatRoomClient({ roomId, user }: { roomId: string; 
       <div className="xl:col-span-2 bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl overflow-hidden flex flex-col flex-1 min-h-0 xl:order-none order-last">
         <div className="px-5 py-4 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between shrink-0">
           <Link href="/dashboard/chat" className="flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-primary transition-colors">
-            <ArrowLeft className="w-4 h-4" /> All Chats
+            <ArrowLeft className="w-4 h-4" /> Semua Chat
           </Link>
-          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">{messages.length} messages</p>
+          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">{messages.length} pesan</p>
         </div>
         <div className="flex-1 overflow-y-auto p-5 space-y-3" ref={scrollRef}>
           {messages.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-slate-400 opacity-40 gap-3">
-              <p className="text-xs font-bold uppercase tracking-wider">No messages yet — start the conversation</p>
+              <p className="text-xs font-bold uppercase tracking-wider">Belum ada pesan — mulai percakapan</p>
             </div>
           ) : messages.map((m, idx) => {
             const isMe = m.sender_id === user.id;
@@ -129,7 +129,7 @@ export default function AdminChatRoomClient({ roomId, user }: { roomId: string; 
                   </div>
                   <span className="text-[10px] font-medium text-slate-300 px-1">
                     {m.created_at ? format(new Date(m.created_at), "HH:mm") : "--:--"}
-                    {isMe && m.is_read && " · Read"}
+                    {isMe && m.is_read && " · Dibaca"}
                   </span>
                 </div>
               </div>
@@ -141,7 +141,7 @@ export default function AdminChatRoomClient({ roomId, user }: { roomId: string; 
             <input
               value={newMessage}
               onChange={e => setNewMessage(e.target.value)}
-              placeholder="Reply to client..."
+              placeholder="Balas ke klien..."
               className="flex-1 bg-white border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 px-4 py-2.5 transition-all outline-none"
             />
             <button type="submit" disabled={loading || !newMessage.trim()} className="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center hover:bg-indigo-700 active:scale-95 transition-all disabled:opacity-50 shrink-0">
@@ -153,7 +153,7 @@ export default function AdminChatRoomClient({ roomId, user }: { roomId: string; 
 
       <div className="xl:col-span-1 flex flex-col gap-4 shrink-0">
         <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-5">
-          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 pb-3 border-b border-slate-100">Client Profile</p>
+          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 pb-3 border-b border-slate-100">Profil Klien</p>
           <div className="flex flex-col items-center text-center gap-2 mb-4">
             <div className="w-14 h-14 rounded-2xl bg-indigo-50 flex items-center justify-center text-primary font-black text-lg overflow-hidden">
               {chat?.user?.avatar_url
@@ -162,7 +162,7 @@ export default function AdminChatRoomClient({ roomId, user }: { roomId: string; 
               }
             </div>
             <div>
-              <p className="text-sm font-bold text-slate-800">{chat?.user?.full_name ?? "Unknown"}</p>
+              <p className="text-sm font-bold text-slate-800">{chat?.user?.full_name ?? "Tidak Diketahui"}</p>
               <div className="flex items-center justify-center gap-1.5 mt-1">
                 <span className={`w-1.5 h-1.5 rounded-full ${isPartnerOnline ? "bg-emerald-500 animate-pulse" : "bg-slate-300"}`} />
                 <span className={`text-xs font-bold uppercase tracking-wider ${isPartnerOnline ? "text-emerald-600" : "text-slate-400"}`}>
@@ -178,7 +178,7 @@ export default function AdminChatRoomClient({ roomId, user }: { roomId: string; 
             </div>
             <div className="flex items-center gap-2.5 text-slate-600 bg-slate-50 rounded-xl px-3 py-2.5">
               <User className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-              <span className="text-xs font-medium">Last active {formatDistanceToNow(new Date(chat?.last_message_at || Date.now()), { addSuffix: true })}</span>
+              <span className="text-xs font-medium">Aktif terakhir {formatDistanceToNow(new Date(chat?.last_message_at || Date.now()), { addSuffix: true })}</span>
             </div>
           </div>
         </div>

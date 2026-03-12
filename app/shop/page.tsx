@@ -7,10 +7,8 @@ import { ArrowRight, ShoppingBag, Eye } from "lucide-react";
 
 import Pagination from "@/components/landing/Pagination";
 
-export const metadata = {
-  title: "Shop",
-  description: "Browse premium design assets, templates, and digital resources.",
-};
+export const revalidate = 60; // Revalidate every minute
+
 
 async function getProducts(page: number, limit: number) {
   const supabase = await createClient();
@@ -27,13 +25,22 @@ async function getProducts(page: number, limit: number) {
   return { data: data || [], total: count || 0 };
 }
 
+async function getSettings() {
+  const supabase = await createClient();
+  const { data } = await supabase.from("settings").select("*").eq("id", 1).single();
+  return data;
+}
+
 export default async function ShopPage(props: { searchParams?: Promise<{ [key: string]: string | string[] | undefined }> }) {
   const searchParams = await props.searchParams;
   const pageStr = searchParams?.page;
   const page = typeof pageStr === "string" ? parseInt(pageStr, 10) : 1;
   const limit = 9;
 
-  const { data: products, total } = await getProducts(page, limit);
+  const [{ data: products, total }, settings] = await Promise.all([
+    getProducts(page, limit),
+    getSettings(),
+  ]);
   const totalPages = Math.ceil(total / limit);
 
   return (
@@ -45,21 +52,21 @@ export default async function ShopPage(props: { searchParams?: Promise<{ [key: s
           <FadeIn delay={100} className="max-w-2xl mb-16">
             <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-sm font-medium text-primary mb-6">
               <ShoppingBag size={14} />
-              <span>Digital Products</span>
+              <span>{settings?.shop_badge || "Produk Digital"}</span>
             </div>
             <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl mb-4">
-              Premium Assets
+              {settings?.shop_title || "Aset Premium"}
             </h1>
             <p className="text-lg text-slate-600">
-              Download high-quality templates, UI kits, icon sets, and themes to accelerate your workflow.
+              {settings?.shop_description || "Unduh template, UI kit, set ikon, dan tema berkualitas tinggi untuk mempercepat alur kerja Anda."}
             </p>
           </FadeIn>
 
           {products.length === 0 ? (
             <FadeIn delay={200} className="text-center py-32 rounded-3xl bg-slate-50 ring-1 ring-slate-100">
               <ShoppingBag className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-              <p className="text-slate-500 font-medium">No products currently available.</p>
-              <p className="text-slate-400 text-sm mt-1">Check back later for exciting new releases.</p>
+              <p className="text-slate-500 font-medium">Belum ada produk yang tersedia.</p>
+              <p className="text-slate-400 text-sm mt-1">Kunjungi kembali nanti untuk produk baru yang menarik.</p>
             </FadeIn>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
@@ -121,7 +128,7 @@ export default async function ShopPage(props: { searchParams?: Promise<{ [key: s
                           </span>
                         </div>
                         <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary z-20 relative">
-                           View Details <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                           Lihat Detail <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
                         </div>
                       </div>
                     </div>

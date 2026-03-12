@@ -55,7 +55,7 @@ export default function ShareButtons({ title, slug }: ShareButtonsProps) {
 
   return (
     <div className="flex items-center flex-wrap gap-2">
-      <span className="text-xs font-bold uppercase tracking-wider text-slate-400 mr-1">Share:</span>
+      <span className="text-xs font-bold uppercase tracking-wider text-slate-400 mr-1">Bagikan:</span>
       {socials.map((s) => (
         <button
           key={s.label}
@@ -75,7 +75,7 @@ export default function ShareButtons({ title, slug }: ShareButtonsProps) {
         }`}
       >
         {copied ? <Check className="w-4 h-4" /> : <Link2 className="w-4 h-4" />}
-        {copied ? "Tersalin!" : "Copy Link"}
+        {copied ? "Tersalin!" : "Salin Link"}
       </button>
     </div>
   );

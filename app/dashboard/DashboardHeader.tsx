@@ -15,8 +15,33 @@ import GlobalSearch from "@/components/dashboard/GlobalSearch";
 
 export default function DashboardHeader({ user, profile, settings }: { user: User | null, profile: any, settings: any }) {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const dropdownRef = useRef<HTMLElement>(null);
   const supabase = createClient();
+
+  const toggleSidebar = () => {
+    setSidebarOpen((prev: boolean) => !prev);
+    const sidebar = document.getElementById("sidebar");
+    const backdrop = document.getElementById("sidebarBackdrop");
+    if (sidebar && backdrop) {
+      const isOpen = sidebar.classList.contains("flex");
+      if (isOpen) {
+        sidebar.classList.remove("flex");
+        sidebar.classList.add("hidden");
+        backdrop.classList.add("hidden");
+      } else {
+        sidebar.classList.add("flex");
+        sidebar.classList.remove("hidden");
+        backdrop.classList.remove("hidden");
+        backdrop.onclick = () => {
+          sidebar.classList.remove("flex");
+          sidebar.classList.add("hidden");
+          backdrop.classList.add("hidden");
+          setSidebarOpen(false);
+        };
+      }
+    }
+  };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -46,8 +71,9 @@ export default function DashboardHeader({ user, profile, settings }: { user: Use
           <div className="flex items-center justify-start">
             <button
               id="toggleSidebarMobile"
-              aria-expanded="true"
+              aria-expanded={sidebarOpen}
               aria-controls="sidebar"
+              onClick={toggleSidebar}
               className="lg:hidden mr-2 text-slate-500 hover:text-slate-900 cursor-pointer p-2 hover:bg-slate-100 focus:bg-slate-100 focus:ring-2 focus:ring-slate-200 rounded-xl transition-colors"
             >
               <Menu className="w-5 h-5" />
@@ -93,16 +119,16 @@ export default function DashboardHeader({ user, profile, settings }: { user: Use
                 {openDropdown === "apps" && (
                   <div className="absolute right-0 mt-3 w-72 bg-white rounded-2xl shadow-lg ring-1 ring-slate-100 overflow-hidden transform opacity-100 scale-100 origin-top-right transition-all">
                     <div className="px-4 py-3 bg-slate-50 border-b border-slate-100 text-xs font-bold uppercase tracking-wider text-slate-700 text-center">
-                      Public Pages
+                      Halaman Publik
                     </div>
                     <div className="grid grid-cols-3 gap-1 p-4">
                       {[
-                        { name: "Home", icon: Home, href: '/' },
-                        { name: "Services", icon: BriefcaseBusiness, href: '/services' },
-                        { name: "Shop", icon: ShoppingBag, href: '/shop' },
-                        { name: "Portfolio", icon: Images, href: '/portfolio' },
+                        { name: "Beranda", icon: Home, href: '/' },
+                        { name: "Layanan", icon: BriefcaseBusiness, href: '/services' },
+                        { name: "Toko", icon: ShoppingBag, href: '/shop' },
+                        { name: "Portofolio", icon: Images, href: '/portfolio' },
                         { name: "Blog", icon: BookOpen, href: '/blog' },
-                        { name: "Settings", icon: Settings, href: isAdmin ? '/dashboard/settings' : '#' },
+                        { name: "Pengaturan", icon: Settings, href: isAdmin ? '/dashboard/settings' : '#' },
                       ].map((app, i) => (
                         <Link
                           key={i}
@@ -137,7 +163,7 @@ export default function DashboardHeader({ user, profile, settings }: { user: Use
                 <div className="absolute right-0 mt-3 w-56 bg-white rounded-2xl shadow-lg border border-slate-100 divide-y divide-slate-100 transform opacity-100 scale-100 origin-top-right transition-all">
                   <div className="px-4 py-4 rounded-t-2xl bg-slate-50">
                     <p className="text-sm font-bold text-slate-900 truncate">
-                      {profile?.full_name || "Authorized User"}
+                      {profile?.full_name || "Pengguna Terverifikasi"}
                     </p>
                     <p className="text-sm font-medium text-slate-500 truncate mt-0.5">
                       {user?.email}
@@ -146,18 +172,18 @@ export default function DashboardHeader({ user, profile, settings }: { user: Use
                   <ul className="py-2">
                     <li>
                       <Link href={`/dashboard/user/${user?.id}`} className="flex items-center px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors">
-                        <UserIcon className="w-4 h-4 mr-3 text-slate-400" /> Account Profile
+                        <UserIcon className="w-4 h-4 mr-3 text-slate-400" /> Profil Akun
                       </Link>
                     </li>
                     <li>
                       <Link href="/dashboard/chat" className="flex items-center px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors">
-                        <MessageSquare className="w-4 h-4 mr-3 text-slate-400" /> Live Chat
+                        <MessageSquare className="w-4 h-4 mr-3 text-slate-400" /> Chat Langsung
                       </Link>
                     </li>
                     {isAdmin && (
                       <li>
                         <Link href="/dashboard/settings" className="flex items-center px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors">
-                          <Settings className="w-4 h-4 mr-3 text-slate-400" /> System Settings
+                          <Settings className="w-4 h-4 mr-3 text-slate-400" /> Pengaturan Sistem
                         </Link>
                       </li>
                     )}
@@ -167,7 +193,7 @@ export default function DashboardHeader({ user, profile, settings }: { user: Use
                       onClick={handleLogout}
                       className="flex w-full items-center px-4 py-2.5 text-sm font-bold text-rose-600 hover:bg-rose-50 hover:text-rose-700 transition-colors"
                     >
-                      <LogOut className="w-4 h-4 mr-3 text-rose-500" /> Sign Out
+                      <LogOut className="w-4 h-4 mr-3 text-rose-500" /> Keluar
                     </button>
                   </div>
                 </div>

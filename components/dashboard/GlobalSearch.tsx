@@ -129,7 +129,7 @@ export default function GlobalSearch({ isAdmin, userId }: { isAdmin: boolean, us
             setQuery(e.target.value);
             setIsOpen(true);
           }}
-          placeholder="Search everything..."
+          placeholder="Cari semuanya..."
           className={`w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm font-bold rounded-xl pl-11 pr-12 py-2.5 transition-all outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 focus:bg-white shadow-sm placeholder:text-slate-400 placeholder:font-medium ${isOpen ? 'border-indigo-400 bg-white shadow-md ring-4 ring-indigo-500/5' : ''}`}
         />
         <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
@@ -148,14 +148,14 @@ export default function GlobalSearch({ isAdmin, userId }: { isAdmin: boolean, us
             {loading ? (
               <div className="flex flex-col items-center justify-center py-20 text-slate-400">
                 <Loader2 className="w-8 h-8 animate-spin text-primary mb-3" />
-                <p className="text-sm font-bold uppercase tracking-wider text-slate-500">Searching everything...</p>
+                <p className="text-sm font-bold uppercase tracking-wider text-slate-500">Mencari...</p>
               </div>
             ) : results.length > 0 ? (
               Object.entries(groupedResults).map(([type, items]) => (
                 <div key={type} className="pb-1">
                   <div className="sticky top-0 bg-white/90 backdrop-blur-md px-4 py-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100/50 mb-1 z-10 flex justify-between select-none">
                     <span>{type}</span>
-                    <span className="text-slate-300 font-medium lowercase tracking-normal">{items.length} item{items.length > 1 ? 's' : ''}</span>
+                    <span className="text-slate-300 font-medium lowercase tracking-normal">{items.length} item{items.length > 1 ? '' : ''}</span>
                   </div>
                   <div className="px-2 space-y-1">
                     {items.map((item) => {
@@ -195,8 +195,8 @@ export default function GlobalSearch({ isAdmin, userId }: { isAdmin: boolean, us
             ) : (
               <div className="flex flex-col items-center justify-center py-20 text-slate-400">
                 <SearchSlash className="w-10 h-10 mb-3 text-slate-200" />
-                <p className="text-sm font-bold">No results found for &quot;{query}&quot;</p>
-                <p className="text-xs mt-1">Try different keywords or check spelling.</p>
+                <p className="text-sm font-bold">Tidak ada hasil untuk &quot;{query}&quot;</p>
+                <p className="text-xs mt-1">Coba kata kunci lain atau periksa ejaan.</p>
               </div>
             )}
           </div>
@@ -208,12 +208,12 @@ export default function GlobalSearch({ isAdmin, userId }: { isAdmin: boolean, us
                   onClick={() => setIsOpen(false)}
                   className="text-[10px] font-bold uppercase tracking-[0.15em] text-primary hover:text-primary flex items-center gap-2 transition-all group/btn"
                 >
-                  View all results <ArrowRight className="w-3 h-3 group-hover/btn:translate-x-1 transition-transform" />
+                  Lihat semua hasil <ArrowRight className="w-3 h-3 group-hover/btn:translate-x-1 transition-transform" />
                 </Link>
             ) : (
               <div className="flex gap-4">
                  <div className="flex items-center gap-1 text-[10px] font-bold text-slate-400">
-                   <kbd className="h-4 px-1 rounded border border-slate-200 bg-white">ESC</kbd> to close
+                   <kbd className="h-4 px-1 rounded border border-slate-200 bg-white">ESC</kbd> untuk menutup
                  </div>
               </div>
             )}

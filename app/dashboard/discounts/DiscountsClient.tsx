@@ -183,14 +183,14 @@ export default function DiscountsClient() {
     <div className="pt-6 px-4 pb-16">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Discounts & Vouchers</h1>
-          <p className="text-sm font-medium text-slate-500 mt-1">Manage promo codes and automated service discounts.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Diskon & Voucher</h1>
+          <p className="text-sm font-medium text-slate-500 mt-1">Kelola kode promo dan diskon layanan otomatis.</p>
         </div>
         <button 
           onClick={openAdd}
           className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-sm shadow-indigo-200 transition-colors w-fit"
         >
-          <Plus className="w-4 h-4" /> Create Promo
+          <Plus className="w-4 h-4" /> Buat Promo
         </button>
       </div>
 
@@ -201,7 +201,7 @@ export default function DiscountsClient() {
             <input 
               value={search}
               onChange={e => { setSearch(e.target.value); setPage(1); }}
-              placeholder="Search promo name or code..." 
+              placeholder="Cari nama promo atau kode..." 
               className="w-full bg-slate-50 border-0 rounded-xl pl-9 pr-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500/20"
             />
           </div>
@@ -211,12 +211,12 @@ export default function DiscountsClient() {
           <table className="w-full text-left">
             <thead>
               <tr className="text-slate-400 text-xs font-bold uppercase tracking-wider border-b border-slate-100 bg-slate-50/50">
-                <th className="px-6 py-4">Promo Info</th>
+                <th className="px-6 py-4">Info Promo</th>
                 <th className="px-6 py-4">Target</th>
-                <th className="px-6 py-4">Value</th>
-                <th className="px-6 py-4">Validity</th>
-                <th className="px-6 py-4">Usage</th>
-                <th className="px-6 py-4 text-right">Actions</th>
+                <th className="px-6 py-4">Nilai</th>
+                <th className="px-6 py-4">Validitas</th>
+                <th className="px-6 py-4">Penggunaan</th>
+                <th className="px-6 py-4 text-right">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -253,7 +253,7 @@ export default function DiscountsClient() {
                       ) : d.service_id ? (
                         <span className="flex items-center gap-1.5"><Layers className="w-3.5 h-3.5" /> {d.store_services?.title}</span>
                       ) : (
-                        <span className="text-[10px] uppercase bg-slate-100 px-2 py-0.5 rounded-full tracking-wider">Global Voucher</span>
+                        <span className="text-[10px] uppercase bg-slate-100 px-2 py-0.5 rounded-full tracking-wider">Voucher Global</span>
                       )}
                     </div>
                   </td>
@@ -270,7 +270,7 @@ export default function DiscountsClient() {
                       <p className="text-xs font-bold text-slate-500 flex items-center gap-1.5 whitespace-nowrap"><Calendar className="w-3.5 h-3.5 text-slate-400" /> Start: {new Date(d.start_date).toLocaleDateString()}</p>
                       {d.end_date ? (
                         <p className={`text-xs font-bold flex items-center gap-1.5 whitespace-nowrap ${new Date(d.end_date) < new Date() ? 'text-red-500' : 'text-slate-500'}`}>
-                          <XCircle className="w-3.5 h-3.5 text-slate-400" /> Ends: {new Date(d.end_date).toLocaleDateString()}
+                          <XCircle className="w-3.5 h-3.5 text-slate-400" /> Berakhir: {new Date(d.end_date).toLocaleDateString()}
                         </p>
                       ) : (
                         <p className="text-xs font-bold text-emerald-500 bg-emerald-50 px-2 py-0.5 rounded-md w-fit">No Expiry</p>
@@ -317,7 +317,7 @@ export default function DiscountsClient() {
         {totalPages > 1 && (
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-4 border-t border-slate-100">
             <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">
-              Showing {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filtered.length)} of {filtered.length} discounts
+              Menampilkan {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filtered.length)} dari {filtered.length} diskon
             </p>
             <div className="flex items-center gap-2">
               <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
@@ -354,8 +354,8 @@ export default function DiscountsClient() {
           <div className="relative w-full max-w-2xl bg-white rounded-2xl shadow-xl ring-1 ring-slate-100 overflow-hidden">
             <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
               <div>
-                <h2 className="text-base font-bold text-slate-900">{editingId ? 'Edit Promo' : 'New Promotion'}</h2>
-                <p className="text-xs font-medium text-slate-500 mt-0.5">Setup vouchers or automatic service discounts</p>
+                <h2 className="text-base font-bold text-slate-900">{editingId ? 'Edit Promo' : 'Promo Baru'}</h2>
+                <p className="text-xs font-medium text-slate-500 mt-0.5">Atur voucher atau diskon layanan otomatis</p>
               </div>
               <button onClick={() => setIsModalOpen(false)} className="p-2 rounded-lg bg-slate-100 text-slate-500 hover:bg-slate-200 transition-colors">
                 <X className="w-4 h-4" />
@@ -380,14 +380,14 @@ export default function DiscountsClient() {
                         onClick={() => setFormData({...formData, code: ""})}
                         className={`flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-bold transition-all ${formData.code === "" ? 'bg-white text-orange-500 shadow-sm border border-slate-200' : 'text-slate-500 hover:text-slate-700'}`}
                       >
-                        <Zap className="w-4 h-4" /> AUTOMATIC
+                        <Zap className="w-4 h-4" /> OTOMATIS
                       </button>
                     </div>
                   </div>
 
                   {formData.code !== "" && (
                     <div>
-                      <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Voucher Code</label>
+                      <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Kode Voucher</label>
                       <input 
                         type="text"
                         value={formData.code}
@@ -400,7 +400,7 @@ export default function DiscountsClient() {
                   )}
 
                   <div>
-                    <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Internal Promo Name</label>
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Nama Promo Internal</label>
                     <input 
                       type="text"
                       value={formData.name}
@@ -413,18 +413,18 @@ export default function DiscountsClient() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Discount Type</label>
+                      <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Tipe Diskon</label>
                       <select 
                         value={formData.type}
                         onChange={e => setFormData({ ...formData, type: e.target.value })}
                         className={inputClass}
                       >
-                        <option value="percentage">Percentage (%)</option>
-                        <option value="fixed_amount">Fixed Amount (Rp)</option>
+                        <option value="percentage">Persentase (%)</option>
+                        <option value="fixed_amount">Jumlah Tetap (Rp)</option>
                       </select>
                     </div>
                     <div>
-                      <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Value</label>
+                      <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Nilai</label>
                       <div className="relative">
                         <input 
                           type="number"
@@ -444,7 +444,7 @@ export default function DiscountsClient() {
                     <div className="p-4 bg-orange-50/50 border border-orange-100 rounded-xl space-y-3">
                       <div className="flex items-center gap-2 text-orange-600">
                         <Zap className="w-4 h-4" />
-                        <span className="text-xs font-bold uppercase tracking-wider">Automatic Target</span>
+                        <span className="text-xs font-bold uppercase tracking-wider">Target Otomatis</span>
                       </div>
                       <select 
                         value={formData.product_id || formData.service_id || ""}
@@ -455,16 +455,16 @@ export default function DiscountsClient() {
                         }}
                         className="w-full bg-white border border-orange-200 rounded-xl px-4 py-2.5 text-sm font-medium text-slate-700 focus:ring-2 focus:ring-orange-200 outline-none shadow-sm"
                       >
-                        <option value="">Global (All Services/Shop)</option>
-                        <optgroup label="Shop Products">
+                        <option value="">Global (Semua Layanan/Toko)</option>
+                        <optgroup label="Produk Toko">
                           {products.map(p => <option key={p.id} value={p.id}>{p.title}</option>)}
                         </optgroup>
-                        <optgroup label="Professional Services">
+                        <optgroup label="Layanan Profesional">
                           {services.map(s => <option key={s.id} value={s.id}>{s.title}</option>)}
                         </optgroup>
                       </select>
                       <p className="text-[10px] font-medium text-orange-500 leading-relaxed max-w-xs flex gap-1">
-                        <AlertCircle className="w-3.5 h-3.5 shrink-0" /> Automatic discounts will be applied directly without code at checkout.
+                        <AlertCircle className="w-3.5 h-3.5 shrink-0" /> Diskon otomatis akan diterapkan langsung tanpa kode saat checkout.
                       </p>
                     </div>
                   )}
@@ -473,7 +473,7 @@ export default function DiscountsClient() {
                 <div className="space-y-5">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Min. Purchase</label>
+                      <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Min. Pembelian</label>
                       <input 
                         type="number"
                         value={formData.min_purchase || ""}
@@ -482,7 +482,7 @@ export default function DiscountsClient() {
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Usage Limit</label>
+                      <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Batas Penggunaan</label>
                       <input 
                         type="number"
                         value={formData.usage_limit || ""}
@@ -495,7 +495,7 @@ export default function DiscountsClient() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Starts At</label>
+                      <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Mulai Pada</label>
                       <input 
                         type="datetime-local"
                         value={formData.start_date}
@@ -505,7 +505,7 @@ export default function DiscountsClient() {
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Ends At</label>
+                      <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Berakhir Pada</label>
                       <input 
                         type="datetime-local"
                         value={formData.end_date}
@@ -516,11 +516,11 @@ export default function DiscountsClient() {
                   </div>
 
                   <div>
-                    <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Internal Description</label>
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Deskripsi Internal</label>
                     <textarea 
                       value={formData.description}
                       onChange={e => setFormData({ ...formData, description: e.target.value })}
-                      placeholder="Notes for admin..."
+                      placeholder="Catatan untuk admin..."
                       className={`${inputClass} min-h-[140px] resize-none`}
                     />
                   </div>
@@ -529,10 +529,10 @@ export default function DiscountsClient() {
 
               <div className="flex gap-3 pt-2">
                 <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 bg-slate-100 text-slate-600 text-sm font-bold py-3 rounded-xl hover:bg-slate-200 transition-colors">
-                  Cancel
+                  Batal
                 </button>
                 <button type="submit" disabled={saving} className="flex-2 inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold py-3 rounded-xl shadow-sm shadow-indigo-200 transition-colors disabled:opacity-60">
-                  {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : editingId ? "Update Promotion" : "Create Promotion"}
+                  {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : editingId ? "Perbarui Promosi" : "Buat Promosi"}
                 </button>
               </div>
             </form>

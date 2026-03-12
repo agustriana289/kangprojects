@@ -16,7 +16,6 @@ export default async function UserDashboard({ name }: { name: string }) {
   
   const activities = userActivitiesList || [];
 
-  // Fetch all user orders for accurate stats
   const { data: allUserOrders } = await supabase
     .from("store_orders")
     .select("total_amount, status")
@@ -68,16 +67,16 @@ export default async function UserDashboard({ name }: { name: string }) {
 
       <div className="w-full bg-linear-to-r from-indigo-600 to-indigo-500 rounded-3xl p-6 sm:p-8 mb-6 text-white shadow-lg shadow-indigo-200">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold tracking-tight mb-2">Good morning, {name || "User"}</h1>
-          <p className="text-sm font-medium text-white">Here&apos;s what&apos;s happening with your projects today.</p>
+          <h1 className="text-2xl font-bold tracking-tight mb-2">Selamat pagi, {name || "Pengguna"}</h1>
+          <p className="text-sm font-medium text-white">Inilah yang terjadi dengan proyek Anda hari ini.</p>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
           {[
-            { title: "Active Projects", value: activeProjectsCount.toString(), tag: "↗ Track progress", icon: Rocket },
-            { title: "Open Tickets", value: openTicketsCount?.toString() || "0", tag: "↗ Contact support", icon: LifeBuoy },
-            { title: "Completed", value: completedProjectsCount.toString(), tag: "↗ View portfolio", icon: CheckCircle2 },
-            { title: "Total Investment", value: `Rp ${totalInvestment.toLocaleString("id-ID")}`, tag: "↗ Thank you", icon: DollarSign },
+            { title: "Proyek Aktif", value: activeProjectsCount.toString(), tag: "↗ Pantau progres", icon: Rocket },
+            { title: "Tiket Terbuka", value: openTicketsCount?.toString() || "0", tag: "↗ Hubungi dukungan", icon: LifeBuoy },
+            { title: "Selesai", value: completedProjectsCount.toString(), tag: "↗ Lihat portofolio", icon: CheckCircle2 },
+            { title: "Total Investasi", value: `Rp ${totalInvestment.toLocaleString("id-ID")}`, tag: "↗ Terima kasih", icon: DollarSign },
           ].map((stat, i) => (
             <div key={i} className="bg-white/10 backdrop-blur-md rounded-2xl p-5 ring-1 ring-white/20 transition-all hover:bg-white/20">
               <div className="flex items-center gap-2 mb-3 text-white">
@@ -101,15 +100,15 @@ export default async function UserDashboard({ name }: { name: string }) {
           <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-4 sm:p-6 xl:p-8">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4">
               <div>
-                <h3 className="text-lg font-bold text-slate-900 tracking-tight">Support Center</h3>
+                <h3 className="text-lg font-bold text-slate-900 tracking-tight">Pusat Dukungan</h3>
               </div>
               <div className="flex mt-4 sm:mt-0 flex-wrap gap-2">
                 <button className="text-slate-900 bg-white hover:bg-slate-50 border border-slate-200 focus:ring-2 focus:ring-slate-100 rounded-lg text-xs font-bold uppercase tracking-wider px-4 py-2 shadow-sm transition-colors">
-                  + CREATE TICKET
+                  + BUAT TIKET
                 </button>
                 <button className="text-white bg-slate-900 hover:bg-slate-800 focus:ring-2 focus:ring-slate-300 rounded-lg text-xs font-bold uppercase tracking-wider px-4 py-2 flex items-center gap-2 shadow-sm transition-colors">
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clipRule="evenodd"></path></svg>
-                  DIRECT CHAT
+                  CHAT LANGSUNG
                 </button>
                 <button className="text-emerald-700 bg-emerald-100 hover:bg-emerald-200 border border-emerald-200 focus:ring-2 focus:ring-emerald-100 rounded-lg text-xs font-bold uppercase tracking-wider px-4 py-2 shadow-sm transition-colors">
                   WHATSAPP
@@ -117,10 +116,10 @@ export default async function UserDashboard({ name }: { name: string }) {
               </div>
             </div>
             <p className="text-sm font-medium text-slate-500 mb-6">
-              You have {openTicketsCount || 0} active support request{Number(openTicketsCount) !== 1 ? 's' : ''}. Our team is processing your reports to ensure everything stays on track.
+              Anda memiliki {openTicketsCount || 0} permintaan dukungan aktif. Tim kami sedang memproses laporan Anda untuk memastikan semuanya berjalan lancar.
             </p>
             <a href="#" className="flex items-center text-xs font-bold uppercase tracking-wider text-primary hover:text-primary transition-colors inline-block hover:translate-x-1 transform duration-200">
-              PROCEED TO TICKET MANAGEMENT &rarr;
+              LANJUT KE MANAJEMEN TIKET &rarr;
             </a>
           </div>
 
@@ -129,11 +128,11 @@ export default async function UserDashboard({ name }: { name: string }) {
           <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-4 sm:p-6 xl:p-8">
             <div className="mb-6 flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-bold text-slate-900 mb-1">Recent Orders</h3>
-                <span className="text-sm font-medium text-slate-500">Your latest transactions</span>
+                <h3 className="text-lg font-bold text-slate-900 mb-1">Pesanan Terbaru</h3>
+                <span className="text-sm font-medium text-slate-500">Transaksi terakhir Anda</span>
               </div>
               <div className="shrink-0">
-                <a href="#" className="text-xs font-bold uppercase tracking-wider text-primary hover:bg-slate-50 rounded-lg px-3 py-2 transition-colors">View All</a>
+                <a href="#" className="text-xs font-bold uppercase tracking-wider text-primary hover:bg-slate-50 rounded-lg px-3 py-2 transition-colors">Lihat Semua</a>
               </div>
             </div>
             
@@ -144,25 +143,25 @@ export default async function UserDashboard({ name }: { name: string }) {
                     <table className="min-w-full divide-y divide-slate-200">
                       <thead className="bg-slate-50">
                         <tr>
-                          <th scope="col" className="p-4 text-left text-xs font-bold uppercase tracking-wider text-slate-500">Order Ref</th>
-                          <th scope="col" className="p-4 text-left text-xs font-bold uppercase tracking-wider text-slate-500">Service/Product</th>
-                          <th scope="col" className="p-4 text-center text-xs font-bold uppercase tracking-wider text-slate-500">Amount</th>
+                          <th scope="col" className="p-4 text-left text-xs font-bold uppercase tracking-wider text-slate-500">Ref Pesanan</th>
+                          <th scope="col" className="p-4 text-left text-xs font-bold uppercase tracking-wider text-slate-500">Layanan/Produk</th>
+                          <th scope="col" className="p-4 text-center text-xs font-bold uppercase tracking-wider text-slate-500">Jumlah</th>
                           <th scope="col" className="p-4 text-center text-xs font-bold uppercase tracking-wider text-slate-500">Status</th>
-                          <th scope="col" className="p-4 text-right text-xs font-bold uppercase tracking-wider text-slate-500">Date</th>
-                          <th scope="col" className="p-4 text-right text-xs font-bold uppercase tracking-wider text-slate-500">Action</th>
+                          <th scope="col" className="p-4 text-right text-xs font-bold uppercase tracking-wider text-slate-500">Tanggal</th>
+                          <th scope="col" className="p-4 text-right text-xs font-bold uppercase tracking-wider text-slate-500">Aksi</th>
                         </tr>
                       </thead>
                       <tbody className="bg-white divide-y divide-slate-100 border-t border-slate-200">
                         {recentOrders.length === 0 ? (
                           <tr>
                             <td colSpan={6} className="p-4 whitespace-nowrap text-sm font-medium text-slate-400 italic text-center py-12">
-                              No orders found. Head to the Shop to browse products!
+                               Tidak ada pesanan ditemukan. Buka Toko untuk melihat produk!
                             </td>
                           </tr>
                         ) : (
                           recentOrders.map((order: any, i: number) => {
-                            const itemName = order.store_services?.title || order.store_products?.title || "Custom Order";
-                            const itemCat = order.store_services?.category || order.store_products?.category || "Service";
+                            const itemName = order.store_services?.title || order.store_products?.title || "Pesanan Kustom";
+                            const itemCat = order.store_services?.category || order.store_products?.category || "Layanan";
                             
                             return (
                               <tr key={order.id} className="hover:bg-slate-50/80 transition-colors">
@@ -183,7 +182,13 @@ export default async function UserDashboard({ name }: { name: string }) {
                                     order.status === 'processing' ? 'bg-indigo-50 text-primary border-indigo-200' :
                                     'bg-amber-50 text-amber-600 border-amber-200'
                                   }`}>
-                                    {order.status.replace('_', ' ')}
+                                    {order.status === 'completed' ? 'Selesai' :
+                                    order.status === 'cancelled' ? 'Dibatalkan' :
+                                    order.status === 'processing' ? 'Diproses' :
+                                    order.status === 'paid' ? 'Dibayar' :
+                                    order.status === 'waiting_payment' ? 'Menunggu Pembayaran' :
+                                    order.status === 'pending' ? 'Menunggu' :
+                                    order.status.replace('_', ' ')}
                                   </span>
                                 </td>
                                 <td className="p-4 whitespace-nowrap text-xs font-medium text-slate-400 text-right">
@@ -195,7 +200,7 @@ export default async function UserDashboard({ name }: { name: string }) {
                                       <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
                                       </svg>
-                                      Workspace
+                                      Ruang Kerja
                                     </a>
                                   </div>
                                 </td>
@@ -217,7 +222,7 @@ export default async function UserDashboard({ name }: { name: string }) {
           
 
           <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-4 sm:p-6 xl:p-8">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-8 border-b border-slate-100 pb-4">Announcements</h3>
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-8 border-b border-slate-100 pb-4">Pengumuman</h3>
             
             <div className="flow-root">
               <ul className="relative border-l-2 border-slate-200 border-dashed ml-3">                  
@@ -231,7 +236,7 @@ export default async function UserDashboard({ name }: { name: string }) {
                         {latestAnnouncement.title}
                       </h3>
                       <span className="bg-amber-100 text-amber-700 border border-amber-200 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded shadow-sm ml-3">
-                        {latestAnnouncement.type || "INFO"}
+                        {latestAnnouncement.type || "INFORMASI"}
                       </span>
                     </div>
                     <time className="block mb-4 text-[10px] font-bold uppercase tracking-wider text-slate-400">
@@ -243,7 +248,7 @@ export default async function UserDashboard({ name }: { name: string }) {
                     </div>
                   </li>
                 ) : (
-                  <li className="mb-2 ml-6 text-sm text-slate-400 italic">No new announcements.</li>
+                   <li className="mb-2 ml-6 text-sm text-slate-400 italic">Tidak ada pengumuman baru.</li>
                 )}
               </ul>
             </div>
@@ -252,7 +257,7 @@ export default async function UserDashboard({ name }: { name: string }) {
           
 
           <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-4 sm:p-6 xl:p-8 flex-1">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-8 border-b border-slate-100 pb-4">Timeline</h3>
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-8 border-b border-slate-100 pb-4">Timeline Aktivitas</h3>
             <div className="flow-root">
               <ul className="relative border-l border-slate-200 ml-3 mt-4">
                 {activities.length > 0 ? (
@@ -264,7 +269,7 @@ export default async function UserDashboard({ name }: { name: string }) {
                       <div className="flex justify-between items-start gap-4">
                         <div className="flex flex-col gap-1 items-start pt-0.5">
                           <p className="text-sm font-medium text-slate-600 leading-relaxed">
-                            {act.title}{" "}
+                            {act.title?.replace('Service request submitted for', 'Permintaan layanan dikirim untuk').replace('Product purchase submitted for', 'Pembelian produk dikirim untuk')}{" "}
                             {act.highlight && (
                               <span className={`font-bold ${act.highlight_color || 'text-slate-900'}`}>{act.highlight}</span>
                             )}
@@ -275,7 +280,7 @@ export default async function UserDashboard({ name }: { name: string }) {
                     </li>
                   ))
                 ) : (
-                  <li className="mb-7 ml-6 relative text-sm text-slate-500 font-medium pt-2">No recent account activities.</li>
+                  <li className="mb-7 ml-6 relative text-sm text-slate-500 font-medium pt-2">Tidak ada aktivitas akun terbaru.</li>
                 )}
               </ul>
             </div>

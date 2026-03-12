@@ -76,7 +76,7 @@ export default function EditBlogPage() {
         })
         .eq("id", params.id);
       if (error) throw error;
-      showToast("Blog post updated successfully!", "success");
+      showToast("Postingan blog berhasil diperbarui!", "success");
       router.push("/dashboard/blogs");
     } catch (error: any) {
       showToast(error.message, "error");
@@ -99,7 +99,7 @@ export default function EditBlogPage() {
     <div className="pt-6 px-4 pb-16 max-w-7xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <Link href="/dashboard/blogs" className="inline-flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-primary transition-colors">
-          <ArrowLeft className="w-4 h-4" /> Back to List
+          <ArrowLeft className="w-4 h-4" /> Kembali ke Daftar
         </Link>
         <button
           onClick={handleSave}
@@ -107,7 +107,7 @@ export default function EditBlogPage() {
           className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-6 py-2.5 rounded-xl shadow-sm shadow-indigo-200 transition-colors disabled:opacity-60"
         >
           {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-          Update Post
+          Perbarui Postingan
         </button>
       </div>
 
@@ -115,32 +115,32 @@ export default function EditBlogPage() {
         <div className="lg:col-span-3 space-y-5">
           <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-6 space-y-5">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Article Title</label>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Judul Artikel</label>
               <div className="relative">
                 <Type className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <input
                   required
                   value={formData.title}
                   onChange={e => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                  placeholder="Article title..."
+                  placeholder="Judul artikel..."
                   className={`${inputClass} pl-10 text-lg font-semibold placeholder:font-normal placeholder:text-slate-300`}
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Excerpt / Summary</label>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Kutipan / Ringkasan</label>
               <textarea
                 rows={2}
                 value={formData.excerpt}
                 onChange={e => setFormData(prev => ({ ...prev, excerpt: e.target.value }))}
-                placeholder="Short preview of your article..."
+                placeholder="Pratinjau singkat artikel Anda..."
                 className={`${inputClass} resize-none`}
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Content</label>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Konten</label>
               <RichTextEditor
                 value={formData.content}
                 onChange={content => setFormData(prev => ({ ...prev, content }))}
@@ -151,27 +151,27 @@ export default function EditBlogPage() {
           <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-6 space-y-5">
             <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
               <Search className="w-4 h-4 text-primary" />
-              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">SEO Optimization</h3>
+              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Optimalisasi SEO</h3>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div className="space-y-4">
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">SEO Title</label>
-                  <input value={formData.meta_title} onChange={e => setFormData(prev => ({ ...prev, meta_title: e.target.value }))} className={inputClass} placeholder="Title for search engines" />
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Judul SEO</label>
+                  <input value={formData.meta_title} onChange={e => setFormData(prev => ({ ...prev, meta_title: e.target.value }))} className={inputClass} placeholder="Judul untuk mesin pencari" />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">SEO Keywords</label>
-                  <input value={formData.meta_keywords} onChange={e => setFormData(prev => ({ ...prev, meta_keywords: e.target.value }))} className={inputClass} placeholder="logo design, branding, tips" />
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Kata Kunci SEO</label>
+                  <input value={formData.meta_keywords} onChange={e => setFormData(prev => ({ ...prev, meta_keywords: e.target.value }))} className={inputClass} placeholder="desain logo, branding, tips" />
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">SEO Description</label>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Deskripsi SEO</label>
                 <textarea
                   rows={5}
                   value={formData.meta_description}
                   onChange={e => setFormData(prev => ({ ...prev, meta_description: e.target.value }))}
                   className={`${inputClass} resize-none h-[130px]`}
-                  placeholder="Compelling description for search results..."
+                  placeholder="Deskripsi menarik untuk hasil pencarian..."
                 />
               </div>
             </div>
@@ -182,10 +182,10 @@ export default function EditBlogPage() {
           <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-6 space-y-4">
             <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
               <ImageIcon className="w-4 h-4 text-primary" />
-              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Featured Image</h3>
+              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Gambar Utama</h3>
             </div>
             <ImageUploader 
-              label="Blog Thumbnail"
+              label="Thumbnail Blog"
               value={formData.featured_image} 
               onChange={(url) => setFormData(prev => ({ ...prev, featured_image: url }))} 
               folder="blogs"
@@ -195,20 +195,20 @@ export default function EditBlogPage() {
           <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-6 space-y-4">
             <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
               <Globe className="w-4 h-4 text-primary" />
-              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Category & URL</h3>
+              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Kategori & URL</h3>
             </div>
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Category</label>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Kategori</label>
               <input
                 value={formData.category}
                 onChange={e => setFormData(prev => ({ ...prev, category: e.target.value }))}
                 className={inputClass}
-                placeholder="e.g. Branding, Design Tips, Logo"
+                placeholder="contoh: Branding, Tips Desain, Logo"
               />
               <p className="text-xs text-slate-400 mt-1.5">Pisahkan dengan koma untuk beberapa kategori</p>
             </div>
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Article Slug</label>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Slug Artikel</label>
               <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-xl px-3 py-3">
                 <span className="text-slate-400 text-sm font-medium shrink-0">/blog/</span>
                 <input
@@ -224,7 +224,7 @@ export default function EditBlogPage() {
           <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-6 space-y-4">
             <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
               <CheckCircle className="w-4 h-4 text-primary" />
-              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Publishing</h3>
+              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">Penerbitan</h3>
             </div>
             <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200">
               <div className="flex items-center gap-3">
@@ -232,8 +232,8 @@ export default function EditBlogPage() {
                   {formData.is_published ? <Globe className="w-4 h-4" /> : <Clock className="w-4 h-4" />}
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-slate-900">{formData.is_published ? "Published" : "Draft"}</p>
-                  <p className="text-xs text-slate-400">{formData.is_published ? "Visible to public" : "Not yet published"}</p>
+                  <p className="text-sm font-bold text-slate-900">{formData.is_published ? "Diterbitkan" : "Draf"}</p>
+                  <p className="text-xs text-slate-400">{formData.is_published ? "Terlihat oleh publik" : "Belum diterbitkan"}</p>
                 </div>
               </div>
               <button

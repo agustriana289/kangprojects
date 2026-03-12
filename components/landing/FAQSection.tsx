@@ -12,7 +12,7 @@ interface FAQSectionProps {
   badge?: string;
 }
 
-export default function FAQSection({ faqs, title = "Frequently Asked Questions", badge = "FAQ" }: FAQSectionProps) {
+export default function FAQSection({ faqs, title = "Pertanyaan yang Sering Diajukan", badge = "FAQ" }: FAQSectionProps) {
   if (!faqs || faqs.length === 0) return null;
   return (
     <section className="py-20 sm:py-28 bg-white">

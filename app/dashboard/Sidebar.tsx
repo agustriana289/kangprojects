@@ -11,35 +11,33 @@ import {
 export default function Sidebar({ isAdmin }: { isAdmin: boolean }) {
   const pathname = usePathname();
 
-  // Admin Items
   const adminMenu = [
-    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { name: "Projects", href: "/dashboard/projects", icon: FolderKanban },
-    { name: "Services", href: "/dashboard/services", icon: BriefcaseBusiness },
-    { name: "Shop", href: "/dashboard/shop", icon: ShoppingBag },
-    { name: "Discounts", href: "/dashboard/discounts", icon: Tags },
-    { name: "Announcements", href: "/dashboard/announcements", icon: Megaphone },
-    { name: "Support Tickets", href: "/dashboard/tickets", icon: Ticket },
-    { name: "Portfolios", href: "/dashboard/portfolios", icon: Images },
-    { name: "Testimonials", href: "/dashboard/testimonials", icon: Star },
-    { name: "Blogs", href: "/dashboard/blogs", icon: BookOpen },
-    { name: "Ads", href: "/dashboard/ads", icon: Tv2 },
-    { name: "Pages", href: "/dashboard/pages", icon: LayoutTemplate },
+    { name: "Dasbor", href: "/dashboard", icon: LayoutDashboard },
+    { name: "Proyek", href: "/dashboard/projects", icon: FolderKanban },
+    { name: "Layanan", href: "/dashboard/services", icon: BriefcaseBusiness },
+    { name: "Toko", href: "/dashboard/shop", icon: ShoppingBag },
+    { name: "Diskon", href: "/dashboard/discounts", icon: Tags },
+    { name: "Pengumuman", href: "/dashboard/announcements", icon: Megaphone },
+    { name: "Tiket Dukungan", href: "/dashboard/tickets", icon: Ticket },
+    { name: "Portofolio", href: "/dashboard/portfolios", icon: Images },
+    { name: "Testimoni", href: "/dashboard/testimonials", icon: Star },
+    { name: "Blog", href: "/dashboard/blogs", icon: BookOpen },
+    { name: "Iklan", href: "/dashboard/ads", icon: Tv2 },
+    { name: "Halaman", href: "/dashboard/pages", icon: LayoutTemplate },
     { name: "FAQ", href: "/dashboard/faq", icon: HelpCircle },
-    { name: "Users", href: "/dashboard/user", icon: Users },
+    { name: "Pengguna", href: "/dashboard/user", icon: Users },
   ];
 
-  // User Items
   const userMenu = [
-    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { name: "My Projects", href: "/dashboard/projects", icon: FolderKanban },
-    { name: "Browse Shop", href: "/dashboard/browse-shop", icon: ShoppingBag },
-    { name: "Discounts", href: "/dashboard/vouchers", icon: Tags },
-    { name: "Latest Post", href: "/dashboard/latest-posts", icon: BookOpen },
-    { name: "Explore Pages", href: "/dashboard/user-pages", icon: LayoutTemplate },
-    { name: "Help & FAQ", href: "/dashboard/help-faq", icon: HelpCircle },
-    { name: "Chat with Admin", href: "/dashboard/chat", icon: MessageSquare },
-    { name: "Support Tickets", href: "/dashboard/tickets", icon: Ticket },
+    { name: "Dasbor", href: "/dashboard", icon: LayoutDashboard },
+    { name: "Proyek Saya", href: "/dashboard/projects", icon: FolderKanban },
+    { name: "Telusuri Toko", href: "/dashboard/browse-shop", icon: ShoppingBag },
+    { name: "Diskon", href: "/dashboard/vouchers", icon: Tags },
+    { name: "Postingan Terbaru", href: "/dashboard/latest-posts", icon: BookOpen },
+    { name: "Jelajahi Halaman", href: "/dashboard/user-pages", icon: LayoutTemplate },
+    { name: "Bantuan & FAQ", href: "/dashboard/help-faq", icon: HelpCircle },
+    { name: "Chat dengan Admin", href: "/dashboard/chat", icon: MessageSquare },
+    { name: "Tiket Dukungan", href: "/dashboard/tickets", icon: Ticket },
   ];
 
   const menus = isAdmin ? adminMenu : userMenu;
@@ -56,7 +54,7 @@ export default function Sidebar({ isAdmin }: { isAdmin: boolean }) {
           <div className="flex-1 flex flex-col pt-6 pb-4 overflow-y-auto px-4">
             <div className="flex-1 bg-white space-y-4">
               <h3 className="px-2 text-xs font-bold uppercase tracking-wider text-slate-400">
-                Main Menu
+                Menu Utama
               </h3>
               <ul className="space-y-1.5 pb-2">
                 {menus.map((item) => {

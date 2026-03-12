@@ -42,9 +42,9 @@ export default async function ServiceDetail({ params }: ServiceProps) {
 
   // Create a minimal settings object for the Pricing component
   const mockSettings = {
-    pricing_badge: service.category || "Pricing Plans",
-    pricing_title: `Choose your ${service.title} plan`,
-    pricing_description: "Select the package that best fits your requirements. All packages come with guaranteed quality and support.",
+    pricing_badge: service.category || "Paket Harga",
+    pricing_title: `Pilih paket ${service.title} Anda`,
+    pricing_description: "Pilih paket yang paling sesuai dengan kebutuhan Anda. Semua paket disertai jaminan kualitas dan dukungan.",
   };
 
   // Fetch active automated discounts
@@ -106,7 +106,7 @@ export default async function ServiceDetail({ params }: ServiceProps) {
                 <div className="flex items-center">
                   <ChevronRight className="h-4 w-4 shrink-0 text-slate-300" />
                   <Link href="/services" className="ml-2 hover:text-primary transition-colors">
-                    Services
+                    Layanan
                   </Link>
                 </div>
               </li>
@@ -196,13 +196,13 @@ export default async function ServiceDetail({ params }: ServiceProps) {
               <div className="text-center max-w-2xl mx-auto mb-16">
                 <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-sm font-medium text-primary mb-6">
                   <BriefcaseBusiness size={14} />
-                  <span>Work Samples</span>
+                  <span>Contoh Karya</span>
                 </div>
                 <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
-                  {service.title} Portfolios
+                  Portofolio {service.title}
                 </h2>
                 <p className="mt-4 text-lg text-slate-600">
-                  Take a look at some of our selected projects for this service.
+                  Lihat beberapa proyek pilihan kami untuk layanan ini.
                 </p>
               </div>
             </FadeIn>
@@ -250,8 +250,8 @@ export default async function ServiceDetail({ params }: ServiceProps) {
 
       <FAQSection 
         faqs={serviceFaqs || []} 
-        title={`Questions about ${service.title}`}
-        badge="Service FAQ"
+        title={`Pertanyaan tentang ${service.title}`}
+        badge="FAQ Layanan"
       />
 
       {/* CTA SECTION - Standardized with Landing Page Style */}
@@ -260,10 +260,10 @@ export default async function ServiceDetail({ params }: ServiceProps) {
           <FadeIn delay={100}>
             <div className="relative isolate overflow-hidden bg-slate-900 px-6 py-24 text-center shadow-2xl rounded-3xl sm:px-16">
               <h2 className="mx-auto max-w-2xl text-4xl font-bold tracking-tight text-white sm:text-5xl">
-                Ready to start your <span className="text-indigo-400">{service.title}</span> project?
+                Siap memulai proyek <span className="text-indigo-400">{service.title}</span> Anda?
               </h2>
               <p className="mx-auto mt-6 max-w-xl text-lg leading-8 text-slate-300">
-                Consult with our experts today. We are here to help you turn your visions into reality and get your initial concepts in as little as 24 hours.
+                Konsultasikan dengan tim ahli kami. Kami siap membantu mewujudkan visi Anda dan memberikan konsep awal dalam waktu 24 jam.
               </p>
               <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-6">
                 <a 
@@ -272,14 +272,14 @@ export default async function ServiceDetail({ params }: ServiceProps) {
                   rel="noopener noreferrer"
                   className="group flex items-center justify-center gap-2 rounded-full bg-indigo-500 px-8 py-4 text-base font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/30 hover:-translate-y-1 w-full sm:w-auto"
                 >
-                  Consult via WhatsApp
+                  Konsultasi via WhatsApp
                   <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
                 </a>
                 <Link 
                   href="/#pricing" 
                   className="flex items-center justify-center gap-2 text-base font-semibold leading-6 text-white transition-colors hover:text-indigo-400 w-full sm:w-auto py-2"
                 >
-                  View Pricing Plans
+                  Lihat Paket Harga
                 </Link>
               </div>
               

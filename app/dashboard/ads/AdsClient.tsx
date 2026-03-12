@@ -14,10 +14,10 @@ interface Ad {
 }
 
 const POSITIONS: Record<string, string> = {
-  above_date: "Above Article Date",
-  article_middle: "Middle of Article",
-  article_end: "End of Article",
-  after_recent: "After Recent Articles",
+  above_date: "Tanggal Artikel di Atas",
+  article_middle: "Tengah Artikel",
+  article_end: "Akhir Artikel",
+  after_recent: "Setelah Artikel Terkini",
 };
 
 const emptyForm = { name: "", position: "above_date", html_code: "", is_active: true };
@@ -59,24 +59,24 @@ export default function AdsClient() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name || !form.html_code) return showToast("Name and HTML code are required", "error");
+    if (!form.name || !form.html_code) return showToast("Nama dan kode HTML wajib diisi.", "error");
     setSaving(true);
     if (editingAd) {
       const { error } = await supabase.from("ads").update({ ...form, updated_at: new Date().toISOString() }).eq("id", editingAd.id);
-      if (error) showToast("Failed to update ad", "error");
-      else { showToast("Ad updated", "success"); setView("list"); fetchAds(); }
+      if (error) showToast("Gagal memperbarui iklan.", "error");
+      else { showToast("Iklan diperbarui.", "success"); setView("list"); fetchAds(); }
     } else {
       const { error } = await supabase.from("ads").insert(form);
-      if (error) showToast("Failed to create ad", "error");
-      else { showToast("Ad created", "success"); setView("list"); fetchAds(); }
+      if (error) showToast("Gagal membuat iklan.", "error");
+      else { showToast("Iklan dibuat.", "success"); setView("list"); fetchAds(); }
     }
     setSaving(false);
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm("Delete this ad?")) return;
+    if (!confirm("Apakah Anda yakin ingin menghapus iklan ini?")) return;
     await supabase.from("ads").delete().eq("id", id);
-    showToast("Ad deleted", "success");
+    showToast("Iklan dihapus.", "success");
     fetchAds();
   };
 
@@ -103,7 +103,7 @@ export default function AdsClient() {
             onClick={() => setView("list")}
             className="inline-flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-primary transition-colors"
           >
-            <ArrowLeft className="w-4 h-4" /> Back to List
+            <ArrowLeft className="w-4 h-4" /> Kembali ke Daftar
           </button>
           <button
             onClick={handleSave}
@@ -111,14 +111,14 @@ export default function AdsClient() {
             className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-6 py-2.5 rounded-xl shadow-sm shadow-indigo-200 transition-colors disabled:opacity-60"
           >
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-            {editingAd ? "Update Ad" : "Save Ad"}
+            {editingAd ? "Perbarui Iklan" : "Simpan Iklan"}
           </button>
         </div>
 
         <form onSubmit={handleSave} className="space-y-5">
           <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-6 space-y-5">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Ad Name</label>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Nama Iklan</label>
               <input
                 required
                 value={form.name}
@@ -129,7 +129,7 @@ export default function AdsClient() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Position</label>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Posisi</label>
               <select
                 value={form.position}
                 onChange={e => setForm(p => ({ ...p, position: e.target.value }))}
@@ -142,13 +142,13 @@ export default function AdsClient() {
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">HTML / Ad Code</label>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Kode HTML / Iklan</label>
               <textarea
                 required
                 rows={8}
                 value={form.html_code}
                 onChange={e => setForm(p => ({ ...p, html_code: e.target.value }))}
-                placeholder="Paste your Google AdSense or any HTML ad code here..."
+                placeholder="Tempelkan kode iklan Google AdSense atau kode iklan HTML Anda di sini..."
                 className={`${inputClass} font-mono text-xs leading-relaxed resize-none`}
               />
             </div>
@@ -159,8 +159,8 @@ export default function AdsClient() {
                   {form.is_active ? <Globe className="w-4 h-4" /> : <Clock className="w-4 h-4" />}
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-slate-900">{form.is_active ? "Active" : "Inactive"}</p>
-                  <p className="text-xs text-slate-400">{form.is_active ? "Ad is visible on articles" : "Ad is hidden"}</p>
+                  <p className="text-sm font-bold text-slate-900">{form.is_active ? "Aktif" : "Tidak Aktif"}</p>
+                  <p className="text-xs text-slate-400">{form.is_active ? "Iklan terlihat di artikel" : "Iklan disembunyikan"}</p>
                 </div>
               </div>
               <button
@@ -181,14 +181,14 @@ export default function AdsClient() {
     <div className="pt-6 px-4 pb-10">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Ads Management</h1>
-          <p className="text-sm font-medium text-slate-500 mt-1">Manage ad placements across your blog articles.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Manajemen Iklan</h1>
+          <p className="text-sm font-medium text-slate-500 mt-1">Kelola penempatan iklan di artikel blog Anda.</p>
         </div>
         <button
           onClick={openNew}
           className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-sm shadow-indigo-200 transition-colors w-fit"
         >
-          <Plus className="w-4 h-4" /> New Ad
+          <Plus className="w-4 h-4" /> Iklan Baru
         </button>
       </div>
 
@@ -199,7 +199,7 @@ export default function AdsClient() {
             <input 
               value={search}
               onChange={e => { setSearch(e.target.value); setPage(1); }}
-              placeholder="Search ads..." 
+              placeholder="Cari iklan..." 
               className="w-full bg-slate-50 border-0 rounded-xl pl-9 pr-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500/20"
             />
           </div>
@@ -211,17 +211,17 @@ export default function AdsClient() {
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-32 text-slate-400">
             <Megaphone className="w-10 h-10 mb-3 text-slate-200" />
-            <p className="text-sm font-bold">{search ? "No results found" : "No ads yet"}</p>
-            {!search && <p className="text-xs mt-1">Create your first ad placement</p>}
+            <p className="text-sm font-bold">{search ? "Tidak ada hasil yang ditemukan" : "Belum ada iklan"}</p>
+            {!search && <p className="text-xs mt-1">Buat penempatan iklan pertama Anda.</p>}
           </div>
         ) : (
           <table className="w-full text-left">
             <thead>
               <tr className="text-slate-400 text-xs font-bold uppercase tracking-wider border-b border-slate-100 bg-slate-50/50">
-                <th className="px-6 py-4">Name</th>
-                <th className="px-6 py-4">Position</th>
+                <th className="px-6 py-4">Nama</th>
+                <th className="px-6 py-4">Posisi</th>
                 <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4 text-right">Actions</th>
+                <th className="px-6 py-4 text-right">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -236,8 +236,8 @@ export default function AdsClient() {
                   <td className="px-6 py-4">
                     <button onClick={() => handleToggle(ad)} className="flex items-center gap-1.5 text-xs font-semibold">
                       {ad.is_active
-                        ? <><ToggleRight className="w-4 h-4 text-emerald-500" /><span className="text-emerald-600">Active</span></>
-                        : <><ToggleLeft className="w-4 h-4 text-slate-400" /><span className="text-slate-400">Inactive</span></>}
+                        ? <><ToggleRight className="w-4 h-4 text-emerald-500" /><span className="text-emerald-600">Aktif</span></>
+                        : <><ToggleLeft className="w-4 h-4 text-slate-400" /><span className="text-slate-400">Tidak Aktif</span></>}
                     </button>
                   </td>
                   <td className="px-6 py-4">
@@ -259,7 +259,7 @@ export default function AdsClient() {
         {totalPages > 1 && (
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-4 border-t border-slate-100">
             <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">
-              Showing {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filtered.length)} of {filtered.length} ads
+              Menampilkan {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filtered.length)} dari {filtered.length} iklan
             </p>
             <div className="flex items-center gap-2">
               <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}

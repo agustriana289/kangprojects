@@ -46,11 +46,11 @@ export default function PagesClient() {
   }, [fetchPages]);
 
   const deletePage = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this page?")) return;
+    if (!confirm("Apakah Anda yakin ingin menghapus halaman ini?")) return;
     try {
       const { error } = await supabase.from("pages").delete().eq("id", id);
       if (error) throw error;
-      showToast("Page deleted.", "success");
+      showToast("Halaman dihapus.", "success");
       fetchPages();
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "An unknown error occurred";
@@ -79,15 +79,15 @@ export default function PagesClient() {
     <div className="pt-6 px-4 pb-10">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Static Pages</h1>
-          <p className="text-sm font-medium text-slate-500 mt-1">Manage your website&apos;s static content.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Halaman Statis</h1>
+          <p className="text-sm font-medium text-slate-500 mt-1">Kelola konten statis website Anda.</p>
         </div>
         <Link
           href="/dashboard/pages/new"
           className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-sm shadow-indigo-200 transition-colors w-fit"
         >
           <Plus className="w-4 h-4" />
-          New Page
+          Halaman Baru
         </Link>
       </div>
 
@@ -98,7 +98,7 @@ export default function PagesClient() {
             <input
               value={search}
               onChange={e => { setSearch(e.target.value); setCurrentPage(1); }}
-              placeholder="Search by title or slug..."
+              placeholder="Cari berdasarkan judul atau slug..."
               className="w-full rounded-xl bg-slate-50 border border-slate-200 pl-10 pr-4 py-2.5 text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all"
             />
           </div>
@@ -109,7 +109,7 @@ export default function PagesClient() {
                 onClick={() => { setTab(t); setCurrentPage(1); }}
                 className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${tab === t ? "bg-white text-primary shadow-sm ring-1 ring-slate-200/50" : "text-slate-500 hover:text-slate-800"}`}
               >
-                {t}
+                {t === "all" ? "Semua" : t === "published" ? "Diterbitkan" : "Draf"}
               </button>
             ))}
           </div>
@@ -119,11 +119,11 @@ export default function PagesClient() {
           <table className="w-full text-left">
             <thead>
               <tr className="text-slate-400 text-xs font-bold uppercase tracking-wider border-b border-slate-100 bg-slate-50/50">
-                <th className="px-6 py-4">Page</th>
+                <th className="px-6 py-4">Halaman</th>
                 <th className="px-6 py-4">Slug</th>
                 <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4">Last Updated</th>
-                <th className="px-6 py-4 text-right">Actions</th>
+                <th className="px-6 py-4">Terakhir Diperbarui</th>
+                <th className="px-6 py-4 text-right">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -143,11 +143,11 @@ export default function PagesClient() {
                   <td className="px-6 py-4">
                     {page.is_published ? (
                       <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-lg text-xs font-bold border border-emerald-100">
-                        <CheckCircle2 className="w-3.5 h-3.5" /> Published
+                        <CheckCircle2 className="w-3.5 h-3.5" /> Diterbitkan
                       </span>
                     ) : (
                       <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 text-slate-500 rounded-lg text-xs font-bold">
-                        <Clock className="w-3.5 h-3.5" /> Draft
+                        <Clock className="w-3.5 h-3.5" /> Draf
                       </span>
                     )}
                   </td>
@@ -184,7 +184,7 @@ export default function PagesClient() {
 
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-4 border-t border-slate-100">
           <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-            Showing {(currentPage - 1) * pageSize + 1}–{Math.min(currentPage * pageSize, filteredPages.length)} of {filteredPages.length} Pages
+            Menampilkan {(currentPage - 1) * pageSize + 1}–{Math.min(currentPage * pageSize, filteredPages.length)} dari {filteredPages.length} Halaman
           </p>
           <div className="flex items-center gap-2">
             <button

@@ -25,10 +25,10 @@ export default function HighlightedPortfolio({ settings, portfolios = [] }: { se
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <FadeIn delay={100} className="mb-12 text-center">
             <h2 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-              {settings?.case_studies_title || "More Case Studies"}
+              {settings?.case_studies_title || "Studi Kasus Lainnya"}
             </h2>
             <p className="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">
-              {settings?.case_studies_description || "A curated collection of our finest brand identity projects."}
+              {settings?.case_studies_description || "Koleksi kurasi proyek identitas merek terbaik kami."}
             </p>
           </FadeIn>
 
@@ -69,7 +69,7 @@ export default function HighlightedPortfolio({ settings, portfolios = [] }: { se
                         <ZoomIn size={20} />
                       </div>
                       <h3 className="text-xl font-bold text-white mb-1 line-clamp-1">{item.title}</h3>
-                      <p className="text-sm text-slate-300 font-medium line-clamp-1">{item.category || "Uncategorized"}</p>
+                      <p className="text-sm text-slate-300 font-medium line-clamp-1">{item.category || "Tak Berkategori"}</p>
                     </div>
                   </div>
                 </div>

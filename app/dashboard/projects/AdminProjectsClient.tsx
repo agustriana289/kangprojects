@@ -79,7 +79,7 @@ export default function AdminProjectsClient() {
       })));
       setUsersList(profiles || []);
     } catch (error: any) {
-      showToast(error.message || "Failed to fetch projects", "error");
+      showToast(error.message || "Gagal mengambil data proyek", "error");
     } finally {
       setLoading(false);
     }
@@ -112,14 +112,14 @@ export default function AdminProjectsClient() {
     if (baseTitle && pkgName) return `${baseTitle} (${pkgName})`;
     if (baseTitle) return baseTitle;
     if (pkgName) return pkgName;
-    return fd.customer_name || "Project";
+    return fd.customer_name || "Proyek";
   };
 
   const getClientName = (o: any) => {
     if (o.client?.full_name) return o.client.full_name;
     if (o.client?.email) return o.client.email.split("@")[0];
     const fd = getFormData(o);
-    return fd.customer_name || fd["Client Name"] || "Unknown Client";
+    return fd.customer_name || fd["Client Name"] || "Klien Tidak Dikenal";
   };
 
   const getClientEmail = (o: any) => {
@@ -137,8 +137,8 @@ export default function AdminProjectsClient() {
 
   const updateStatus = async (id: string, status: string) => {
     const { error } = await supabase.from("store_orders").update({ status }).eq("id", id);
-    if (error) return showToast("Failed to update status", "error");
-    showToast(`Status updated to ${status}`, "success");
+    if (error) return showToast("Gagal memperbarui status", "error");
+    showToast(`Status diperbarui ke ${status}`, "success");
     fetchOrders();
   };
 
@@ -161,7 +161,7 @@ export default function AdminProjectsClient() {
           .upload(filePath, file);
 
         if (uploadError) {
-          showToast(`Error uploading image: ${uploadError.message}`, "error");
+          showToast(`Gagal mengunggah gambar: ${uploadError.message}`, "error");
           continue;
         }
 
@@ -169,11 +169,11 @@ export default function AdminProjectsClient() {
         uploadedImages.push(publicUrl);
       }
 
-      if (uploadedImages.length === 0) throw new Error("No images uploaded");
+      if (uploadedImages.length === 0) throw new Error("Tidak ada gambar yang diunggah");
 
       const title = getProjectTitle(selectedProject).split(' — ')[1] || getProjectTitle(selectedProject);
       const category = selectedProject.store_services?.category || selectedProject.store_products?.category || "Logo Design";
-      const description = `Portfolio for project ${getProjectTitle(selectedProject)}. Crafted for ${getClientName(selectedProject)}.`;
+      const description = `Portofolio untuk proyek ${getProjectTitle(selectedProject)}. Dibuat untuk ${getClientName(selectedProject)}.`;
       
       const { error: insertError } = await supabase.from("store_portfolios").insert({
         order_id: selectedProject.id,
@@ -188,7 +188,7 @@ export default function AdminProjectsClient() {
 
       if (insertError) throw insertError;
 
-      showToast("Portfolio published successfully!", "success");
+      showToast("Portofolio berhasil dipublikasikan!", "success");
       
       const { data: newPortfolio } = await supabase.from("store_portfolios").select("*").eq("order_id", selectedProject.id).single();
       if (newPortfolio) {
@@ -197,7 +197,7 @@ export default function AdminProjectsClient() {
       
       fetchOrders();
     } catch (err: any) {
-      showToast(err.message || "Failed to automate portfolio creation", "error");
+      showToast(err.message || "Gagal membuat portofolio otomatis", "error");
     } finally {
       setUploadingPortfolio(false);
       if (e.target) e.target.value = "";
@@ -205,10 +205,8 @@ export default function AdminProjectsClient() {
   };
 
   const deleteOrder = async (id: string) => {
-    if (!confirm("Delete this project? This cannot be undone.")) return;
-    const { error } = await supabase.from("store_orders").delete().eq("id", id);
-    if (error) return showToast("Failed to delete project", "error");
-    showToast("Project deleted", "success");
+    if (error) return showToast("Gagal menghapus proyek", "error");
+    showToast("Proyek dihapus", "success");
     setIsDetailModalOpen(false);
     fetchOrders();
   };
@@ -269,7 +267,7 @@ export default function AdminProjectsClient() {
       })
       .eq("id", selectedProject.id);
     if (error) { showToast(error.message, "error"); }
-    else { showToast("Project updated", "success"); setIsEditModalOpen(false); fetchOrders(); }
+    else { showToast("Proyek diperbarui", "success"); setIsEditModalOpen(false); fetchOrders(); }
     setUpdating(false);
   };
 
@@ -277,7 +275,7 @@ export default function AdminProjectsClient() {
     e.preventDefault();
     if (creatingProject) return;
     if (!createFormData.service_id || !createFormData.selected_package || !createFormData.title || !createFormData.total_amount) {
-      return showToast("Service, Package, Title, and Amount are required", "error");
+      return showToast("Layanan, Paket, Judul, dan Jumlah wajib diisi", "error");
     }
     setCreatingProject(true);
     try {
@@ -293,7 +291,7 @@ export default function AdminProjectsClient() {
         selected_package: createFormData.selected_package
       });
       if (error) throw error;
-      showToast("Project created successfully", "success");
+      showToast("Proyek berhasil dibuat", "success");
       setIsCreateModalOpen(false);
       setCreateFormData({ title: "", client_name: "", total_amount: "", status: "pending", user_id: "", service_id: "", selected_package: null });
       fetchOrders();
@@ -333,10 +331,10 @@ export default function AdminProjectsClient() {
   const completedStats = orders.filter(o => ['paid', 'processing', 'completed'].includes(o.status));
 
   const clientStats: Record<string, { count: number; amount: number; name: string }> = {};
-  let topClient = { name: "No orders yet", count: 0, amount: 0 };
+  let topClient = { name: "Belum ada pesanan", count: 0, amount: 0 };
   
   const itemStats: Record<string, { count: number; amount: number; name: string }> = {};
-  let topItem = { name: "No orders yet", count: 0, amount: 0 };
+  let topItem = { name: "Belum ada pesanan", count: 0, amount: 0 };
 
   const currentMonthIdx = new Date().getMonth();
   const currentYear = new Date().getFullYear();
@@ -362,7 +360,7 @@ export default function AdminProjectsClient() {
     clientStats[cName].amount += amt;
     if (clientStats[cName].count > topClient.count) topClient = clientStats[cName];
 
-    const iName = o.store_services?.title || o.store_products?.title || "Project";
+    const iName = o.store_services?.title || o.store_products?.title || "Proyek";
     if (!itemStats[iName]) itemStats[iName] = { count: 0, amount: 0, name: iName };
     itemStats[iName].count++;
     itemStats[iName].amount += amt;
@@ -373,31 +371,31 @@ export default function AdminProjectsClient() {
     <div className="pt-6 px-4 pb-16">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Project Management</h1>
-          <p className="text-sm font-medium text-slate-500 mt-1">Manage all incoming orders and service requests.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Manajemen Proyek</h1>
+          <p className="text-sm font-medium text-slate-500 mt-1">Kelola semua pesanan dan permintaan layanan yang masuk.</p>
         </div>
         <div className="flex items-center gap-3">
           <div className="flex bg-slate-100 p-1 rounded-xl">
             {(["all", "shop", "service"] as const).map(t => (
               <button key={t} onClick={() => { setTab(t); setPage(1); }}
                 className={`px-4 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wide transition-all ${tab === t ? "bg-white text-primary shadow-sm" : "text-slate-400 hover:text-slate-600"}`}>
-                {t}
+                {t === "all" ? "Semua" : t === "shop" ? "Toko" : "Layanan"}
               </button>
             ))}
           </div>
           <button onClick={() => setIsCreateModalOpen(true)}
             className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-sm shadow-indigo-200 transition-colors">
-            <Briefcase className="w-4 h-4" /> New Project
+            <Briefcase className="w-4 h-4" /> Proyek Baru
           </button>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
         {[
-          { title: "Top Client", value: topClient.name, tag: `${topClient.count} Order(s) • Rp ${topClient.amount.toLocaleString("id-ID")}`, icon: Users, color: "text-primary" },
-          { title: "Top Service/Shop", value: topItem.name, tag: `${topItem.count} Order(s) • Rp ${topItem.amount.toLocaleString("id-ID")}`, icon: TrendingUp, color: "text-blue-500" },
-          { title: "Monthly Orders", value: `${monthlyOrderCount} Order(s)`, tag: `Rp ${monthlyOrderAmount.toLocaleString("id-ID")}`, icon: Calendar, color: "text-emerald-500" },
-          { title: "Total Orders", value: `${totalOrderCount} Order(s)`, tag: `Rp ${totalOrderAmount.toLocaleString("id-ID")}`, icon: Wallet, color: "text-amber-500" },
+          { title: "Klien Teratas", value: topClient.name, tag: `${topClient.count} Pesanan • Rp ${topClient.amount.toLocaleString("id-ID")}`, icon: Users, color: "text-primary" },
+          { title: "Layanan/Toko Teratas", value: topItem.name, tag: `${topItem.count} Pesanan • Rp ${topItem.amount.toLocaleString("id-ID")}`, icon: TrendingUp, color: "text-blue-500" },
+          { title: "Pesanan Bulanan", value: `${monthlyOrderCount} Pesanan`, tag: `Rp ${monthlyOrderAmount.toLocaleString("id-ID")}`, icon: Calendar, color: "text-emerald-500" },
+          { title: "Total Pesanan", value: `${totalOrderCount} Pesanan`, tag: `Rp ${totalOrderAmount.toLocaleString("id-ID")}`, icon: Wallet, color: "text-amber-500" },
         ].map((s, i) => (
           <div key={i} className="bg-white rounded-2xl p-5 ring-1 ring-slate-100 shadow-sm transition-all hover:shadow-md">
             <div className="flex items-center gap-2 mb-3 text-slate-500">
@@ -415,18 +413,18 @@ export default function AdminProjectsClient() {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }}
-              placeholder="Search by order ID, project name, or client..."
+              placeholder="Cari berdasarkan ID pesanan, nama proyek, atau klien..."
               className="w-full bg-slate-50 border-0 rounded-xl pl-9 pr-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500/20" />
           </div>
           <select value={statusFilter} onChange={e => { setStatusFilter(e.target.value); setPage(1); }}
             className="bg-slate-50 border-0 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-600 min-w-[160px] outline-none focus:ring-2 focus:ring-indigo-500/20">
-            <option value="all">All Status</option>
-            <option value="pending">Pending</option>
-            <option value="waiting_payment">Waiting Payment</option>
-            <option value="paid">Paid</option>
-            <option value="processing">Processing</option>
-            <option value="completed">Completed</option>
-            <option value="cancelled">Cancelled</option>
+            <option value="all">Semua Status</option>
+            <option value="pending">Menunggu</option>
+            <option value="waiting_payment">Menunggu Pembayaran</option>
+            <option value="paid">Dibayar</option>
+            <option value="processing">Diproses</option>
+            <option value="completed">Selesai</option>
+            <option value="cancelled">Dibatalkan</option>
           </select>
         </div>
 
@@ -435,7 +433,7 @@ export default function AdminProjectsClient() {
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-slate-400">
             <Briefcase className="w-10 h-10 mb-3 text-slate-200" />
-            <p className="text-sm font-bold">No projects found</p>
+            <p className="text-sm font-bold">Proyek tidak ditemukan</p>
           </div>
         ) : (
           <>
@@ -443,11 +441,11 @@ export default function AdminProjectsClient() {
               <table className="w-full text-left">
                 <thead>
                   <tr className="text-slate-400 text-xs font-bold uppercase tracking-wider border-b border-slate-100 bg-slate-50/50">
-                    <th className="px-6 py-4">Order Info</th>
-                    <th className="px-6 py-4">Client</th>
-                    <th className="px-6 py-4">Amount</th>
+                    <th className="px-6 py-4">Info Pesanan</th>
+                    <th className="px-6 py-4">Klien</th>
+                    <th className="px-6 py-4">Jumlah</th>
                     <th className="px-6 py-4">Status</th>
-                    <th className="px-6 py-4 text-right">Actions</th>
+                    <th className="px-6 py-4 text-right">Aksi</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -475,7 +473,7 @@ export default function AdminProjectsClient() {
                           <div>
                             <p className="text-sm font-bold text-slate-900">{getClientName(o)}</p>
                             <p className="text-[10px] text-slate-400 font-medium">
-                              {o.client ? "Registered user" : "Offline client"}
+                              {o.client ? "Pengguna terdaftar" : "Klien offline"}
                             </p>
                           </div>
                         </div>
@@ -486,17 +484,17 @@ export default function AdminProjectsClient() {
                       </td>
                       <td className="px-6 py-4">
                         <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg shadow-sm border ${statusColors[o.status] || "bg-slate-50 text-slate-500 border-slate-100"}`}>
-                          {o.status.replace("_", " ")}
+                          {o.status.replace("_", " ").replace("pending", "menunggu").replace("waiting payment", "menunggu pembayaran").replace("paid", "dibayar").replace("processing", "diproses").replace("completed", "selesai").replace("cancelled", "dibatalkan")}
                         </span>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center justify-end gap-1.5">
                           <button onClick={() => openDetailModal(o)}
-                            className="p-2 rounded-lg bg-slate-100 text-slate-500 hover:bg-indigo-50 hover:text-primary transition-colors" title="View Detail">
+                            className="p-2 rounded-lg bg-slate-100 text-slate-500 hover:bg-indigo-50 hover:text-primary transition-colors" title="Lihat Detail">
                             <Eye className="w-4 h-4" />
                           </button>
                           <Link href={`/workspace/${o.id}`}
-                            className="p-2 rounded-lg bg-slate-100 text-slate-500 hover:bg-indigo-50 hover:text-primary transition-colors" title="Go to Workspace">
+                            className="p-2 rounded-lg bg-slate-100 text-slate-500 hover:bg-indigo-50 hover:text-primary transition-colors" title="Buka Ruang Kerja">
                             <MessageSquare className="w-4 h-4" />
                           </Link>
                         </div>
@@ -510,7 +508,7 @@ export default function AdminProjectsClient() {
             {totalPages > 1 && (
               <div className="flex items-center justify-between px-6 py-4 border-t border-slate-100">
                 <p className="text-xs text-slate-400 font-medium">
-                  Showing {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filtered.length)} of {filtered.length} orders
+                  Menampilkan {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filtered.length)} dari {filtered.length} pesanan
                 </p>
                 <div className="flex items-center gap-2">
                   <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
@@ -548,7 +546,7 @@ export default function AdminProjectsClient() {
           <div className="bg-white rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden">
             <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-bold text-slate-900">Order Detail</h3>
+                <h3 className="text-lg font-bold text-slate-900">Detail Pesanan</h3>
                 <p className="text-xs text-slate-400 font-mono mt-0.5">#{selectedProject.order_number}</p>
               </div>
               <button onClick={() => setIsDetailModalOpen(false)} className="p-2 hover:bg-slate-50 rounded-xl text-slate-400"><X className="w-4 h-4" /></button>
@@ -556,22 +554,22 @@ export default function AdminProjectsClient() {
             <div className="p-6 space-y-5 max-h-[75vh] overflow-y-auto">
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-slate-50 rounded-xl p-4">
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Project</p>
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Proyek</p>
                   <p className="text-sm font-bold text-slate-900">{getProjectTitle(selectedProject)}</p>
                 </div>
                 <div className="bg-slate-50 rounded-xl p-4">
                   <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Status</p>
                   <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg border ${statusColors[selectedProject.status] || "bg-slate-50 text-slate-500 border-slate-100"}`}>
-                    {selectedProject.status.replace("_", " ")}
+                    {selectedProject.status.replace("_", " ").replace("pending", "menunggu").replace("waiting payment", "menunggu pembayaran").replace("paid", "dibayar").replace("processing", "diproses").replace("completed", "selesai").replace("cancelled", "dibatalkan")}
                   </span>
                 </div>
                 <div className="bg-slate-50 rounded-xl p-4">
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Amount</p>
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Jumlah</p>
                   <p className="text-sm font-bold text-slate-900">Rp {Number(selectedProject.total_amount || 0).toLocaleString("id-ID")}</p>
                   <p className="text-[10px] text-slate-400 mt-0.5">{selectedProject.payment_method || "—"}</p>
                 </div>
                 <div className="bg-slate-50 rounded-xl p-4">
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Date</p>
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Tanggal</p>
                   <p className="text-sm font-bold text-slate-900">
                     {new Date(selectedProject.created_at).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}
                   </p>
@@ -579,7 +577,7 @@ export default function AdminProjectsClient() {
               </div>
 
               <div>
-                <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Client Information</p>
+                <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Informasi Klien</p>
                 <div className="bg-slate-50 rounded-xl p-4 space-y-3">
                   <div className="flex items-center gap-3">
                     <div className="w-9 h-9 rounded-xl bg-indigo-100 flex items-center justify-center text-xs font-bold text-primary shrink-0">
@@ -587,7 +585,7 @@ export default function AdminProjectsClient() {
                     </div>
                     <div>
                       <p className="text-sm font-bold text-slate-900">{getClientName(selectedProject)}</p>
-                      <p className="text-[10px] text-slate-400">{selectedProject.client ? "Registered user" : "Offline client"}</p>
+                      <p className="text-[10px] text-slate-400">{selectedProject.client ? "Pengguna terdaftar" : "Klien offline"}</p>
                     </div>
                   </div>
                   {getClientEmail(selectedProject) && (
@@ -613,7 +611,7 @@ export default function AdminProjectsClient() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Portfolio</p>
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Portofolio</p>
                   {!selectedProject.portfolio ? (
                     <div className="relative">
                       <button 
@@ -624,7 +622,7 @@ export default function AdminProjectsClient() {
                         {uploadingPortfolio ? (
                           <div className="flex flex-col items-center gap-2">
                             <Loader2 className="w-6 h-6 animate-spin text-primary" />
-                            <p className="text-[10px] font-bold text-slate-400">Uploading...</p>
+                            <p className="text-[10px] font-bold text-slate-400">Mengunggah...</p>
                           </div>
                         ) : (
                           <>
@@ -632,8 +630,8 @@ export default function AdminProjectsClient() {
                               <Plus className="w-4 h-4 group-hover:text-primary" />
                             </div>
                             <div className="text-center">
-                               <p className="text-xs font-bold">Not Published</p>
-                               <p className="text-[10px] font-medium opacity-80 mt-0.5">Click to upload result</p>
+                               <p className="text-xs font-bold">Belum Dipublikasikan</p>
+                               <p className="text-[10px] font-medium opacity-80 mt-0.5">Klik untuk unggah hasil</p>
                             </div>
                           </>
                         )}
@@ -652,7 +650,7 @@ export default function AdminProjectsClient() {
                       <div className="space-y-3 w-full">
                          <div className="flex items-center gap-2 mb-2">
                            <Briefcase className="w-4 h-4 text-emerald-500 shrink-0" />
-                           <p className="text-xs font-bold leading-none">Published</p>
+                           <p className="text-xs font-bold leading-none">Terpublikasi</p>
                          </div>
                          {Array.isArray(selectedProject.portfolio.images) && selectedProject.portfolio.images.length > 0 ? (
                             <div className="w-full aspect-video rounded-lg overflow-hidden border border-emerald-200 shadow-sm relative group">
@@ -669,7 +667,7 @@ export default function AdminProjectsClient() {
                             </div>
                          ) : (
                            <div className="w-full aspect-video rounded-lg bg-emerald-100/50 flex items-center justify-center border border-emerald-200 border-dashed">
-                             <span className="text-[10px] font-medium opacity-60">No image</span>
+                             <span className="text-[10px] font-medium opacity-60">Tidak ada gambar</span>
                            </div>
                          )}
                       </div>
@@ -682,14 +680,14 @@ export default function AdminProjectsClient() {
                   <div className={`p-4 rounded-xl border flex flex-col justify-center gap-3 ${selectedProject.testimonial ? 'bg-indigo-50 border-indigo-100 text-primary' : 'bg-slate-50 border-slate-100 text-slate-500'} min-h-[120px]`}>
                     {selectedProject.testimonial ? (
                       <div className="space-y-3 w-full">
-                        <div className="flex items-center gap-2 mb-2">
+                         <div className="flex items-center gap-2 mb-2">
                            <Star className="w-4 h-4 text-indigo-500 shrink-0 fill-indigo-500" />
-                           <p className="text-xs font-bold leading-none">Received</p>
+                           <p className="text-xs font-bold leading-none">Diterima</p>
                         </div>
                         <div className="bg-white/60 p-3 rounded-lg border border-indigo-100/50 relative">
                            <span className="absolute -top-2 -left-1 text-2xl text-indigo-300 font-serif leading-none">&ldquo;</span>
-                           <p className="text-xs font-medium text-slate-600 italic line-clamp-3 relative z-10 pl-2">
-                             {selectedProject.testimonial.comment || "Empty testimonial text."}
+                            <p className="text-xs font-medium text-slate-600 italic line-clamp-3 relative z-10 pl-2">
+                             {selectedProject.testimonial.comment || "Teks testimoni kosong."}
                            </p>
                         </div>
                       </div>
@@ -697,8 +695,8 @@ export default function AdminProjectsClient() {
                       <div className="flex items-center gap-3">
                         <Star className="w-5 h-5 text-slate-400 shrink-0" />
                         <div>
-                           <p className="text-xs font-bold">Not Received</p>
-                           <p className="text-[10px] font-medium opacity-80 mt-0.5">Waiting for rating</p>
+                           <p className="text-xs font-bold">Belum Diterima</p>
+                           <p className="text-[10px] font-medium opacity-80 mt-0.5">Menunggu penilaian</p>
                         </div>
                       </div>
                     )}
@@ -722,7 +720,7 @@ export default function AdminProjectsClient() {
                       if (error) throw error;
                       
                       navigator.clipboard.writeText(`${window.location.origin}/testimonials/submit/${selectedProject.id}`);
-                      showToast("Testimonial link generated and copied! Expires in 7 days.", "success");
+                      showToast("Link testimoni dibuat dan disalin! Kedaluwarsa dalam 7 hari.", "success");
                       fetchOrders();
                     } catch (err: any) {
                       showToast(err.message || "Failed to generate link", "error");
@@ -732,17 +730,17 @@ export default function AdminProjectsClient() {
                   }}
                   className="w-full sm:flex-1 inline-flex items-center justify-center gap-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 py-2.5 rounded-xl text-sm font-bold transition-colors border border-emerald-100 disabled:opacity-50">
                   {updating ? <Loader2 className="w-4 h-4 animate-spin" /> : <PartyPopper className="w-4 h-4" />}
-                  Copy Testimonial Link
+                  Salin Link Testimoni
                 </button>
               )}
               <button onClick={() => openEditModal(selectedProject)}
                 className="flex-1 inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl text-sm font-bold transition-colors">
-                <Edit className="w-4 h-4" /> Edit Project
+                <Edit className="w-4 h-4" /> Edit Proyek
               </button>
               <button
                 onClick={() => { setIsDetailModalOpen(false); deleteOrder(selectedProject.id); }}
                 className="inline-flex items-center justify-center gap-2 px-4 bg-red-50 hover:bg-red-100 text-red-600 py-2.5 rounded-xl text-sm font-bold transition-colors border border-red-100">
-                <Trash2 className="w-4 h-4" /> Delete
+                <Trash2 className="w-4 h-4" /> Hapus
               </button>
             </div>
           </div>
@@ -754,33 +752,33 @@ export default function AdminProjectsClient() {
           <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden">
             <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-bold text-slate-900">Edit Project</h3>
+                <h3 className="text-lg font-bold text-slate-900">Edit Proyek</h3>
                 <p className="text-xs text-slate-400 font-medium mt-0.5">#{selectedProject.order_number}</p>
               </div>
               <button onClick={() => setIsEditModalOpen(false)} className="p-2 hover:bg-slate-50 rounded-xl text-slate-400"><X className="w-4 h-4" /></button>
             </div>
             <form onSubmit={handleUpdateProject} className="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Order Info</p>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Info Pesanan</p>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Status</label>
                   <select value={editFormData.status} onChange={e => setEditFormData({ ...editFormData, status: e.target.value })} className={inputClass}>
-                    <option value="pending">Pending</option>
-                    <option value="waiting_payment">Waiting Payment</option>
-                    <option value="paid">Paid</option>
-                    <option value="processing">Processing</option>
-                    <option value="completed">Completed</option>
-                    <option value="cancelled">Cancelled</option>
+                    <option value="pending">Menunggu</option>
+                    <option value="waiting_payment">Menunggu Pembayaran</option>
+                    <option value="paid">Dibayar</option>
+                    <option value="processing">Diproses</option>
+                    <option value="completed">Selesai</option>
+                    <option value="cancelled">Dibatalkan</option>
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Payment Method</label>
-                  <input type="text" value={editFormData.payment_method} onChange={e => setEditFormData({ ...editFormData, payment_method: e.target.value })} className={inputClass} placeholder="e.g. Bank Transfer" />
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Metode Pembayaran</label>
+                  <input type="text" value={editFormData.payment_method} onChange={e => setEditFormData({ ...editFormData, payment_method: e.target.value })} className={inputClass} placeholder="misal: Transfer Bank" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Total Amount (IDR)</label>
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Total Jumlah (IDR)</label>
                   <input type="number" value={editFormData.total_amount} onChange={e => setEditFormData({ ...editFormData, total_amount: e.target.value })} className={inputClass} />
                 </div>
                 <div>
@@ -790,15 +788,15 @@ export default function AdminProjectsClient() {
               </div>
 
               <div className="border-t border-slate-100 pt-4">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-4">Client Info</p>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-4">Info Klien</p>
                 <div className="space-y-3">
                   <div>
-                    <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Project / Logo Name</label>
-                    <input type="text" value={editFormData.project_title} onChange={e => setEditFormData({ ...editFormData, project_title: e.target.value })} className={inputClass} placeholder="e.g. Logo Kopi Kenangan" />
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Nama Proyek / Logo</label>
+                    <input type="text" value={editFormData.project_title} onChange={e => setEditFormData({ ...editFormData, project_title: e.target.value })} className={inputClass} placeholder="misal: Logo Kopi Kenangan" />
                   </div>
                   <div>
-                    <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Customer Name</label>
-                    <input type="text" value={editFormData.customer_name} onChange={e => setEditFormData({ ...editFormData, customer_name: e.target.value })} className={inputClass} placeholder="e.g. Budi Santoso" />
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Nama Pelanggan</label>
+                    <input type="text" value={editFormData.customer_name} onChange={e => setEditFormData({ ...editFormData, customer_name: e.target.value })} className={inputClass} placeholder="misal: Budi Santoso" />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
@@ -814,31 +812,31 @@ export default function AdminProjectsClient() {
               </div>
 
               <div className="border-t border-slate-100 pt-4">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-4">Linked Item & Package</p>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-4">Item & Paket Tertaut</p>
                 <div className="space-y-3">
                   <div>
-                    <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Type</label>
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Tipe</label>
                     <select value={editFormData.product_id ? "product" : editFormData.service_id ? "service" : "none"} onChange={e => {
                       const v = e.target.value;
                       if (v === "none") setEditFormData({...editFormData, service_id: "", product_id: "", selected_package: ""});
                       else if (v === "service") setEditFormData({...editFormData, service_id: servicesList[0]?.id || "", product_id: "", selected_package: ""});
                       else if (v === "product") setEditFormData({...editFormData, product_id: productsList[0]?.id || "", service_id: "", selected_package: ""});
                     }} className={inputClass}>
-                      <option value="none">Custom (Manual Input)</option>
-                      <option value="service">Service</option>
-                      <option value="product">Shop Product</option>
+                      <option value="none">Kustom (Input Manual)</option>
+                      <option value="service">Layanan</option>
+                      <option value="product">Produk Toko</option>
                     </select>
                   </div>
 
                   {!editFormData.product_id && !editFormData.service_id && (
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Service / Item Name</label>
-                        <input type="text" value={editFormData.custom_item_name || ""} onChange={e => setEditFormData({...editFormData, custom_item_name: e.target.value})} className={inputClass} placeholder="e.g. Logo Design" />
+                        <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Nama Layanan / Item</label>
+                        <input type="text" value={editFormData.custom_item_name || ""} onChange={e => setEditFormData({...editFormData, custom_item_name: e.target.value})} className={inputClass} placeholder="misal: Desain Logo" />
                       </div>
                       <div>
-                        <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Package Name</label>
-                        <input type="text" value={editFormData.custom_package_name || ""} onChange={e => setEditFormData({...editFormData, custom_package_name: e.target.value})} className={inputClass} placeholder="e.g. Standard" />
+                        <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Nama Paket</label>
+                        <input type="text" value={editFormData.custom_package_name || ""} onChange={e => setEditFormData({...editFormData, custom_package_name: e.target.value})} className={inputClass} placeholder="misal: Standar" />
                       </div>
                     </div>
                   )}
@@ -856,7 +854,7 @@ export default function AdminProjectsClient() {
                           ))}
                         </select>
                       </div>
-                      {(() => {
+                       {(() => {
                         let pkgs: any[] = [];
                         if (editFormData.product_id) {
                           const item = productsList.find((x: any) => x.id === editFormData.product_id);
@@ -867,12 +865,12 @@ export default function AdminProjectsClient() {
                         }
                         return pkgs.length > 0 ? (
                           <div>
-                            <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Package</label>
+                            <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Paket</label>
                             <select value={editFormData.selected_package || ""} onChange={e => {
                               const p = pkgs.find((x: any) => x.name === e.target.value);
                               if (p) setEditFormData((prev: any) => ({...prev, selected_package: p.name, total_amount: p.price || prev.total_amount}));
                             }} className={inputClass}>
-                              <option value="">-- Choose Package --</option>
+                              <option value="">-- Pilih Paket --</option>
                               {pkgs.map((p: any) => (
                                 <option key={p.name} value={p.name}>{p.name}{p.price ? ` — Rp${Number(p.price).toLocaleString("id-ID")}` : ""}</option>
                               ))}
@@ -886,9 +884,9 @@ export default function AdminProjectsClient() {
               </div>
 
               <div className="flex gap-3 pt-2">
-                <button type="button" onClick={() => setIsEditModalOpen(false)} className="flex-1 py-2.5 rounded-xl text-sm font-bold text-slate-500 hover:bg-slate-50 transition-colors">Cancel</button>
+                <button type="button" onClick={() => setIsEditModalOpen(false)} className="flex-1 py-2.5 rounded-xl text-sm font-bold text-slate-500 hover:bg-slate-50 transition-colors">Batal</button>
                 <button type="submit" disabled={updating} className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl text-sm font-bold transition-colors disabled:opacity-60 flex items-center justify-center gap-2">
-                  {updating ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save Changes"}
+                  {updating ? <Loader2 className="w-4 h-4 animate-spin" /> : "Simpan Perubahan"}
                 </button>
               </div>
             </form>
@@ -901,28 +899,28 @@ export default function AdminProjectsClient() {
           <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden">
             <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-bold text-slate-900">Create Offline Project</h3>
-                <p className="text-xs text-slate-400 font-medium mt-0.5">Manual order entry for offline clients</p>
+                <h3 className="text-lg font-bold text-slate-900">Buat Proyek Offline</h3>
+                <p className="text-xs text-slate-400 font-medium mt-0.5">Entri pesanan manual untuk klien offline</p>
               </div>
               <button onClick={() => setIsCreateModalOpen(false)} className="p-2 hover:bg-slate-50 rounded-xl text-slate-400"><X className="w-4 h-4" /></button>
             </div>
             <form onSubmit={handleCreateProject} className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
               <div>
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Select Service <span className="text-red-500">*</span></label>
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Pilih Layanan <span className="text-red-500">*</span></label>
                 <select required value={createFormData.service_id} onChange={e => setCreateFormData({ ...createFormData, service_id: e.target.value, selected_package: null, total_amount: "" })} className={inputClass}>
-                  <option value="">-- Choose Service --</option>
+                  <option value="">-- Pilih Layanan --</option>
                   {servicesList.map(s => <option key={s.id} value={s.id}>{s.title}</option>)}
                 </select>
               </div>
-              {createFormData.service_id && (
+                     {createFormData.service_id && (
                 <div>
-                  <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Select Package <span className="text-red-500">*</span></label>
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Pilih Paket <span className="text-red-500">*</span></label>
                   <select required value={createFormData.selected_package?.name || ""} onChange={e => {
                     const service = servicesList.find(s => s.id === createFormData.service_id);
                     const pkg = service?.packages?.find((p: any) => p.name === e.target.value);
                     setCreateFormData({ ...createFormData, selected_package: pkg || null, total_amount: pkg ? String(pkg.price) : createFormData.total_amount });
                   }} className={inputClass}>
-                    <option value="">-- Choose Package --</option>
+                    <option value="">-- Pilih Paket --</option>
                     {servicesList.find(s => s.id === createFormData.service_id)?.packages?.map((p: any) => (
                       <option key={p.name} value={p.name}>{p.name} — Rp{Number(p.price).toLocaleString("id-ID")}</option>
                     ))}
@@ -930,36 +928,36 @@ export default function AdminProjectsClient() {
                 </div>
               )}
               <div>
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Project / Logo Name <span className="text-red-500">*</span></label>
-                <input required type="text" value={createFormData.title} onChange={e => setCreateFormData({ ...createFormData, title: e.target.value })} className={inputClass} placeholder="e.g. Logo Kopi Kenangan" />
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Nama Proyek / Logo <span className="text-red-500">*</span></label>
+                <input required type="text" value={createFormData.title} onChange={e => setCreateFormData({ ...createFormData, title: e.target.value })} className={inputClass} placeholder="misal: Logo Kopi Kenangan" />
               </div>
               <div>
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Client Name</label>
-                <input type="text" value={createFormData.client_name} onChange={e => setCreateFormData({ ...createFormData, client_name: e.target.value })} className={inputClass} placeholder="e.g. Budi Santoso" />
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Nama Klien</label>
+                <input type="text" value={createFormData.client_name} onChange={e => setCreateFormData({ ...createFormData, client_name: e.target.value })} className={inputClass} placeholder="misal: Budi Santoso" />
               </div>
               <div>
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Total Amount (IDR) <span className="text-red-500">*</span></label>
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Total Jumlah (IDR) <span className="text-red-500">*</span></label>
                 <input required type="number" value={createFormData.total_amount} onChange={e => setCreateFormData({ ...createFormData, total_amount: e.target.value })} className={inputClass} placeholder="150000" />
               </div>
               <div>
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Link to Registered User (Optional)</label>
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Tautkan ke Pengguna Terdaftar (Opsional)</label>
                 <select value={createFormData.user_id} onChange={e => setCreateFormData({ ...createFormData, user_id: e.target.value })} className={inputClass}>
-                  <option value="">-- No Linked User --</option>
+                  <option value="">-- Tidak Ada Pengguna Tautan --</option>
                   {usersList.map(u => <option key={u.id} value={u.id}>{u.full_name || u.email}</option>)}
                 </select>
               </div>
-              <div>
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Initial Status</label>
+                   <div>
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-2">Status Awal</label>
                 <select value={createFormData.status} onChange={e => setCreateFormData({ ...createFormData, status: e.target.value })} className={inputClass}>
-                  <option value="pending">Pending</option>
-                  <option value="processing">Processing</option>
-                  <option value="completed">Completed</option>
+                  <option value="pending">Menunggu</option>
+                  <option value="processing">Diproses</option>
+                  <option value="completed">Selesai</option>
                 </select>
               </div>
               <div className="flex gap-3 pt-2">
-                <button type="button" onClick={() => setIsCreateModalOpen(false)} className="flex-1 py-2.5 rounded-xl text-sm font-bold text-slate-500 hover:bg-slate-50 transition-colors">Cancel</button>
+                <button type="button" onClick={() => setIsCreateModalOpen(false)} className="flex-1 py-2.5 rounded-xl text-sm font-bold text-slate-500 hover:bg-slate-50 transition-colors">Batal</button>
                 <button type="submit" disabled={creatingProject} className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl text-sm font-bold transition-colors disabled:opacity-60 flex items-center justify-center gap-2">
-                  {creatingProject ? <Loader2 className="w-4 h-4 animate-spin" /> : "Create Project"}
+                  {creatingProject ? <Loader2 className="w-4 h-4 animate-spin" /> : "Buat Proyek"}
                 </button>
               </div>
             </form>

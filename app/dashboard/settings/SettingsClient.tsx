@@ -50,13 +50,32 @@ type WebsiteSettings = {
   faq_badge: string;
   faq_title: string;
   faq_description: string;
+  hero_button1_text: string;
+  hero_button1_url: string;
+  hero_button2_text: string;
+  hero_button2_url: string;
   cta_title: string;
   cta_description: string;
   cta_button1_text: string;
+  cta_button1_url: string;
   cta_button2_text: string;
+  cta_button2_url: string;
   blog_badge: string;
   blog_title: string;
   blog_description: string;
+  why_choose_us_badge: string;
+  why_choose_us_title: string;
+  why_choose_us_description: string;
+  why_choose_us_list: { title: string; desc: string; icon: string }[];
+  all_services_badge: string;
+  all_services_title: string;
+  all_services_description: string;
+  shop_badge: string;
+  shop_title: string;
+  shop_description: string;
+  testimonial_badge: string;
+  testimonial_title: string;
+  testimonial_description: string;
   header_size: string;
   header_sticky: boolean;
   header_transparent: boolean;
@@ -83,13 +102,13 @@ type WebsiteSettings = {
 };
 
 const TAB_MENUS = [
-  { id: "website", label: "Website Setting", icon: Globe },
-  { id: "navigation", label: "Navigation", icon: MonitorSmartphone },
-  { id: "landing", label: "Landing Page", icon: LayoutTemplate },
+  { id: "website", label: "Pengaturan Website", icon: Globe },
+  { id: "navigation", label: "Navigasi", icon: MonitorSmartphone },
+  { id: "landing", label: "Halaman Utama", icon: LayoutTemplate },
   { id: "header", label: "Header", icon: PanelTop },
   { id: "footer", label: "Footer", icon: PanelBottom },
-  { id: "seo", label: "SEO Engine", icon: Search },
-  { id: "payment", label: "Payment Method", icon: Banknote },
+  { id: "seo", label: "Mesin SEO", icon: Search },
+  { id: "payment", label: "Metode Pembayaran", icon: Banknote },
 ];
 
 export default function SettingsClient() {
@@ -140,13 +159,32 @@ export default function SettingsClient() {
     faq_badge: "Got Questions?",
     faq_title: "Frequently asked questions",
     faq_description: "If you can't find what you're looking for, feel free to contact our support team.",
+    hero_button1_text: "Pesan Logo Anda",
+    hero_button1_url: "/shop",
+    hero_button2_text: "Lihat Portofolio",
+    hero_button2_url: "/#portfolio",
     cta_title: "Ready to elevate your brand?",
     cta_description: "Join thousands of successful businesses who trust us with their visual identity. Start your project today and get your initial concepts in as little as 24 hours.",
     cta_button1_text: "Let's get started",
+    cta_button1_url: "/shop",
     cta_button2_text: "Talk to our team",
+    cta_button2_url: "/contact",
     blog_badge: "Our Blog",
     blog_title: "Latest insights",
     blog_description: "Expert advice, design principles, and strategies to help your brand stand out in a crowded market.",
+    why_choose_us_badge: "Kenapa Kami",
+    why_choose_us_title: "Mengapa Memilih Kami?",
+    why_choose_us_description: "Kami bukan sekadar jasa desain logo biasa. Kami adalah mitra branding yang berkomitmen membangun identitas visual terbaik untuk bisnis Anda.",
+    why_choose_us_list: [],
+    all_services_badge: "Layanan Kami",
+    all_services_title: "Semua Layanan",
+    all_services_description: "Temukan paket desain yang paling sesuai dengan kebutuhan bisnis Anda.",
+    shop_badge: "Produk Digital",
+    shop_title: "Aset Premium",
+    shop_description: "Unduh template, UI kit, set ikon, dan tema berkualitas tinggi untuk mempercepat alur kerja Anda.",
+    testimonial_badge: "Ulasan Klien",
+    testimonial_title: "Apa Kata Klien Kami",
+    testimonial_description: "Umpan balik dan ulasan jujur dari klien-klien kami yang luar biasa di seluruh dunia.",
     header_size: "md",
     header_sticky: true,
     header_transparent: false,
@@ -212,7 +250,7 @@ export default function SettingsClient() {
       .upload(filePath, file);
 
     if (uploadError) {
-      showToast(`Error uploading: ${uploadError.message}`, "error");
+      showToast(`Gagal mengunggah: ${uploadError.message}`, "error");
       setSaving(false);
       return;
     }
@@ -224,7 +262,7 @@ export default function SettingsClient() {
       [field]: publicUrlData.publicUrl,
     }));
     
-    showToast("File uploaded successfully! Remember to Save Settings.", "success");
+    showToast("File berhasil diunggah! Ingat untuk Simpan Pengaturan.", "success");
     setSaving(false);
   };
 
@@ -240,7 +278,7 @@ export default function SettingsClient() {
   const addLink = (field: keyof WebsiteSettings) => {
     setSettings((prev) => ({
       ...prev,
-      [field]: [...(prev[field] as any), { label: "New Link", url: "#" }],
+      [field]: [...(prev[field] as any), { label: "Tautan Baru", url: "#" }],
     }));
   };
 
@@ -271,14 +309,14 @@ export default function SettingsClient() {
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-sm font-bold text-slate-900">{title}</h3>
           <button type="button" onClick={() => addLink(field)} className="text-xs font-bold uppercase tracking-wider text-primary hover:bg-slate-50 px-3 py-1.5 rounded-lg transition-colors inline-flex items-center">
-            <Plus className="w-3.5 h-3.5 mr-1.5" /> Add Link
+            <Plus className="w-3.5 h-3.5 mr-1.5" /> Tambah Tautan
           </button>
         </div>
         <p className="text-xs font-medium text-slate-500 mb-4">{desc}</p>
         
         <div className="space-y-3">
           {!links || links.length === 0 ? (
-            <div className="text-center py-6 text-slate-400 text-xs font-bold uppercase tracking-wider bg-slate-50 rounded-xl border border-slate-200 border-dashed">No links configured.</div>
+            <div className="text-center py-6 text-slate-400 text-xs font-bold uppercase tracking-wider bg-slate-50 rounded-xl border border-slate-200 border-dashed">Belum ada tautan yang dikonfigurasi.</div>
           ) : (
             links.map((link, idx) => (
               <div key={idx} className="flex flex-col sm:flex-row gap-2 items-center bg-slate-50 p-2 rounded-xl border border-slate-100 group transition-all hover:bg-white hover:border-slate-200 hover:shadow-sm">
@@ -294,14 +332,14 @@ export default function SettingsClient() {
                   type="text"
                   value={link.label}
                   onChange={(e) => handleLinkChange(field, idx, "label", e.target.value)}
-                  placeholder="Label (e.g. About)"
+                  placeholder="Label (misal: Tentang Kami)"
                   className="w-full sm:flex-1 bg-white border border-slate-200 text-slate-900 text-xs font-medium rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 p-2.5 transition-all outline-none"
                 />
                 <input
                   type="text"
                   value={link.url}
                   onChange={(e) => handleLinkChange(field, idx, "url", e.target.value)}
-                  placeholder="URL (e.g. /about or https://...)"
+                  placeholder="URL (misal: /tentang atau https://...)"
                   className="w-full sm:flex-[1.5] bg-white border border-slate-200 text-slate-900 text-xs font-medium rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 p-2.5 transition-all outline-none"
                 />
                 <button type="button" onClick={() => removeLink(field, idx)} className="self-end sm:self-center p-2.5 text-rose-400 hover:bg-rose-50 hover:text-rose-600 rounded-lg transition-colors">
@@ -357,15 +395,15 @@ export default function SettingsClient() {
       <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-sm font-bold text-slate-900">{title}</h3>
-          <button type="button" onClick={() => addListItem(field, { title: "New Feature", desc: "Feature description...", icon: "Star" })} className="text-xs font-bold uppercase tracking-wider text-primary hover:bg-slate-50 px-3 py-1.5 rounded-lg transition-colors inline-flex items-center">
-            <Plus className="w-3.5 h-3.5 mr-1.5" /> Add Item
+          <button type="button" onClick={() => addListItem(field, { title: "Fitur Baru", desc: "Deskripsi fitur...", icon: "Star" })} className="text-xs font-bold uppercase tracking-wider text-primary hover:bg-slate-50 px-3 py-1.5 rounded-lg transition-colors inline-flex items-center">
+            <Plus className="w-3.5 h-3.5 mr-1.5" /> Tambah Item
           </button>
         </div>
         <p className="text-xs font-medium text-slate-500 mb-4">{desc}</p>
         
         <div className="space-y-3">
           {!items || items.length === 0 ? (
-            <div className="text-center py-6 text-slate-400 text-xs font-bold uppercase tracking-wider bg-slate-50 rounded-xl border border-slate-200 border-dashed">No items configured.</div>
+            <div className="text-center py-6 text-slate-400 text-xs font-bold uppercase tracking-wider bg-slate-50 rounded-xl border border-slate-200 border-dashed">Belum ada item yang dikonfigurasi.</div>
           ) : (
             items.map((item, idx) => (
               <div key={idx} className="flex flex-col sm:flex-row gap-2 items-center bg-slate-50 p-2 rounded-xl border border-slate-100 group transition-all hover:bg-white hover:border-slate-200 hover:shadow-sm">
@@ -381,14 +419,14 @@ export default function SettingsClient() {
                   type="text"
                   value={item.title}
                   onChange={(e) => handleListChange(field, idx, "title", e.target.value)}
-                  placeholder="Title"
+                  placeholder="Judul"
                   className="w-full sm:flex-1 bg-white border border-slate-200 text-slate-900 text-xs font-medium rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 p-2.5 transition-all outline-none"
                 />
                 <input
                   type="text"
                   value={item.desc}
                   onChange={(e) => handleListChange(field, idx, "desc", e.target.value)}
-                  placeholder="Description..."
+                  placeholder="Deskripsi..."
                   className="w-full sm:flex-[1.5] bg-white border border-slate-200 text-slate-900 text-xs font-medium rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 p-2.5 transition-all outline-none"
                 />
                 <div className="w-full sm:w-auto flex flex-col relative">
@@ -417,15 +455,15 @@ export default function SettingsClient() {
       <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-sm font-bold text-slate-900">{title}</h3>
-          <button type="button" onClick={() => addListItem(field, { value: "0", suffix: "+", label: "New Stat" })} className="text-xs font-bold uppercase tracking-wider text-primary hover:bg-slate-50 px-3 py-1.5 rounded-lg transition-colors inline-flex items-center">
-            <Plus className="w-3.5 h-3.5 mr-1.5" /> Add Stat
+          <button type="button" onClick={() => addListItem(field, { value: "0", suffix: "+", label: "Statistik Baru" })} className="text-xs font-bold uppercase tracking-wider text-primary hover:bg-slate-50 px-3 py-1.5 rounded-lg transition-colors inline-flex items-center">
+            <Plus className="w-3.5 h-3.5 mr-1.5" /> Tambah Statistik
           </button>
         </div>
         <p className="text-xs font-medium text-slate-500 mb-4">{desc}</p>
         
         <div className="space-y-3">
           {!items || items.length === 0 ? (
-            <div className="text-center py-6 text-slate-400 text-xs font-bold uppercase tracking-wider bg-slate-50 rounded-xl border border-slate-200 border-dashed">No items configured.</div>
+            <div className="text-center py-6 text-slate-400 text-xs font-bold uppercase tracking-wider bg-slate-50 rounded-xl border border-slate-200 border-dashed">Belum ada item yang dikonfigurasi.</div>
           ) : (
             items.map((item, idx) => (
               <div key={idx} className="flex flex-col sm:flex-row gap-2 items-center bg-slate-50 p-2 rounded-xl border border-slate-100 group transition-all hover:bg-white hover:border-slate-200 hover:shadow-sm">
@@ -441,21 +479,21 @@ export default function SettingsClient() {
                   type="text"
                   value={item.value}
                   onChange={(e) => handleListChange(field, idx, "value", e.target.value)}
-                  placeholder="Value (e.g. 24)"
+                  placeholder="Nilai (misal: 24)"
                   className="w-full sm:w-24 bg-white border border-slate-200 text-slate-900 text-xs font-medium rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 p-2.5 transition-all outline-none"
                 />
                 <input
                   type="text"
                   value={item.suffix}
                   onChange={(e) => handleListChange(field, idx, "suffix", e.target.value)}
-                  placeholder="Suffix (e.g. h)"
+                  placeholder="Akhiran (misal: j)"
                   className="w-full sm:w-20 bg-white border border-slate-200 text-slate-900 text-xs font-medium rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 p-2.5 transition-all outline-none"
                 />
                 <input
                   type="text"
                   value={item.label}
                   onChange={(e) => handleListChange(field, idx, "label", e.target.value)}
-                  placeholder="Label (e.g. Average Delivery)"
+                  placeholder="Label (misal: Rata-rata Pengiriman)"
                   className="w-full sm:flex-[2] bg-white border border-slate-200 text-slate-900 text-xs font-medium rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 p-2.5 transition-all outline-none"
                 />
                 <button type="button" onClick={() => removeListItem(field, idx)} className="self-end sm:self-center p-2.5 text-rose-400 hover:bg-rose-50 hover:text-rose-600 rounded-lg transition-colors">
@@ -476,14 +514,14 @@ export default function SettingsClient() {
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-sm font-bold text-slate-900">{title}</h3>
           <button type="button" onClick={() => addListItem(field, { platform: "Instagram", url: "https://instagram.com/kanglogo" })} className="text-xs font-bold uppercase tracking-wider text-primary hover:bg-slate-50 px-3 py-1.5 rounded-lg transition-colors inline-flex items-center">
-            <Plus className="w-3.5 h-3.5 mr-1.5" /> Add Social Profile
+            <Plus className="w-3.5 h-3.5 mr-1.5" /> Tambah Profil Sosial
           </button>
         </div>
         <p className="text-xs font-medium text-slate-500 mb-4">{desc}</p>
         
         <div className="space-y-3">
           {!items || items.length === 0 ? (
-            <div className="text-center py-6 text-slate-400 text-xs font-bold uppercase tracking-wider bg-slate-50 rounded-xl border border-slate-200 border-dashed">No profiles configured.</div>
+            <div className="text-center py-6 text-slate-400 text-xs font-bold uppercase tracking-wider bg-slate-50 rounded-xl border border-slate-200 border-dashed">Belum ada profil yang dikonfigurasi.</div>
           ) : (
             items.map((item, idx) => (
               <div key={idx} className="flex flex-col sm:flex-row gap-2 items-center bg-slate-50 p-2 rounded-xl border border-slate-100 group transition-all hover:bg-white hover:border-slate-200 hover:shadow-sm">
@@ -509,7 +547,7 @@ export default function SettingsClient() {
                   type="text"
                   value={item.url}
                   onChange={(e) => handleListChange(field, idx, "url", e.target.value)}
-                  placeholder="URL (e.g. https://instagram.com/username)"
+                  placeholder="URL (misal: https://instagram.com/username)"
                   className="w-full sm:flex-1 bg-white border border-slate-200 text-slate-900 text-xs font-medium rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 p-2.5 transition-all outline-none"
                 />
                 <button type="button" onClick={() => removeListItem(field, idx)} className="self-end sm:self-center p-2.5 text-rose-400 hover:bg-rose-50 hover:text-rose-600 rounded-lg transition-colors">
@@ -530,14 +568,14 @@ export default function SettingsClient() {
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-sm font-bold text-slate-900">{title}</h3>
           <button type="button" onClick={() => addListItem(field, { bank_name: "BANK BCA", account_name: "John Doe", account_number: "1234567890" })} className="text-xs font-bold uppercase tracking-wider text-primary hover:bg-slate-50 px-3 py-1.5 rounded-lg transition-colors inline-flex items-center">
-            <Plus className="w-3.5 h-3.5 mr-1.5" /> Add Payment Method
+            <Plus className="w-3.5 h-3.5 mr-1.5" /> Tambah Metode Pembayaran
           </button>
         </div>
         <p className="text-xs font-medium text-slate-500 mb-4">{desc}</p>
         
         <div className="space-y-3">
           {!items || items.length === 0 ? (
-            <div className="text-center py-6 text-slate-400 text-xs font-bold uppercase tracking-wider bg-slate-50 rounded-xl border border-slate-200 border-dashed">No payment methods configured.</div>
+            <div className="text-center py-6 text-slate-400 text-xs font-bold uppercase tracking-wider bg-slate-50 rounded-xl border border-slate-200 border-dashed">Belum ada metode pembayaran yang dikonfigurasi.</div>
           ) : (
             items.map((item, idx) => (
               <div key={idx} className="flex flex-col sm:flex-row gap-2 items-center bg-slate-50 p-2 rounded-xl border border-slate-100 group transition-all hover:bg-white hover:border-slate-200 hover:shadow-sm">
@@ -554,21 +592,21 @@ export default function SettingsClient() {
                   type="text"
                   value={item.bank_name}
                   onChange={(e) => handleListChange(field, idx, "bank_name", e.target.value)}
-                  placeholder="Bank Name (e.g. BCA, PayPal)"
+                  placeholder="Nama Bank (misal: BCA, PayPal)"
                   className="w-full sm:w-40 bg-white border border-slate-200 text-slate-900 text-xs font-medium rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 p-2.5 outline-none uppercase"
                 />
                 <input
                   type="text"
                   value={item.account_number}
                   onChange={(e) => handleListChange(field, idx, "account_number", e.target.value)}
-                  placeholder="Account Number"
+                  placeholder="Nomor Rekening"
                   className="w-full sm:w-48 bg-white border border-slate-200 text-slate-900 text-xs font-medium rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 p-2.5 outline-none font-mono tracking-wider"
                 />
                 <input
                   type="text"
                   value={item.account_name}
                   onChange={(e) => handleListChange(field, idx, "account_name", e.target.value)}
-                  placeholder="Account Holder Name"
+                  placeholder="Nama Pemegang Rekening"
                   className="w-full sm:flex-1 bg-white border border-slate-200 text-slate-900 text-xs font-medium rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 p-2.5 transition-all outline-none"
                 />
                 <button type="button" onClick={() => removeListItem(field, idx)} className="self-end sm:self-center p-2.5 text-rose-400 hover:bg-rose-50 hover:text-rose-600 rounded-lg transition-colors">
@@ -588,7 +626,7 @@ export default function SettingsClient() {
       {isTextArea ? (
         <textarea
           name={field}
-          value={settings[field] as string}
+          value={(settings[field] as string) || ""}
           onChange={handleChange}
           rows={3}
           placeholder={placeholder}
@@ -598,7 +636,7 @@ export default function SettingsClient() {
         <input
           type="text"
           name={field}
-          value={settings[field] as string}
+          value={(settings[field] as string) || ""}
           onChange={handleChange}
           placeholder={placeholder}
           className="bg-white border border-slate-200 text-slate-900 text-sm rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 block w-full p-3 transition-all outline-none"
@@ -622,7 +660,7 @@ export default function SettingsClient() {
     if (error) {
       showToast(error.message, "error");
     } else {
-      showToast("System configurations have been successfully saved.", "success");
+      showToast("Konfigurasi sistem berhasil disimpan.", "success");
     }
     setSaving(false);
   };
@@ -631,7 +669,7 @@ export default function SettingsClient() {
     return (
       <div className="flex-1 bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl flex flex-col items-center justify-center py-20">
         <Loader2 className="w-10 h-10 animate-spin text-primary mb-4" />
-        <p className="text-sm font-bold text-slate-500 tracking-wider uppercase">Loading Config...</p>
+        <p className="text-sm font-bold text-slate-500 tracking-wider uppercase">Memuat Konfigurasi...</p>
       </div>
     );
   }
@@ -642,7 +680,7 @@ export default function SettingsClient() {
       
 
       <div className="w-full xl:w-72 shrink-0 bg-slate-50/50 border-b xl:border-b-0 xl:border-r border-slate-100 p-4 sm:p-6 overflow-x-auto">
-        <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4 px-2">Settings Menu</h3>
+        <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4 px-2">Menu Pengaturan</h3>
         <nav className="flex xl:flex-col gap-2 min-w-max xl:min-w-0 pb-2">
           {TAB_MENUS.map((tab) => {
             const isActive = activeTab === tab.id;
@@ -673,14 +711,14 @@ export default function SettingsClient() {
         {activeTab === "website" && (
           <form onSubmit={handleSave} className="space-y-8 max-w-4xl">
             <div>
-              <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-1">Global Website Information</h2>
+              <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-1">Informasi Website</h2>
               <p className="text-sm font-medium text-slate-500 mb-6 border-b border-slate-100 pb-4">
-                Basic details that represent your portal across platforms.
+                Detail dasar yang mewakili portal Anda di berbagai platform.
               </p>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
-                  <label htmlFor="website_name" className="block mb-2 text-xs font-bold uppercase tracking-wider text-slate-700">Website Name</label>
+                  <label htmlFor="website_name" className="block mb-2 text-xs font-bold uppercase tracking-wider text-slate-700">Nama Website</label>
                   <input
                     type="text"
                     id="website_name"
@@ -691,7 +729,7 @@ export default function SettingsClient() {
                   />
                 </div>
                 <div>
-                  <label htmlFor="phone_number" className="block mb-2 text-xs font-bold uppercase tracking-wider text-slate-700">Contact Phone</label>
+                  <label htmlFor="phone_number" className="block mb-2 text-xs font-bold uppercase tracking-wider text-slate-700">Nomor Telepon</label>
                   <input
                     type="text"
                     id="phone_number"
@@ -702,7 +740,7 @@ export default function SettingsClient() {
                   />
                 </div>
                 <div className="sm:col-span-2">
-                  <label htmlFor="email" className="block mb-2 text-xs font-bold uppercase tracking-wider text-slate-700">Official Support Email</label>
+                  <label htmlFor="email" className="block mb-2 text-xs font-bold uppercase tracking-wider text-slate-700">Email Dukungan Resmi</label>
                   <input
                     type="email"
                     id="email"
@@ -713,7 +751,7 @@ export default function SettingsClient() {
                   />
                 </div>
                 <div className="sm:col-span-2">
-                  <label htmlFor="description" className="block mb-2 text-xs font-bold uppercase tracking-wider text-slate-700">SEO Description</label>
+                  <label htmlFor="description" className="block mb-2 text-xs font-bold uppercase tracking-wider text-slate-700">Deskripsi SEO</label>
                   <textarea
                     id="description"
                     name="description"
@@ -729,14 +767,14 @@ export default function SettingsClient() {
             
 
             <div>
-              <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-1">Brand Assets</h2>
+              <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-1">Aset Brand</h2>
               <p className="text-sm font-medium text-slate-500 mb-6 border-b border-slate-100 pb-4">
-                Visual identity and logos for your web appearance.
+                Identitas visual dan logo untuk tampilan website Anda.
               </p>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
-                  <label className="block mb-3 text-xs font-bold uppercase tracking-wider text-slate-700">Main Logo</label>
+                  <label className="block mb-3 text-xs font-bold uppercase tracking-wider text-slate-700">Logo Utama</label>
                   <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                     <div className="w-20 h-20 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-center overflow-hidden shrink-0 shadow-sm relative group p-2">
                       {settings.logo_url ? (
@@ -747,7 +785,7 @@ export default function SettingsClient() {
                     </div>
                     <div className="flex-1">
                       <label htmlFor="logo_upload" className="cursor-pointer bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold uppercase tracking-wider py-2 px-4 rounded-lg inline-flex items-center transition-colors shadow-sm">
-                        <Upload className="w-4 h-4 mr-2" /> Upload Logo
+                        <Upload className="w-4 h-4 mr-2" /> Unggah Logo
                       </label>
                       <input
                         type="file"
@@ -757,13 +795,13 @@ export default function SettingsClient() {
                         onChange={(e) => handleFileUpload(e, "logo_url")}
                         disabled={saving}
                       />
-                      <p className="text-xs font-medium text-slate-500 mt-2">Recommended: 200x50px, PNG/SVG.<br/>Max size: 2MB.</p>
+                      <p className="text-xs font-medium text-slate-500 mt-2">Rekomendasi: 200x50px, PNG/SVG.<br/>Ukuran maks: 2MB.</p>
                     </div>
                   </div>
                 </div>
                 
                 <div>
-                  <label className="block mb-3 text-xs font-bold uppercase tracking-wider text-slate-700">Favicon (Browser Icon)</label>
+                  <label className="block mb-3 text-xs font-bold uppercase tracking-wider text-slate-700">Favicon (Ikon Browser)</label>
                   <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                     <div className="w-20 h-20 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-center overflow-hidden shrink-0 shadow-sm relative group p-2">
                       {settings.favicon_url ? (
@@ -774,7 +812,7 @@ export default function SettingsClient() {
                     </div>
                     <div className="flex-1">
                       <label htmlFor="favicon_upload" className="cursor-pointer bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold uppercase tracking-wider py-2 px-4 rounded-lg inline-flex items-center transition-colors shadow-sm">
-                        <Upload className="w-4 h-4 mr-2" /> Upload Favicon
+                        <Upload className="w-4 h-4 mr-2" /> Unggah Favicon
                       </label>
                       <input
                         type="file"
@@ -784,7 +822,7 @@ export default function SettingsClient() {
                         onChange={(e) => handleFileUpload(e, "favicon_url")}
                         disabled={saving}
                       />
-                      <p className="text-xs font-medium text-slate-500 mt-2">Square ratio: 32x32px minimum.<br/>Max size: 1MB (.ICO/.PNG).</p>
+                      <p className="text-xs font-medium text-slate-500 mt-2">Rasio persegi: minimal 32x32px.<br/>Ukuran maks: 1MB (.ICO/.PNG).</p>
                     </div>
                   </div>
                 </div>
@@ -794,9 +832,9 @@ export default function SettingsClient() {
             
 
             <div>
-              <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-1">Color Tokens</h2>
+              <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-1">Token Warna</h2>
               <p className="text-sm font-medium text-slate-500 mb-6 border-b border-slate-100 pb-4">
-                Dynamic theme overriding engine.
+                Mesin pengaturan tema dinamis.
               </p>
               
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -829,15 +867,15 @@ export default function SettingsClient() {
             
 
             <div>
-              <h2 className="text-lg font-bold text-rose-600 tracking-tight mb-1">Danger Zone</h2>
+              <h2 className="text-lg font-bold text-rose-600 tracking-tight mb-1">Zona Berbahaya</h2>
               <p className="text-sm font-medium text-slate-500 mb-6 border-b border-rose-100 pb-4">
-                Restricting application access globally.
+                Membatasi akses aplikasi secara global.
               </p>
               
               <div className="flex items-center justify-between p-4 rounded-xl border border-rose-200 bg-rose-50/50">
                 <div>
-                  <h4 className="text-sm font-bold text-slate-900">Enable Maintenance Mode</h4>
-                  <p className="text-xs font-medium text-slate-500 mt-1">Locks out visitors except administrators.</p>
+                  <h4 className="text-sm font-bold text-slate-900">Aktifkan Mode Pemeliharaan</h4>
+                  <p className="text-xs font-medium text-slate-500 mt-1">Mengunci pengunjung kecuali administrator.</p>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input type="checkbox" name="is_maintenance" checked={settings.is_maintenance || false} onChange={handleChange} className="sr-only peer" />
@@ -853,7 +891,7 @@ export default function SettingsClient() {
                 className="w-full sm:w-auto bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-70 disabled:cursor-not-allowed text-sm font-bold uppercase tracking-wider px-8 py-3.5 rounded-xl shadow-sm transition-colors flex items-center justify-center gap-2"
               >
                 {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                {saving ? "Deploying..." : "Save Settings"}
+                {saving ? "Menyimpan..." : "Simpan Pengaturan"}
               </button>
             </div>
           </form>
@@ -864,17 +902,17 @@ export default function SettingsClient() {
         {activeTab === "navigation" && (
            <form onSubmit={handleSave} className="space-y-8 max-w-4xl">
              <div>
-               <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-1">Global Navigation Maps</h2>
+               <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-1">Peta Navigasi Global</h2>
                <p className="text-sm font-medium text-slate-500 mb-6 border-b border-slate-100 pb-4">
-                 Manage menu endpoints injected across Header & Footer sections. Order affects visual placement.
+                 Kelola endpoint menu yang diinjeksi di bagian Header & Footer. Urutan mempengaruhi tampilan visual.
                </p>
 
                <div className="space-y-6">
-                 {renderLinkManager("Header Main Menu", "Primary navigation presented to all visitors beside your logo.", "header_links")}
-                 {renderLinkManager("Footer (Services Column)", "Grid column typically mapping to your business offerings.", "footer_services_links")}
-                 {renderLinkManager("Footer (Company Column)", "Grid column mapping internal corporate portals (About, Teams, Contact).", "footer_company_links")}
-                 {renderLinkManager("Footer (Legal Column)", "Mandatory or bureaucratic portals related to policies.", "footer_legal_links")}
-                 {renderLinkManager("Footer Bottom Layer", "Tiny horizontal links printed besides the Copyright notice.", "footer_bottom_links")}
+                 {renderLinkManager("Menu Header Utama", "Navigasi utama yang ditampilkan kepada semua pengunjung di samping logo Anda.", "header_links")}
+                 {renderLinkManager("Footer (Kolom Layanan)", "Kolom grid yang biasanya memetakan penawaran bisnis Anda.", "footer_services_links")}
+                 {renderLinkManager("Footer (Kolom Perusahaan)", "Kolom grid yang memetakan portal internal perusahaan (Tentang, Tim, Kontak).", "footer_company_links")}
+                 {renderLinkManager("Footer (Kolom Hukum)", "Portal wajib atau birokrasi yang berkaitan dengan kebijakan.", "footer_legal_links")}
+                 {renderLinkManager("Footer Bawah", "Tautan horizontal kecil yang dicetak di samping informasi Hak Cipta.", "footer_bottom_links")}
                </div>
              </div>
 
@@ -885,7 +923,7 @@ export default function SettingsClient() {
                   className="w-full sm:w-auto bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-70 disabled:cursor-not-allowed text-sm font-bold uppercase tracking-wider px-8 py-3.5 rounded-xl shadow-sm transition-colors flex items-center justify-center gap-2"
                 >
                   {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                  {saving ? "Deploying..." : "Save Navigation"}
+                  {saving ? "Menyimpan..." : "Simpan Navigasi"}
                 </button>
               </div>
            </form>
@@ -895,37 +933,44 @@ export default function SettingsClient() {
 
         {activeTab === "landing" && (
            <form onSubmit={handleSave} className="space-y-8 max-w-4xl">
-             
-             
 
              <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-               <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-4 border-b border-slate-100 pb-2">Hero Section</h2>
+               <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-4 border-b border-slate-100 pb-2">Seksi Hero</h2>
                {renderTextInput("Hero Badge / Subtitle", "hero_badge", "Fast, Premium Logo Design")}
                {renderTextInput("Hero Main Title", "hero_title", "Design your brand's perfect identity")}
                {renderTextInput("Hero Description", "hero_description", "Professional logo design...", true)}
-               <div className="mt-6">
-                 {renderFeaturesListManager("Core Features Config", "Shown below the hero buttons as 3 cards.", "features_list")}
+               <div className="mt-6 border-t border-slate-100 pt-6">
+                 <p className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-4">Tombol Hero</p>
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                   <div>
+                     {renderTextInput("Teks Tombol Utama", "hero_button1_text", "Pesan Logo Anda")}
+                     {renderTextInput("Link Tombol Utama", "hero_button1_url", "/shop")}
+                   </div>
+                   <div>
+                     {renderTextInput("Teks Tombol Kedua", "hero_button2_text", "Lihat Portofolio")}
+                     {renderTextInput("Link Tombol Kedua", "hero_button2_url", "/#portfolio")}
+                   </div>
+                 </div>
+               </div>
+               <div className="mt-6 border-t border-slate-100 pt-6">
+                 {renderFeaturesListManager("Konfigurasi Fitur Utama", "Ditampilkan di bawah tombol hero sebagai 3 kartu.", "features_list")}
                </div>
              </div>
 
-             
-
              <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-               <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-4 border-b border-slate-100 pb-2">Social Proof & Stats</h2>
+               <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-4 border-b border-slate-100 pb-2">Bukti Sosial & Statistik</h2>
                {renderTextInput("Trusted By Title", "trusted_by_title", "Trusted by 5,000+ ambitious brands")}
                {renderTextInput("Trusted By Description", "trusted_by_description", "From stealth startups to global enterprises...", true)}
                <div className="mt-6 border-t border-slate-100 pt-6">
                  {renderTextInput("Stats Banner Title", "stats_title", "Join the club")}
                  <div className="mt-4">
-                   {renderStatsListManager("Numerical Statistics", "4 columns showing numbers with suffix.", "stats_list")}
+                   {renderStatsListManager("Statistik Numerik", "4 kolom yang menampilkan angka dengan akhiran.", "stats_list")}
                  </div>
                </div>
              </div>
 
-             
-
              <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-               <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-4 border-b border-slate-100 pb-2">Portfolio Gallery</h2>
+               <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-4 border-b border-slate-100 pb-2">Galeri Portofolio</h2>
                {renderTextInput("Portfolio Badge", "portfolio_badge", "View Our Work")}
                {renderTextInput("Portfolio Title", "portfolio_title", "Recent Masterpieces")}
                {renderTextInput("Portfolio Description", "portfolio_description", "A glimpse into the visual identities...", true)}
@@ -935,54 +980,89 @@ export default function SettingsClient() {
                </div>
              </div>
 
-             
+             <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+               <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-4 border-b border-slate-100 pb-2">Seksi Kenapa Memilih Kami</h2>
+               {renderTextInput("Badge", "why_choose_us_badge", "Kenapa Kami")}
+               {renderTextInput("Judul", "why_choose_us_title", "Mengapa Memilih Kami?")}
+               {renderTextInput("Deskripsi", "why_choose_us_description", "Kami bukan sekadar jasa desain logo biasa...", true)}
+               <div className="mt-4">
+                 {renderFeaturesListManager("Daftar Alasan", "Tambahkan keunggulan kompetitif kami (maks 6 item).", "why_choose_us_list")}
+               </div>
+             </div>
 
              <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-               <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-4 border-b border-slate-100 pb-2">Pricing</h2>
+               <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-4 border-b border-slate-100 pb-2">Harga</h2>
                {renderTextInput("Pricing Badge", "pricing_badge", "Clear Pricing")}
                {renderTextInput("Pricing Title", "pricing_title", "Simple, transparent pricing")}
                {renderTextInput("Pricing Description", "pricing_description", "No hidden fees...", true)}
              </div>
 
-             
-
              <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-               <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-4 border-b border-slate-100 pb-2">Workflow Process</h2>
+               <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-4 border-b border-slate-100 pb-2">Proses Alur Kerja</h2>
                {renderTextInput("Process Badge", "process_badge", "Our Process")}
                {renderTextInput("Process Title", "process_title", "4 simple steps to launch")}
                {renderTextInput("Process Description", "process_description", "We've eliminated the friction...", true)}
                <div className="mt-4">
-                 {renderFeaturesListManager("Process Steps", "Add workflows like Discovery, Ideation.", "process_list")}
+                 {renderFeaturesListManager("Langkah Proses", "Tambahkan alur kerja seperti Penemuan, Ideasi.", "process_list")}
                </div>
              </div>
-
-             
 
              <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-               <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-4 border-b border-slate-100 pb-2">FAQ & Footer Call-To-Action</h2>
-               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                 <div>
-                   <h3 className="text-md font-bold text-slate-700 mb-2">FAQ</h3>
-                   {renderTextInput("FAQ Badge", "faq_badge", "Got Questions?")}
-                   {renderTextInput("FAQ Title", "faq_title", "Frequently asked questions")}
-                   {renderTextInput("FAQ Description", "faq_description", "If you can't find...", true)}
-                 </div>
-                 <div>
-                   <h3 className="text-md font-bold text-slate-700 mb-2">Bottom CTA</h3>
-                   {renderTextInput("CTA Title", "cta_title", "Ready to elevate your brand?")}
-                   {renderTextInput("CTA Description", "cta_description", "Join thousands...", true)}
-                   {renderTextInput("Button 1 Text", "cta_button1_text", "Let's get started")}
-                   {renderTextInput("Button 2 Text", "cta_button2_text", "Talk to our team")}
-                 </div>
-               </div>
-               <div className="mt-6 border-t border-slate-100 pt-6">
-                 <h3 className="text-md font-bold text-slate-700 mb-2">Blog Module</h3>
-                 {renderTextInput("Blog Badge", "blog_badge", "Our Blog")}
-                 {renderTextInput("Blog Title", "blog_title", "Latest insights")}
-                 {renderTextInput("Blog Description", "blog_description", "Expert advice, design principles...", true)}
+               <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-4 border-b border-slate-100 pb-2">FAQ</h2>
+               {renderTextInput("FAQ Badge", "faq_badge", "Got Questions?")}
+               {renderTextInput("FAQ Title", "faq_title", "Frequently asked questions")}
+               {renderTextInput("FAQ Description", "faq_description", "If you can't find...", true)}
+             </div>
+
+             <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+               <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-4 border-b border-slate-100 pb-2">Seksi Semua Layanan</h2>
+               {renderTextInput("Badge", "all_services_badge", "Layanan Kami")}
+               {renderTextInput("Judul", "all_services_title", "Semua Layanan")}
+               {renderTextInput("Deskripsi", "all_services_description", "Temukan paket desain yang paling sesuai...", true)}
+               <div className="mt-3 p-3 rounded-xl bg-slate-50 border border-slate-100">
+                 <p className="text-xs font-medium text-slate-500">Data layanan diambil otomatis dari modul <strong>Layanan</strong> yang berstatus published. Urutan mengikuti <em>sort_order</em>.</p>
                </div>
              </div>
 
+             <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+               <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-4 border-b border-slate-100 pb-2">Ajakan Bertindak (CTA)</h2>
+               {renderTextInput("CTA Title", "cta_title", "Ready to elevate your brand?")}
+               {renderTextInput("CTA Description", "cta_description", "Join thousands...", true)}
+               <div className="mt-6 border-t border-slate-100 pt-6">
+                 <p className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-4">Tombol CTA</p>
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                   <div>
+                     {renderTextInput("Teks Tombol Utama", "cta_button1_text", "Let's get started")}
+                     {renderTextInput("Link Tombol Utama", "cta_button1_url", "/shop")}
+                   </div>
+                   <div>
+                     {renderTextInput("Teks Tombol Kedua", "cta_button2_text", "Talk to our team")}
+                     {renderTextInput("Link Tombol Kedua", "cta_button2_url", "/contact")}
+                   </div>
+                 </div>
+               </div>
+             </div>
+
+             <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+               <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-4 border-b border-slate-100 pb-2">Blog / Artikel</h2>
+               {renderTextInput("Blog Badge", "blog_badge", "Our Blog")}
+               {renderTextInput("Blog Title", "blog_title", "Latest insights")}
+               {renderTextInput("Blog Description", "blog_description", "Expert advice, design principles...", true)}
+             </div>
+
+             <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+               <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-4 border-b border-slate-100 pb-2">Testimoni / Ulasan</h2>
+               {renderTextInput("Badge", "testimonial_badge", "Ulasan Klien")}
+               {renderTextInput("Judul Testimoni", "testimonial_title", "Apa Kata Klien Kami")}
+               {renderTextInput("Deskripsi", "testimonial_description", "Umpan balik dan ulasan jujur...", true)}
+             </div>
+
+             <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+               <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-4 border-b border-slate-100 pb-2">Toko / Produk Digital</h2>
+               {renderTextInput("Badge", "shop_badge", "Produk Digital")}
+               {renderTextInput("Judul", "shop_title", "Aset Premium")}
+               {renderTextInput("Deskripsi", "shop_description", "Unduh template, UI kit, set ikon...", true)}
+             </div>
              <div className="pt-6 border-t border-slate-100 flex justify-end">
                 <button
                   type="submit"
@@ -990,7 +1070,7 @@ export default function SettingsClient() {
                   className="w-full sm:w-auto bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-70 disabled:cursor-not-allowed text-sm font-bold uppercase tracking-wider px-8 py-3.5 rounded-xl shadow-sm transition-colors flex items-center justify-center gap-2"
                 >
                   {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                  {saving ? "Deploying..." : "Save Landing Page"}
+                  {saving ? "Menyimpan..." : "Simpan Halaman Utama"}
                 </button>
               </div>
            </form>
@@ -1002,7 +1082,7 @@ export default function SettingsClient() {
         {activeTab === "header" && (
            <form onSubmit={handleSave} className="space-y-8 max-w-4xl">
              <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
-               <h2 className="text-lg font-bold text-slate-900 tracking-tight border-b border-slate-100 pb-2">Header Appearance</h2>
+               <h2 className="text-lg font-bold text-slate-900 tracking-tight border-b border-slate-100 pb-2">Tampilan Header</h2>
                
                <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Navigation Size</label>
@@ -1104,7 +1184,7 @@ export default function SettingsClient() {
                   className="w-full sm:w-auto bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-70 disabled:cursor-not-allowed text-sm font-bold uppercase tracking-wider px-8 py-3.5 rounded-xl shadow-sm transition-colors flex items-center justify-center gap-2"
                 >
                   {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                  {saving ? "Deploying..." : "Save Header Settings"}
+                  {saving ? "Menyimpan..." : "Simpan Pengaturan Header"}
                 </button>
               </div>
            </form>
@@ -1148,7 +1228,7 @@ export default function SettingsClient() {
                   className="w-full sm:w-auto bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-70 disabled:cursor-not-allowed text-sm font-bold uppercase tracking-wider px-8 py-3.5 rounded-xl shadow-sm transition-colors flex items-center justify-center gap-2"
                 >
                   {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                  {saving ? "Deploying..." : "Save Footer Settings"}
+                  {saving ? "Menyimpan..." : "Simpan Pengaturan Footer"}
                 </button>
               </div>
            </form>
@@ -1197,7 +1277,7 @@ export default function SettingsClient() {
                     </div>
                     <div className="flex-1">
                       <label htmlFor="og_image_upload" className="cursor-pointer bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold uppercase tracking-wider py-2 px-4 rounded-lg inline-flex items-center transition-colors shadow-sm">
-                        <Upload className="w-4 h-4 mr-2" /> Upload Social Cover
+                        <Upload className="w-4 h-4 mr-2" /> Unggah Cover Sosial
                       </label>
                       <input
                         type="file"
@@ -1243,7 +1323,7 @@ export default function SettingsClient() {
                   className="w-full sm:w-auto bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-70 disabled:cursor-not-allowed text-sm font-bold uppercase tracking-wider px-8 py-3.5 rounded-xl shadow-sm transition-colors flex items-center justify-center gap-2"
                 >
                   {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                  {saving ? "Deploying..." : "Save SEO Metadata"}
+                  {saving ? "Menyimpan..." : "Simpan Metadata SEO"}
                 </button>
               </div>
            </form>
@@ -1271,7 +1351,7 @@ export default function SettingsClient() {
                   className="w-full sm:w-auto bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-70 disabled:cursor-not-allowed text-sm font-bold uppercase tracking-wider px-8 py-3.5 rounded-xl shadow-sm transition-colors flex items-center justify-center gap-2"
                 >
                   {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                  {saving ? "Deploying..." : "Save Payment Methods"}
+                  {saving ? "Menyimpan..." : "Simpan Metode Pembayaran"}
                 </button>
               </div>
            </form>
@@ -1282,8 +1362,8 @@ export default function SettingsClient() {
         {activeTab !== "website" && activeTab !== "navigation" && activeTab !== "landing" && activeTab !== "header" && activeTab !== "footer" && activeTab !== "seo" && activeTab !== "payment" && (
            <div className="flex flex-col items-center justify-center py-20 bg-slate-50 rounded-2xl border border-slate-100 border-dashed">
              <Settings className="w-12 h-12 text-slate-300 mb-4" />
-             <h3 className="text-lg font-bold text-slate-900 tracking-tight">Configuration Under Construction</h3>
-             <p className="text-sm font-medium text-slate-500 mt-2">The <span className="text-primary font-bold uppercase">{activeTab}</span> module is currently disabled pending updates.</p>
+             <h3 className="text-lg font-bold text-slate-900 tracking-tight">Konfigurasi Sedang Dalam Pengembangan</h3>
+             <p className="text-sm font-medium text-slate-500 mt-2">Modul <span className="text-primary font-bold uppercase">{activeTab}</span> saat ini dinonaktifkan menunggu pembaruan.</p>
            </div>
         )}
 

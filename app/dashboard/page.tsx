@@ -21,7 +21,7 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
     .single();
 
   const isAdmin = profile?.is_admin || false;
-  const fullName = profile?.full_name || user.email || "User";
+  const fullName = profile?.full_name || user.email || "Pengguna";
 
   if (isAdmin) {
     return <AdminDashboard name={fullName} yearParam={yearParam} />;

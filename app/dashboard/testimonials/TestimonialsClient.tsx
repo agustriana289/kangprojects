@@ -79,7 +79,7 @@ export default function TestimonialsClient() {
     if (editForm.order_id) {
       const existing = testimonials.find(t => t.order_id === editForm.order_id && t.id !== editingId);
       if (existing) {
-        showToast("This order already has a testimonial.", "error");
+        showToast("Pesanan ini sudah memiliki testimonial.", "error");
         setSavingEdit(false);
         return;
       }
@@ -95,7 +95,7 @@ export default function TestimonialsClient() {
     if (error) {
       showToast(error.message, "error");
     } else {
-      showToast("Testimonial updated successfully", "success");
+      showToast("Testimonial berhasil diperbarui", "success");
       setIsEditModalOpen(false);
       fetchTestimonials();
     }
@@ -103,10 +103,10 @@ export default function TestimonialsClient() {
   };
 
   const deleteTestimonial = async (id: string) => {
-    if (!confirm("Delete this testimonial?")) return;
+    if (!confirm("Hapus testimonial ini?")) return;
     const { error } = await supabase.from("store_testimonials").delete().eq("id", id);
     if (error) showToast(error.message, "error");
-    else { showToast("Testimonial deleted", "success"); fetchTestimonials(); }
+    else { showToast("Testimonial dihapus", "success"); fetchTestimonials(); }
   };
 
   const getProjectTitle = (t: any) => {
@@ -162,16 +162,16 @@ export default function TestimonialsClient() {
   return (
     <div className="pt-6 px-4 pb-16">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Client Testimonials</h1>
-        <p className="text-sm font-medium text-slate-500 mt-1">Review and manage feedback from your clients.</p>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Testimonial Klien</h1>
+        <p className="text-sm font-medium text-slate-500 mt-1">Tinjau dan kelola umpan balik dari klien Anda.</p>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {[
-          { label: "Total Reviews", value: stats.total },
-          { label: "Avg Quality", value: stats.avgQuality },
-          { label: "Avg Speed", value: stats.avgSpeed },
-          { label: "Avg Comms", value: stats.avgComms },
+          { label: "Total Ulasan", value: stats.total },
+          { label: "Rata-rata Kualitas", value: stats.avgQuality },
+          { label: "Rata-rata Kecepatan", value: stats.avgSpeed },
+          { label: "Rata-rata Komunikasi", value: stats.avgComms },
         ].map((s, i) => (
           <div key={i} className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-5 flex items-center gap-4">
             <div className="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center shrink-0">
@@ -190,7 +190,7 @@ export default function TestimonialsClient() {
           <div className="relative max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }}
-              placeholder="Search by client, project, or comment..."
+              placeholder="Cari berdasarkan klien, proyek, atau komentar..."
               className="w-full bg-slate-50 border-0 rounded-xl pl-9 pr-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500/20" />
           </div>
         </div>
@@ -200,7 +200,7 @@ export default function TestimonialsClient() {
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-slate-300">
             <Star className="w-10 h-10 mb-3" />
-            <p className="text-sm font-bold text-slate-400">No testimonials yet</p>
+            <p className="text-sm font-bold text-slate-400">Belum ada testimonial</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -251,7 +251,7 @@ export default function TestimonialsClient() {
                       </td>
                       <td className="px-6 py-5 max-w-xs">
                         <p className="text-sm font-medium text-slate-500 italic leading-relaxed line-clamp-3">
-                          &ldquo;{t.comment || "No comment provided."}&rdquo;
+                          &ldquo;{t.comment || "Tidak ada komentar yang diberikan."}&rdquo;
                         </p>
                       </td>
                       <td className="px-6 py-5 whitespace-nowrap">
@@ -282,7 +282,7 @@ export default function TestimonialsClient() {
         {totalPages > 1 && (
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-4 border-t border-slate-100">
             <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">
-              Showing {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filtered.length)} of {filtered.length} testimonials
+              Menampilkan {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filtered.length)} dari {filtered.length} testimonial
             </p>
             <div className="flex items-center gap-2">
               <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
@@ -319,7 +319,7 @@ export default function TestimonialsClient() {
           <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-xl ring-1 ring-slate-100 overflow-hidden">
             <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
               <h2 className="text-base font-bold text-slate-900">
-                Edit Testimonial Details
+                Edit Detail Testimonial
               </h2>
               <button onClick={() => setIsEditModalOpen(false)} className="p-2 rounded-lg bg-slate-100 text-slate-500 hover:bg-slate-200 transition-colors">
                 <X className="w-4 h-4" />
@@ -328,19 +328,19 @@ export default function TestimonialsClient() {
 
             <form onSubmit={handleSaveEdit} className="p-6 space-y-5">
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Display Client Name</label>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Nama Klien yang Ditampilkan</label>
                 <input
                   type="text"
                   value={editForm.client_name}
                   onChange={(e) => setEditForm({ ...editForm, client_name: e.target.value })}
-                  placeholder="Override default client name..."
+                  placeholder="Ganti nama klien default..."
                   className="w-full bg-white border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 p-3 transition-all outline-none"
                 />
-                <p className="text-[10px] text-slate-400 mt-1.5 font-medium">Leave empty to use user's original account name.</p>
+                <p className="text-[10px] text-slate-400 mt-1.5 font-medium">Biarkan kosong untuk menggunakan nama akun asli pengguna.</p>
               </div>
 
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Link to Order Project</label>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Hubungkan ke Proyek Pesanan</label>
                 <div className="relative">
                   <select
                     value={editForm.order_id || ""}
@@ -348,7 +348,7 @@ export default function TestimonialsClient() {
                     disabled={fetchingOrders}
                     className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-indigo-500/20 p-3 transition-all outline-none appearance-none disabled:opacity-50"
                   >
-                    <option value="">-- No Order Linked --</option>
+                    <option value="">-- Tidak Ada Pesanan Terhubung --</option>
                     {orders.map(o => (
                       <option key={o.id} value={o.id}>
                         {o.order_number} — {getOrderTitleSafe(o)}
@@ -362,7 +362,7 @@ export default function TestimonialsClient() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Custom Project Title</label>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Judul Proyek Kustom</label>
                 <input
                   type="text"
                   value={editForm.custom_project_title}
@@ -371,16 +371,16 @@ export default function TestimonialsClient() {
                   className="w-full bg-white border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 p-3 transition-all outline-none"
                 />
                 <p className="text-[10px] text-slate-400 mt-1.5 font-medium mb-1">
-                  If filled, this will replace the project title displayed on the public page.
+                  Jika diisi, ini akan menggantikan judul proyek yang ditampilkan di halaman publik.
                 </p>
               </div>
 
               <div className="flex gap-3 pt-2">
                 <button type="button" onClick={() => setIsEditModalOpen(false)} className="flex-1 bg-slate-100 text-slate-600 text-sm font-bold py-2.5 rounded-xl hover:bg-slate-200 transition-colors">
-                  Cancel
+                  Batal
                 </button>
                 <button type="submit" disabled={savingEdit} className="flex-2 inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold py-2.5 rounded-xl shadow-sm shadow-indigo-200 transition-colors disabled:opacity-60">
-                  {savingEdit ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save Changes"}
+                  {savingEdit ? <Loader2 className="w-4 h-4 animate-spin" /> : "Simpan Perubahan"}
                 </button>
               </div>
             </form>

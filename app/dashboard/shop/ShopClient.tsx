@@ -75,7 +75,7 @@ export default function ShopClient() {
     setLoading(true);
     const { data, error } = await supabase.from("store_products").select("*").order("created_at", { ascending: false });
     if (error) {
-      showToast("Failed to fetch products", "error");
+      showToast("Gagal mengambil produk", "error");
     } else {
       setProducts(data || []);
     }
@@ -108,48 +108,46 @@ export default function ShopClient() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.title || !form.slug) return showToast("Title and Slug are required", "error");
+    if (!form.title || !form.slug) return showToast("Judul dan Slug wajib diisi", "error");
     setSaving(true);
     
-    // Clean up empty fields and arrays
     const payload: any = { ...form };
     payload.images = payload.images.filter(Boolean);
     if (payload.images.length === 0) {
-      delete payload.images; // let DB use default '{}' to avoid PostgREST cast error for TEXT[]
+      delete payload.images; 
     }
     
     if (editingProduct) {
       const { error } = await supabase.from("store_products").update(payload).eq("id", editingProduct.id);
-      if (error) showToast(error.message || "Failed to update product", "error");
-      else { showToast("Product updated", "success"); setView("list"); fetchProducts(); }
+      if (error) showToast(error.message || "Gagal memperbarui produk", "error");
+      else { showToast("Produk diperbarui", "success"); setView("list"); fetchProducts(); }
     } else {
       const { error } = await supabase.from("store_products").insert(payload);
-      if (error) showToast(error.message || "Failed to create product", "error");
-      else { showToast("Product created", "success"); setView("list"); fetchProducts(); }
+      if (error) showToast(error.message || "Gagal membuat produk", "error");
+      else { showToast("Produk dibuat", "success"); setView("list"); fetchProducts(); }
     }
     setSaving(false);
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this product?")) return;
+    if (!confirm("Apakah Anda yakin ingin menghapus produk ini?")) return;
     const { error } = await supabase.from("store_products").delete().eq("id", id);
-    if (error) showToast("Failed to delete product", "error");
-    else { showToast("Product deleted", "success"); fetchProducts(); }
+    if (error) showToast("Gagal menghapus produk", "error");
+    else { showToast("Produk dihapus", "success"); fetchProducts(); }
   };
 
   const togglePublished = async (prd: Product) => {
     const { error } = await supabase.from("store_products").update({ is_published: !prd.is_published }).eq("id", prd.id);
-    if (error) showToast("Failed to update status", "error");
+    if (error) showToast("Gagal memperbarui status", "error");
     else fetchProducts();
   };
 
-  // Form helpers
   const updatePackage = (index: number, field: keyof ProductPackage, value: string | number) => {
     const pkgs = [...form.packages];
     pkgs[index] = { ...pkgs[index], [field]: value };
     setForm({ ...form, packages: pkgs });
   };
-  const addPackage = () => setForm({ ...form, packages: [...form.packages, { name: "New License", price: 0, desc: "", features: [] }] });
+  const addPackage = () => setForm({ ...form, packages: [...form.packages, { name: "Lisensi Baru", price: 0, desc: "", features: [] }] });
   const removePackage = (index: number) => setForm({ ...form, packages: form.packages.filter((_, i) => i !== index) });
   
   const addFeature = (pkgIndex: number) => {
@@ -168,7 +166,7 @@ export default function ShopClient() {
     setForm({ ...form, packages: pkgs });
   };
 
-  const addField = () => setForm(prev => ({ ...prev, form_fields: [...prev.form_fields, { label: "New Field", type: "text", required: false }] }));
+  const addField = () => setForm(prev => ({ ...prev, form_fields: [...prev.form_fields, { label: "Kolom Baru", type: "text", required: false }] }));
   const removeField = (index: number) => setForm(prev => ({ ...prev, form_fields: prev.form_fields.filter((_, i) => i !== index) }));
   const updateField = (index: number, field: keyof FormField, value: string | boolean | string[]) => {
     setForm(prev => {
@@ -178,7 +176,7 @@ export default function ShopClient() {
     });
   };
 
-  const addKeyFeature = () => setForm(prev => ({ ...prev, key_features: [...(prev.key_features || []), { title: "New Highlight", description: "Details about this feature", icon: "Download" }] }));
+  const addKeyFeature = () => setForm(prev => ({ ...prev, key_features: [...(prev.key_features || []), { title: "Sorotan Baru", description: "Detail tentang fitur ini", icon: "Download" }] }));
   const removeKeyFeature = (index: number) => setForm(prev => ({ ...prev, key_features: (prev.key_features || []).filter((_, i) => i !== index) }));
   const updateKeyFeature = (index: number, field: keyof KeyFeature, value: string) => {
     setForm(prev => {
@@ -207,7 +205,7 @@ export default function ShopClient() {
             onClick={() => setView("list")}
             className="inline-flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-primary transition-colors"
           >
-            <ArrowLeft className="w-4 h-4" /> Back to Products
+            <ArrowLeft className="w-4 h-4" /> Kembali ke Produk
           </button>
           <button
             type="button"
@@ -216,7 +214,7 @@ export default function ShopClient() {
             className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-6 py-2.5 rounded-xl shadow-sm shadow-indigo-200 transition-colors disabled:opacity-60"
           >
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-            {editingProduct ? "Update Product" : "Save Product"}
+            {editingProduct ? "Perbarui Produk" : "Simpan Produk"}
           </button>
         </div>
 
@@ -227,15 +225,15 @@ export default function ShopClient() {
               
 
               <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-6 space-y-5">
-                <h3 className="text-lg font-bold text-slate-800 mb-4 border-b border-slate-100 pb-3">Basic Information</h3>
+                <h3 className="text-lg font-bold text-slate-800 mb-4 border-b border-slate-100 pb-3">Informasi Dasar</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Product Title</label>
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Judul Produk</label>
                     <input required value={form.title} onChange={e => {
                         const title = e.target.value;
                         const slug = title.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
                         setForm(p => ({ ...p, title, slug }));
-                    }} placeholder="e.g. Modern UI Kit" className={`${inputClass} font-semibold`} />
+                    }} placeholder="contoh: Kit UI Modern" className={`${inputClass} font-semibold`} />
                   </div>
                   <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Slug</label>
@@ -244,21 +242,21 @@ export default function ShopClient() {
                 </div>
                 
                 <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Description</label>
-                  <textarea rows={4} value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} placeholder="Describe your digital product..." className={`${inputClass} resize-none`} />
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Deskripsi</label>
+                  <textarea rows={4} value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} placeholder="Deskripsikan produk digital Anda..." className={`${inputClass} resize-none`} />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div className="space-y-2">
                     <ImageUploader
-                      label="Main Image"
+                      label="Gambar Utama"
                       folder="products"
                       value={form.images[0] || ""}
                       onChange={url => setForm(p => ({ ...p, images: url ? [url] : [] }))}
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Category</label>
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Kategori</label>
                     <select value={form.category} onChange={e => setForm(p => ({ ...p, category: e.target.value }))} className={inputClass}>
                       <option>Logo</option>
                       <option>Icon</option>
@@ -275,8 +273,8 @@ export default function ShopClient() {
 
               <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-6">
                 <div className="flex items-center justify-between mb-6 border-b border-slate-100 pb-3">
-                  <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2"><Layers className="w-5 h-5 text-primary" /> Licenses & Pricing</h3>
-                  <button type="button" onClick={addPackage} className="text-xs font-bold bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg hover:bg-slate-200 inline-flex items-center gap-1"><Plus className="w-3 h-3"/> Add License</button>
+                  <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2"><Layers className="w-5 h-5 text-primary" /> Lisensi & Harga</h3>
+                  <button type="button" onClick={addPackage} className="text-xs font-bold bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg hover:bg-slate-200 inline-flex items-center gap-1"><Plus className="w-3 h-3"/> Tambah Lisensi</button>
                 </div>
                 
                 <div className="space-y-6">
@@ -285,37 +283,37 @@ export default function ShopClient() {
                       <button type="button" onClick={() => removePackage(pIdx)} className="absolute top-4 right-4 text-slate-400 hover:text-red-500"><Trash2 className="w-5 h-5"/></button>
                       <div className="grid grid-cols-2 gap-4 mb-4 pr-10">
                         <div>
-                          <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">License Name</label>
+                          <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Nama Lisensi</label>
                           <input value={pkg.name} onChange={e => updatePackage(pIdx, 'name', e.target.value)} className="w-full bg-white border border-slate-200 rounded-lg p-2 text-sm font-bold" />
                         </div>
                         <div>
-                          <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Price (IDR)</label>
+                          <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Harga (IDR)</label>
                           <input type="number" value={pkg.price} onChange={e => updatePackage(pIdx, 'price', parseInt(e.target.value) || 0)} className="w-full bg-white border border-slate-200 rounded-lg p-2 text-sm font-bold text-primary" />
                         </div>
                       </div>
                       <div className="mb-4">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Description</label>
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Deskripsi</label>
                         <input value={pkg.desc} onChange={e => updatePackage(pIdx, 'desc', e.target.value)} className="w-full bg-white border border-slate-200 rounded-lg p-2 text-sm text-slate-600" />
                       </div>
                       <div>
                         <div className="flex items-center justify-between mb-2">
-                           <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Included Aspects</label>
-                           <button type="button" onClick={() => addFeature(pIdx)} className="text-[10px] text-primary font-bold hover:underline bg-indigo-50 px-2 py-1 rounded">Add Row</button>
+                           <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Aspek yang Disertakan</label>
+                           <button type="button" onClick={() => addFeature(pIdx)} className="text-[10px] text-primary font-bold hover:underline bg-indigo-50 px-2 py-1 rounded">Tambah Baris</button>
                         </div>
                         <div className="space-y-2">
                            {pkg.features.map((feat, fIdx) => (
                              <div key={fIdx} className="flex items-center gap-2">
                                <Check className="w-4 h-4 text-emerald-500 shrink-0" />
-                               <input value={feat} onChange={e => updateFeature(pIdx, fIdx, e.target.value)} className="flex-1 bg-white border border-slate-200 rounded-lg p-1.5 text-xs text-slate-700" placeholder="e.g. Include 1 project" />
+                               <input value={feat} onChange={e => updateFeature(pIdx, fIdx, e.target.value)} className="flex-1 bg-white border border-slate-200 rounded-lg p-1.5 text-xs text-slate-700" placeholder="contoh: Termasuk 1 proyek" />
                                <button type="button" onClick={() => removeFeature(pIdx, fIdx)} className="text-slate-400 hover:text-red-500"><X className="w-4 h-4"/></button>
                              </div>
                            ))}
-                           {pkg.features.length === 0 && <div className="text-xs text-slate-400 italic">No features defined.</div>}
+                           {pkg.features.length === 0 && <div className="text-xs text-slate-400 italic">Belum ada fitur yang ditentukan.</div>}
                         </div>
                       </div>
                     </div>
                   ))}
-                  {form.packages.length === 0 && <div className="text-center py-6 text-slate-400 text-sm">No pricing setup. Click &apos;Add License&apos; to create one.</div>}
+                  {form.packages.length === 0 && <div className="text-center py-6 text-slate-400 text-sm">Belum ada pengaturan harga. Klik &apos;Tambah Lisensi&apos; untuk membuat satu.</div>}
                 </div>
               </div>
             </div>
@@ -328,8 +326,8 @@ export default function ShopClient() {
                  <div className="space-y-4">
                     <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-200">
                       <div>
-                        <p className="text-sm font-bold text-slate-900 flex items-center gap-2">{form.is_published ? <Globe className="w-4 h-4 text-emerald-500" /> : <Clock className="w-4 h-4 text-slate-400" />} {form.is_published ? "Published" : "Draft"}</p>
-                        <p className="text-xs text-slate-400">Visibility on site</p>
+                        <p className="text-sm font-bold text-slate-900 flex items-center gap-2">{form.is_published ? <Globe className="w-4 h-4 text-emerald-500" /> : <Clock className="w-4 h-4 text-slate-400" />} {form.is_published ? "Diterbitkan" : "Draf"}</p>
+                        <p className="text-xs text-slate-400">Visibilitas di situs</p>
                       </div>
                       <button type="button" onClick={() => setForm(p => ({ ...p, is_published: !p.is_published }))} className={`w-11 h-6 rounded-full relative transition-all ${form.is_published ? "bg-emerald-500" : "bg-slate-300"}`}>
                         <div className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow-sm transition-all ${form.is_published ? "right-1" : "left-1"}`} />
@@ -342,8 +340,8 @@ export default function ShopClient() {
 
               <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-6 mt-6">
                 <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
-                  <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2"><Star className="w-4 h-4 text-primary fill-indigo-500" /> Product Highlights</h3>
-                  <button type="button" onClick={addKeyFeature} className="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-1 rounded hover:bg-slate-200">+ Add</button>
+                  <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2"><Star className="w-4 h-4 text-primary fill-indigo-500" /> Sorotan Produk</h3>
+                  <button type="button" onClick={addKeyFeature} className="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-1 rounded hover:bg-slate-200">+ Tambah</button>
                 </div>
                 
                 <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
@@ -353,22 +351,22 @@ export default function ShopClient() {
                         <div className="space-y-3 pr-6">
                            <div className="grid grid-cols-3 gap-2">
                              <div className="col-span-2">
-                                <label className="text-[9px] font-bold uppercase text-slate-500">Highlight Title</label>
-                                <input value={kf.title} onChange={e => updateKeyFeature(i, 'title', e.target.value)} className="w-full bg-white border border-slate-200 p-1.5 rounded text-xs font-semibold" placeholder="e.g. Instant Delivery" />
+                                <label className="text-[9px] font-bold uppercase text-slate-500">Judul Sorotan</label>
+                                <input value={kf.title} onChange={e => updateKeyFeature(i, 'title', e.target.value)} className="w-full bg-white border border-slate-200 p-1.5 rounded text-xs font-semibold" placeholder="misal: Pengiriman Instan" />
                              </div>
                              <div>
-                                <label className="text-[9px] font-bold uppercase text-slate-500">Icon Name</label>
+                                <label className="text-[9px] font-bold uppercase text-slate-500">Nama Ikon</label>
                                 <input value={kf.icon} onChange={e => updateKeyFeature(i, 'icon', e.target.value)} className="w-full bg-white border border-slate-200 p-1.5 rounded text-xs" placeholder="Download" />
                              </div>
                            </div>
                            <div>
-                              <label className="text-[9px] font-bold uppercase text-slate-500">Description</label>
-                              <textarea rows={2} value={kf.description} onChange={e => updateKeyFeature(i, 'description', e.target.value)} className="w-full bg-white border border-slate-200 p-1.5 rounded text-xs resize-none" placeholder="Short detail..." />
+                              <label className="text-[9px] font-bold uppercase text-slate-500">Deskripsi</label>
+                              <textarea rows={2} value={kf.description} onChange={e => updateKeyFeature(i, 'description', e.target.value)} className="w-full bg-white border border-slate-200 p-1.5 rounded text-xs resize-none" placeholder="Detail singkat..." />
                            </div>
                         </div>
                      </div>
                    ))}
-                   {(!form.key_features || form.key_features.length === 0) && <div className="text-xs text-slate-400 text-center py-4">No highlights added. These will appear below the description.</div>}
+                   {(!form.key_features || form.key_features.length === 0) && <div className="text-xs text-slate-400 text-center py-4">Belum ada sorotan yang ditambahkan. Ini akan muncul di bawah deskripsi.</div>}
                 </div>
               </div>
 
@@ -377,9 +375,9 @@ export default function ShopClient() {
               <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-6">
                 <div className="flex justify-between items-center mb-4 border-b border-slate-100 pb-3">
                   <div>
-                    <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2"><MessageSquare className="w-4 h-4 text-primary" /> Checkout Required Data</h3>
+                    <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2"><MessageSquare className="w-4 h-4 text-primary" /> Data Wajib Checkout</h3>
                   </div>
-                  <button type="button" onClick={addField} className="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-1 rounded hover:bg-slate-200">+ Add</button>
+                  <button type="button" onClick={addField} className="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-1 rounded hover:bg-slate-200">+ Tambah</button>
                 </div>
                 
                 <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
@@ -388,34 +386,34 @@ export default function ShopClient() {
                         <button type="button" onClick={() => removeField(i)} className="absolute top-2 right-2 text-slate-400 hover:text-red-500"><X className="w-3 h-3"/></button>
                         <div className="space-y-3 pr-6">
                            <div>
-                              <label className="text-[9px] font-bold uppercase text-slate-500">Field Label</label>
+                              <label className="text-[9px] font-bold uppercase text-slate-500">Label Kolom</label>
                               <input value={f.label} onChange={e => updateField(i, 'label', e.target.value)} className="w-full bg-white border border-slate-200 p-1.5 rounded text-xs font-semibold" />
                            </div>
                            <div className="flex gap-2">
                               <div className="flex-1">
-                                 <label className="text-[9px] font-bold uppercase text-slate-500">Type</label>
+                                 <label className="text-[9px] font-bold uppercase text-slate-500">Tipe</label>
                                  <select value={f.type} onChange={e => updateField(i, 'type', e.target.value)} className="w-full bg-white border border-slate-200 p-1.5 rounded text-xs">
-                                    <option value="text">Text Base</option>
-                                    <option value="textarea">Paragraph</option>
+                                    <option value="text">Teks Biasa</option>
+                                    <option value="textarea">Paragraf</option>
                                     <option value="select">Dropdown</option>
-                                    <option value="file">File Upload</option>
+                                    <option value="file">Unggah File</option>
                                  </select>
                               </div>
                               <div className="w-16 flex flex-col items-center">
-                                 <label className="text-[9px] font-bold uppercase text-slate-500 pb-1">Req.</label>
+                                 <label className="text-[9px] font-bold uppercase text-slate-500 pb-1">Wajib</label>
                                  <input type="checkbox" checked={f.required} onChange={e => updateField(i, 'required', e.target.checked)} className="rounded border-slate-300 text-primary" />
                               </div>
                            </div>
                            {f.type === "select" && (
                               <div>
-                                 <label className="text-[9px] font-bold uppercase text-slate-500">Options (Comma separated)</label>
-                                 <input value={f.options?.join(",") || ""} onChange={e => updateField(i, 'options', e.target.value.split(",").map(s => s.trim()))} className="w-full bg-white border border-slate-200 p-1.5 rounded text-xs" placeholder="Opt 1, Opt 2" />
+                                 <label className="text-[9px] font-bold uppercase text-slate-500">Pilihan (Pisahkan dengan koma)</label>
+                                 <input value={f.options?.join(",") || ""} onChange={e => updateField(i, 'options', e.target.value.split(",").map(s => s.trim()))} className="w-full bg-white border border-slate-200 p-1.5 rounded text-xs" placeholder="Pilihan 1, Pilihan 2" />
                               </div>
                            )}
                         </div>
                      </div>
                    ))}
-                   {form.form_fields.length === 0 && <div className="text-xs text-slate-400 text-center py-4">Optionally add data the user must provide upon checkout.</div>}
+                   {form.form_fields.length === 0 && <div className="text-xs text-slate-400 text-center py-4">Opsional, tambahkan data yang wajib diberikan pengguna saat checkout.</div>}
                 </div>
               </div>
 
@@ -430,20 +428,20 @@ export default function ShopClient() {
     <div className="pt-6 px-4 pb-10">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Shop Directory</h1>
-          <p className="text-sm font-medium text-slate-500 mt-1">Manage digital products and items available for purchase.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Direktori Toko</h1>
+          <p className="text-sm font-medium text-slate-500 mt-1">Kelola produk digital dan item yang tersedia untuk dibeli.</p>
         </div>
         <button
           onClick={openNew}
           className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-sm shadow-indigo-200 transition-colors w-fit"
         >
-          <Plus className="w-4 h-4" /> New Product
+          <Plus className="w-4 h-4" /> Produk Baru
         </button>
       </div>
 
       <div className="relative mb-6">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-        <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} placeholder="Search products by title or category..."
+        <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} placeholder="Cari produk berdasarkan judul atau kategori..."
           className="w-full bg-white shadow-sm ring-1 ring-slate-100 border-0 rounded-2xl pl-9 pr-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500/20" />
       </div>
 
@@ -455,7 +453,7 @@ export default function ShopClient() {
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-32 text-slate-400">
             <Box className="w-10 h-10 mb-3 text-slate-200" />
-            <p className="text-sm font-bold">No products found</p>
+            <p className="text-sm font-bold">Produk tidak ditemukan</p>
           </div>
         ) : (
           <>
@@ -463,10 +461,10 @@ export default function ShopClient() {
             <table className="w-full text-left">
               <thead>
                 <tr className="text-slate-400 text-xs font-bold uppercase tracking-wider border-b border-slate-100 bg-slate-50/50">
-                  <th className="px-6 py-4">Product Details</th>
-                  <th className="px-6 py-4">Licenses / Packages</th>
+                  <th className="px-6 py-4">Detail Produk</th>
+                  <th className="px-6 py-4">Lisensi / Paket</th>
                   <th className="px-6 py-4">Status</th>
-                  <th className="px-6 py-4 text-right">Actions</th>
+                  <th className="px-6 py-4 text-right">Aksi</th>
                 </tr>
               </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -493,21 +491,21 @@ export default function ShopClient() {
                            </div>
                          ))}
                        </div>
-                       <p className="text-xs text-slate-400 mt-1.5">{prd.packages?.length || 0} Pricing plans</p>
+                       <p className="text-xs text-slate-400 mt-1.5">{prd.packages?.length || 0} Paket harga</p>
                     </td>
                     <td className="px-6 py-4">
                        <button onClick={() => togglePublished(prd)} className="flex items-center gap-1.5 text-xs font-semibold py-1.5 px-3 rounded-lg hover:bg-slate-100 transition-colors">
                          {prd.is_published 
-                           ? <><div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div> <span className="text-emerald-700">Published</span></>
-                           : <><div className="w-2 h-2 rounded-full bg-slate-300"></div> <span className="text-slate-500">Draft</span></>}
+                           ? <><div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div> <span className="text-emerald-700">Diterbitkan</span></>
+                           : <><div className="w-2 h-2 rounded-full bg-slate-300"></div> <span className="text-slate-500">Draf</span></>}
                        </button>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-end gap-2">
-                        <button onClick={() => openEdit(prd)} className="p-2 rounded-lg bg-slate-100 text-slate-500 hover:bg-indigo-50 hover:text-primary transition-colors" title="Edit">
+                        <button onClick={() => openEdit(prd)} className="p-2 rounded-lg bg-slate-100 text-slate-500 hover:bg-indigo-50 hover:text-primary transition-colors" title="Ubah">
                           <Pencil className="w-4 h-4" />
                         </button>
-                        <button onClick={() => handleDelete(prd.id)} className="p-2 rounded-lg bg-slate-100 text-rose-400 hover:bg-rose-50 hover:text-rose-600 transition-colors" title="Delete">
+                        <button onClick={() => handleDelete(prd.id)} className="p-2 rounded-lg bg-slate-100 text-rose-400 hover:bg-rose-50 hover:text-rose-600 transition-colors" title="Hapus">
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -521,7 +519,7 @@ export default function ShopClient() {
           {totalPages > 1 && (
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-4 border-t border-slate-100">
               <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">
-                Showing {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filtered.length)} of {filtered.length} products
+                Menampilkan {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filtered.length)} dari {filtered.length} produk
               </p>
               <div className="flex items-center gap-2">
                 <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}

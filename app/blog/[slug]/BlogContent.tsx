@@ -59,7 +59,7 @@ export default function BlogContent({ blog, recentBlogs, nextArticle, ads }: Blo
       <div className="pt-28 pb-24 mx-auto max-w-4xl px-4 sm:px-6">
 
         <nav className="flex items-center gap-1.5 text-xs font-medium text-slate-400 mb-10">
-          <Link href="/" className="hover:text-slate-700 transition-colors">Home</Link>
+          <Link href="/" className="hover:text-slate-700 transition-colors">Beranda</Link>
           <ChevronRight className="w-3 h-3" />
           <Link href="/blog" className="hover:text-slate-700 transition-colors">Blog</Link>
           <ChevronRight className="w-3 h-3" />
@@ -157,7 +157,7 @@ export default function BlogContent({ blog, recentBlogs, nextArticle, ads }: Blo
             href="/blog"
             className="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-primary transition-colors"
           >
-            <ArrowLeft className="w-4 h-4" /> All Articles
+            <ArrowLeft className="w-4 h-4" /> Semua Artikel
           </Link>
           {nextArticle && (
             <Link
@@ -175,7 +175,7 @@ export default function BlogContent({ blog, recentBlogs, nextArticle, ads }: Blo
             <div className="flex items-center gap-2 mb-6">
               <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-sm font-medium text-primary">
                 <BookOpen size={14} />
-                <span>Other Articles</span>
+                <span>Artikel Terkait</span>
               </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">

@@ -48,11 +48,11 @@ const emptyForm: Omit<Service, "id"> = {
   title: "", 
   slug: "", 
   description: "", 
-  category: "Design", 
+  category: "Desain", 
   icon: "Briefcase", 
   thumbnail_url: "", 
-  packages: [{ name: "Standard", price: 0, description: "Standard Package", features: [] }], 
-  form_fields: [{ label: "Project Details", type: "textarea", required: true }], 
+  packages: [{ name: "Standar", price: 0, description: "Paket Standar", features: [] }], 
+  form_fields: [{ label: "Detail Proyek", type: "textarea", required: true }], 
   key_features: [],
   is_published: true, 
   is_featured: false, 
@@ -88,7 +88,7 @@ export default function ServicesClient() {
     setLoading(true);
     const { data, error } = await supabase.from("store_services").select("*").order("sort_order", { ascending: true });
     if (error) {
-      showToast("Failed to fetch services", "error");
+      showToast("Gagal mengambil data layanan", "error");
     } else {
       setServices(data || []);
     }
@@ -125,31 +125,31 @@ export default function ServicesClient() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.title || !form.slug) return showToast("Title and Slug are required", "error");
+    if (!form.title || !form.slug) return showToast("Judul dan Slug wajib diisi", "error");
     setSaving(true);
     if (editingService) {
       const { error } = await supabase.from("store_services").update({ ...form }).eq("id", editingService.id);
-      if (error) showToast("Failed to update service", "error");
-      else { showToast("Service updated", "success"); setView("list"); fetchServices(); }
+      if (error) showToast("Gagal memperbarui layanan", "error");
+      else { showToast("Layanan berhasil diperbarui", "success"); setView("list"); fetchServices(); }
     } else {
       const newOrder = services.length > 0 ? Math.max(...services.map((s: any) => s.sort_order || 0)) + 1 : 1;
       const { error } = await supabase.from("store_services").insert({ ...form, sort_order: newOrder });
-      if (error) showToast("Failed to create service", "error");
-      else { showToast("Service created", "success"); setView("list"); fetchServices(); }
+      if (error) showToast("Gagal membuat layanan", "error");
+      else { showToast("Layanan berhasil dibuat", "success"); setView("list"); fetchServices(); }
     }
     setSaving(false);
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this service?")) return;
+    if (!confirm("Apakah Anda yakin ingin menghapus layanan ini?")) return;
     const { error } = await supabase.from("store_services").delete().eq("id", id);
-    if (error) showToast("Failed to delete service", "error");
-    else { showToast("Service deleted", "success"); fetchServices(); }
+    if (error) showToast("Gagal menghapus layanan", "error");
+    else { showToast("Layanan berhasil dihapus", "success"); fetchServices(); }
   };
 
   const togglePublished = async (svc: Service) => {
     const { error } = await supabase.from("store_services").update({ is_published: !svc.is_published }).eq("id", svc.id);
-    if (error) showToast("Failed to update status", "error");
+    if (error) showToast("Gagal memperbarui status", "error");
     else fetchServices();
   };
 
@@ -159,7 +159,7 @@ export default function ServicesClient() {
     pkgs[index] = { ...pkgs[index], [field]: value };
     setForm({ ...form, packages: pkgs });
   };
-  const addPackage = () => setForm({ ...form, packages: [...form.packages, { name: "New Plan", price: 0, description: "", features: [] }] });
+  const addPackage = () => setForm({ ...form, packages: [...form.packages, { name: "Paket Baru", price: 0, description: "", features: [] }] });
   const removePackage = (index: number) => setForm({ ...form, packages: form.packages.filter((_, i) => i !== index) });
   
   const addFeature = (pkgIndex: number) => {
@@ -178,7 +178,7 @@ export default function ServicesClient() {
     setForm({ ...form, packages: pkgs });
   };
 
-  const addField = () => setForm({ ...form, form_fields: [...form.form_fields, { label: "New Question", type: "text", required: false }] });
+  const addField = () => setForm({ ...form, form_fields: [...form.form_fields, { label: "Pertanyaan Baru", type: "text", required: false }] });
   const removeField = (index: number) => setForm({ ...form, form_fields: form.form_fields.filter((_, i) => i !== index) });
   const updateField = (index: number, field: keyof FormField, value: string | boolean | string[]) => {
     const fields = [...form.form_fields];
@@ -186,7 +186,7 @@ export default function ServicesClient() {
     setForm({ ...form, form_fields: fields });
   };
 
-  const addKeyFeature = () => setForm({ ...form, key_features: [...(form.key_features || []), { title: "New Highlight", description: "Details about this feature", icon: "CheckCircle2" }] });
+  const addKeyFeature = () => setForm({ ...form, key_features: [...(form.key_features || []), { title: "Sorotan Baru", description: "Detail tentang fitur ini", icon: "CheckCircle2" }] });
   const removeKeyFeature = (index: number) => setForm({ ...form, key_features: (form.key_features || []).filter((_, i) => i !== index) });
   const updateKeyFeature = (index: number, field: keyof KeyFeature, value: string) => {
     const kfs = [...(form.key_features || [])];
@@ -213,7 +213,7 @@ export default function ServicesClient() {
             onClick={() => setView("list")}
             className="inline-flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-primary transition-colors"
           >
-            <ArrowLeft className="w-4 h-4" /> Back to Services
+            <ArrowLeft className="w-4 h-4" /> Kembali ke Layanan
           </button>
           <button
             type="button"
@@ -222,7 +222,7 @@ export default function ServicesClient() {
             className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-6 py-2.5 rounded-xl shadow-sm shadow-indigo-200 transition-colors disabled:opacity-60"
           >
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-            {editingService ? "Update Service" : "Save Service"}
+            {editingService ? "Perbarui Layanan" : "Simpan Layanan"}
           </button>
         </div>
 
@@ -233,15 +233,15 @@ export default function ServicesClient() {
               
 
               <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-6 space-y-5">
-                <h3 className="text-lg font-bold text-slate-800 mb-4 border-b border-slate-100 pb-3">Basic Information</h3>
+                <h3 className="text-lg font-bold text-slate-800 mb-4 border-b border-slate-100 pb-3">Informasi Dasar</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Service Title</label>
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Judul Layanan</label>
                     <input required value={form.title} onChange={(e: any) => {
                         const title = e.target.value;
                         const slug = title.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
                         setForm(p => ({ ...p, title, slug }));
-                    }} placeholder="e.g. Website Development" className={`${inputClass} font-semibold`} />
+                    }} placeholder="cth. Pengembangan Website" className={`${inputClass} font-semibold`} />
                   </div>
                   <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Slug</label>
@@ -251,24 +251,24 @@ export default function ServicesClient() {
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block">Category</label>
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block">Kategori</label>
                     <select value={form.category} onChange={e => setForm(p => ({ ...p, category: e.target.value }))} className={`${inputClass} w-full`}>
-                      <option>Design</option>
-                      <option>Development</option>
-                      <option>Marketing</option>
-                      <option>Consulting</option>
-                      <option>Other</option>
+                      <option>Desain</option>
+                      <option>Pengembangan</option>
+                      <option>Pemasaran</option>
+                      <option>Konsultasi</option>
+                      <option>Lainnya</option>
                     </select>
                   </div>
                 </div>
                 
                 <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Description</label>
-                  <textarea rows={4} value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} placeholder="Describe your service offering..." className={`${inputClass} resize-none`} />
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Deskripsi</label>
+                  <textarea rows={4} value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} placeholder="Jelaskan penawaran layanan Anda..." className={`${inputClass} resize-none`} />
                 </div>
 
                 <ImageUploader 
-                  label="Service Thumbnail" 
+                  label="Thumbnail Layanan" 
                   value={form.thumbnail_url} 
                   onChange={(url) => setForm(p => ({ ...p, thumbnail_url: url }))} 
                   folder="services"
@@ -279,8 +279,8 @@ export default function ServicesClient() {
 
               <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-6">
                 <div className="flex items-center justify-between mb-6 border-b border-slate-100 pb-3">
-                  <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2"><Layers className="w-5 h-5 text-primary" /> Pricing Packages</h3>
-                  <button type="button" onClick={addPackage} className="text-xs font-bold bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg hover:bg-slate-200 inline-flex items-center gap-1"><Plus className="w-3 h-3"/> Add Plan</button>
+                  <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2"><Layers className="w-5 h-5 text-primary" /> Paket Harga</h3>
+                  <button type="button" onClick={addPackage} className="text-xs font-bold bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg hover:bg-slate-200 inline-flex items-center gap-1"><Plus className="w-3 h-3"/> Tambah Paket</button>
                 </div>
                 
                 <div className="space-y-6">
@@ -289,37 +289,37 @@ export default function ServicesClient() {
                       <button type="button" onClick={() => removePackage(pIdx)} className="absolute top-4 right-4 text-slate-400 hover:text-red-500"><Trash2 className="w-5 h-5"/></button>
                       <div className="grid grid-cols-2 gap-4 mb-4 pr-10">
                         <div>
-                          <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Plan Name</label>
+                          <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Nama Paket</label>
                           <input value={pkg.name} onChange={e => updatePackage(pIdx, 'name', e.target.value)} className="w-full bg-white border border-slate-200 rounded-lg p-2 text-sm font-bold" />
                         </div>
                         <div>
-                          <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Price (IDR)</label>
+                          <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Harga (IDR)</label>
                           <input type="number" value={pkg.price} onChange={e => updatePackage(pIdx, 'price', parseInt(e.target.value) || 0)} className="w-full bg-white border border-slate-200 rounded-lg p-2 text-sm font-bold text-primary" />
                         </div>
                       </div>
                       <div className="mb-4">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Description</label>
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Deskripsi</label>
                         <input value={pkg.description} onChange={e => updatePackage(pIdx, 'description', e.target.value)} className="w-full bg-white border border-slate-200 rounded-lg p-2 text-sm text-slate-600" />
                       </div>
                       <div>
                         <div className="flex items-center justify-between mb-2">
-                           <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Features Checklist</label>
-                           <button type="button" onClick={() => addFeature(pIdx)} className="text-[10px] text-primary font-bold hover:underline bg-indigo-50 px-2 py-1 rounded">Add Feature</button>
+                           <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Daftar Fitur</label>
+                           <button type="button" onClick={() => addFeature(pIdx)} className="text-[10px] text-primary font-bold hover:underline bg-indigo-50 px-2 py-1 rounded">Tambah Fitur</button>
                         </div>
                         <div className="space-y-2">
                            {pkg.features.map((feat, fIdx) => (
                              <div key={fIdx} className="flex items-center gap-2">
                                <Check className="w-4 h-4 text-emerald-500 shrink-0" />
-                               <input value={feat} onChange={e => updateFeature(pIdx, fIdx, e.target.value)} className="flex-1 bg-white border border-slate-200 rounded-lg p-1.5 text-xs text-slate-700" placeholder="e.g. Free 1 year domain" />
+                               <input value={feat} onChange={e => updateFeature(pIdx, fIdx, e.target.value)} className="flex-1 bg-white border border-slate-200 rounded-lg p-1.5 text-xs text-slate-700" placeholder="contoh: Domain gratis 1 tahun" />
                                <button type="button" onClick={() => removeFeature(pIdx, fIdx)} className="text-slate-400 hover:text-red-500"><X className="w-4 h-4"/></button>
                              </div>
                            ))}
-                           {pkg.features.length === 0 && <div className="text-xs text-slate-400 italic">No features added.</div>}
+                           {pkg.features.length === 0 && <div className="text-xs text-slate-400 italic">Belum ada fitur ditambahkan.</div>}
                         </div>
                       </div>
                     </div>
                   ))}
-                  {form.packages.length === 0 && <div className="text-center py-6 text-slate-400 text-sm">No pricing packages. Click &apos;Add Plan&apos; to create one.</div>}
+                  {form.packages.length === 0 && <div className="text-center py-6 text-slate-400 text-sm">Tidak ada paket harga. Klik &apos;Tambah Paket&apos; untuk membuatnya.</div>}
                 </div>
               </div>
             </div>
@@ -332,8 +332,8 @@ export default function ServicesClient() {
                  <div className="space-y-4">
                     <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-200">
                       <div>
-                        <p className="text-sm font-bold text-slate-900 flex items-center gap-2">{form.is_published ? <Globe className="w-4 h-4 text-emerald-500" /> : <Clock className="w-4 h-4 text-slate-400" />} {form.is_published ? "Published" : "Draft"}</p>
-                        <p className="text-xs text-slate-400">Visibility on site</p>
+                        <p className="text-sm font-bold text-slate-900 flex items-center gap-2">{form.is_published ? <Globe className="w-4 h-4 text-emerald-500" /> : <Clock className="w-4 h-4 text-slate-400" />} {form.is_published ? "Diterbitkan" : "Draf"}</p>
+                        <p className="text-xs text-slate-400">Visibilitas di situs</p>
                       </div>
                       <button type="button" onClick={() => setForm((p: any) => ({ ...p, is_published: !p.is_published }))} className={`w-11 h-6 rounded-full relative transition-all ${form.is_published ? "bg-emerald-500" : "bg-slate-300"}`}>
                         <div className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow-sm transition-all ${form.is_published ? "right-1" : "left-1"}`} />
@@ -341,8 +341,8 @@ export default function ServicesClient() {
                     </div>
                     <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-200">
                       <div>
-                        <p className="text-sm font-bold text-slate-900 flex items-center gap-2"><Star className={`w-4 h-4 ${form.is_featured ? 'text-yellow-500 fill-yellow-500' : 'text-slate-400'}`} /> Featured</p>
-                        <p className="text-xs text-slate-400">Show on landing page</p>
+                        <p className="text-sm font-bold text-slate-900 flex items-center gap-2"><Star className={`w-4 h-4 ${form.is_featured ? 'text-yellow-500 fill-yellow-500' : 'text-slate-400'}`} /> Unggulan</p>
+                        <p className="text-xs text-slate-400">Tampilkan di halaman utama</p>
                       </div>
                       <button type="button" onClick={() => setForm((p: any) => ({ ...p, is_featured: !p.is_featured }))} className={`w-11 h-6 rounded-full relative transition-all ${form.is_featured ? "bg-yellow-500" : "bg-slate-300"}`}>
                         <div className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow-sm transition-all ${form.is_featured ? "right-1" : "left-1"}`} />
@@ -355,8 +355,8 @@ export default function ServicesClient() {
 
               <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-6">
                 <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
-                  <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2"><MessageSquare className="w-4 h-4 text-primary" /> Client Requirements</h3>
-                  <button type="button" onClick={addField} className="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-1 rounded hover:bg-slate-200">+ Add</button>
+                  <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2"><MessageSquare className="w-4 h-4 text-primary" /> Persyaratan Klien</h3>
+                  <button type="button" onClick={addField} className="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-1 rounded hover:bg-slate-200">+ Tambah</button>
                 </div>
                 
                 <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
@@ -365,34 +365,34 @@ export default function ServicesClient() {
                         <button type="button" onClick={() => removeField(i)} className="absolute top-2 right-2 text-slate-400 hover:text-red-500"><X className="w-3 h-3"/></button>
                         <div className="space-y-3 pr-6">
                            <div>
-                              <label className="text-[9px] font-bold uppercase text-slate-500">Question</label>
+                              <label className="text-[9px] font-bold uppercase text-slate-500">Pertanyaan</label>
                               <input value={f.label} onChange={(e: any) => updateField(i, 'label', e.target.value)} className="w-full bg-white border border-slate-200 p-1.5 rounded text-xs font-semibold" />
                            </div>
                            <div className="flex gap-2">
                               <div className="flex-1">
-                                 <label className="text-[9px] font-bold uppercase text-slate-500">Type</label>
+                                 <label className="text-[9px] font-bold uppercase text-slate-500">Tipe</label>
                                  <select value={f.type} onChange={e => updateField(i, 'type', e.target.value)} className="w-full bg-white border border-slate-200 p-1.5 rounded text-xs">
-                                    <option value="text">Text Base</option>
-                                    <option value="textarea">Paragraph</option>
-                                    <option value="select">Dropdown</option>
-                                    <option value="file">File Upload</option>
+                                    <option value="text">Teks Biasa</option>
+                                    <option value="textarea">Paragraf</option>
+                                    <option value="select">Pilihan</option>
+                                    <option value="file">Unggah Berkas</option>
                                  </select>
                               </div>
                               <div className="w-16 flex flex-col items-center">
-                                 <label className="text-[9px] font-bold uppercase text-slate-500 pb-1">Req.</label>
+                                 <label className="text-[9px] font-bold uppercase text-slate-500 pb-1">Wajib</label>
                                  <input type="checkbox" checked={f.required} onChange={e => updateField(i, 'required', e.target.checked)} className="rounded border-slate-300 text-primary" />
                               </div>
                            </div>
                            {f.type === "select" && (
                               <div>
-                                 <label className="text-[9px] font-bold uppercase text-slate-500">Options (Comma separated)</label>
-                                 <input value={f.options?.join(",") || ""} onChange={e => updateField(i, 'options', e.target.value.split(",").map(s => s.trim()))} className="w-full bg-white border border-slate-200 p-1.5 rounded text-xs" placeholder="Opt 1, Opt 2" />
+                                 <label className="text-[9px] font-bold uppercase text-slate-500">Opsi (dipisahkan koma)</label>
+                                 <input value={f.options?.join(",") || ""} onChange={e => updateField(i, 'options', e.target.value.split(",").map(s => s.trim()))} className="w-full bg-white border border-slate-200 p-1.5 rounded text-xs" placeholder="Opsi 1, Opsi 2" />
                               </div>
                            )}
                         </div>
                      </div>
                    ))}
-                   {form.form_fields.length === 0 && <div className="text-xs text-slate-400 text-center py-4">No order form fields defined.</div>}
+                   {form.form_fields.length === 0 && <div className="text-xs text-slate-400 text-center py-4">Tidak ada bidang formulir pesanan yang ditentukan.</div>}
                 </div>
               </div>
 
@@ -400,8 +400,8 @@ export default function ServicesClient() {
 
               <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-6 mt-6">
                 <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
-                  <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2"><Star className="w-4 h-4 text-primary fill-indigo-500" /> Service Highlights</h3>
-                  <button type="button" onClick={addKeyFeature} className="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-1 rounded hover:bg-slate-200">+ Add</button>
+                  <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2"><Star className="w-4 h-4 text-primary fill-indigo-500" /> Sorotan Layanan</h3>
+                  <button type="button" onClick={addKeyFeature} className="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-1 rounded hover:bg-slate-200">+ Tambah</button>
                 </div>
                 
                 <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
@@ -411,29 +411,29 @@ export default function ServicesClient() {
                         <div className="space-y-3 pr-6">
                            <div className="grid grid-cols-3 gap-2">
                              <div className="col-span-2">
-                                <label className="text-[9px] font-bold uppercase text-slate-500">Highlight Title</label>
-                                <input value={kf.title} onChange={(e: any) => updateKeyFeature(i, 'title', e.target.value)} className="w-full bg-white border border-slate-200 p-1.5 rounded text-xs font-semibold" placeholder="e.g. Quality Assured" />
+                                <label className="text-[9px] font-bold uppercase text-slate-500">Judul Sorotan</label>
+                                <input value={kf.title} onChange={(e: any) => updateKeyFeature(i, 'title', e.target.value)} className="w-full bg-white border border-slate-200 p-1.5 rounded text-xs font-semibold" placeholder="contoh: Kualitas Terjamin" />
                              </div>
                              <div>
-                                <label className="text-[9px] font-bold uppercase text-slate-500">Icon Name</label>
+                                <label className="text-[9px] font-bold uppercase text-slate-500">Nama Ikon</label>
                                 <input value={kf.icon} onChange={(e: any) => updateKeyFeature(i, 'icon', e.target.value)} className="w-full bg-white border border-slate-200 p-1.5 rounded text-xs" placeholder="CheckCircle2" />
                              </div>
                            </div>
                            <div>
-                              <label className="text-[9px] font-bold uppercase text-slate-500">Description</label>
-                              <textarea rows={2} value={kf.description} onChange={(e: any) => updateKeyFeature(i, 'description', e.target.value)} className="w-full bg-white border border-slate-200 p-1.5 rounded text-xs resize-none" placeholder="Short detail..." />
+                              <label className="text-[9px] font-bold uppercase text-slate-500">Deskripsi</label>
+                              <textarea rows={2} value={kf.description} onChange={(e: any) => updateKeyFeature(i, 'description', e.target.value)} className="w-full bg-white border border-slate-200 p-1.5 rounded text-xs resize-none" placeholder="Detail singkat..." />
                            </div>
                         </div>
                      </div>
                    ))}
-                   {(!form.key_features || form.key_features.length === 0) && <div className="text-xs text-slate-400 text-center py-4">No highlights added. These will appear below the description.</div>}
+                   {(!form.key_features || form.key_features.length === 0) && <div className="text-xs text-slate-400 text-center py-4">Belum ada sorotan ditambahkan. Ini akan muncul di bawah deskripsi.</div>}
                 </div>
               </div>
 
               <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-6 mt-6">
                 <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
-                  <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2"><BriefcaseBusiness className="w-4 h-4 text-primary" /> Connected Portfolios</h3>
-                  <button type="button" onClick={() => setShowPortfolioModal(true)} className="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-1 rounded hover:bg-slate-200">+ Add Portfolio</button>
+                  <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2"><BriefcaseBusiness className="w-4 h-4 text-primary" /> Portofolio Terhubung</h3>
+                  <button type="button" onClick={() => setShowPortfolioModal(true)} className="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-1 rounded hover:bg-slate-200">+ Tambah Portofolio</button>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4 max-h-[400px] overflow-y-auto">
@@ -452,7 +452,7 @@ export default function ServicesClient() {
                           </div>
                         )}
                         <div className="p-2 bg-white border-t border-slate-100">
-                          <p className="text-xs font-bold truncate text-slate-800">{port.title || "Untitled"}</p>
+                          <p className="text-xs font-bold truncate text-slate-800">{port.title || "Tanpa Judul"}</p>
                         </div>
                         <button type="button" onClick={() => setForm((p: any) => ({ ...p, portfolio_ids: (p.portfolio_ids || []).filter((id: any) => id !== pid) }))} className="absolute top-1 right-1 bg-white/90 backdrop-blur rounded p-1 text-slate-500 hover:text-red-500 hover:bg-white shadow">
                           <X className="w-3 h-3" />
@@ -461,7 +461,7 @@ export default function ServicesClient() {
                     )
                   })}
                   {(!form.portfolio_ids || form.portfolio_ids.length === 0) && (
-                    <div className="col-span-2 text-xs text-slate-400 text-center py-4">No portfolios connected.</div>
+                    <div className="col-span-2 text-xs text-slate-400 text-center py-4">Tidak ada portofolio yang terhubung.</div>
                   )}
                 </div>
               </div>
@@ -474,7 +474,7 @@ export default function ServicesClient() {
           <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
             <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[85vh] flex flex-col">
               <div className="flex items-center justify-between p-4 border-b border-slate-100">
-                <h3 className="font-bold text-slate-900">Select Portfolios (Max 9)</h3>
+                <h3 className="font-bold text-slate-900">Pilih Portofolio (Maks 9)</h3>
                 <button onClick={() => setShowPortfolioModal(false)} className="text-slate-400 hover:text-slate-600"><X className="w-5 h-5"/></button>
               </div>
 
@@ -488,7 +488,7 @@ export default function ServicesClient() {
                       setPortfolioSearch(e.target.value);
                       setPortfolioPage(1); // Reset page on search
                     }}
-                    placeholder="Search portfolios..."
+                    placeholder="Cari portofolio..."
                     className="w-full bg-white border border-slate-200 pl-9 pr-4 py-2 rounded-lg text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
                   />
                 </div>
@@ -504,7 +504,7 @@ export default function ServicesClient() {
                     return (
                       <div className="col-span-full text-center py-12 text-slate-400">
                         <BriefcaseBusiness className="w-8 h-8 mx-auto mb-3 opacity-20" />
-                        <p>No portfolios found.</p>
+                        <p>Tidak ada portofolio ditemukan.</p>
                       </div>
                     );
                   }
@@ -532,7 +532,7 @@ export default function ServicesClient() {
                             }`}
                           >
                             <div className="flex-1 min-w-0 pr-2">
-                              <p className="text-sm font-semibold truncate text-slate-800">{port.title || "Untitled Portfolio"}</p>
+                              <p className="text-sm font-semibold truncate text-slate-800">{port.title || "Tanpa Judul Portofolio"}</p>
                             </div>
                             <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 border ${isSelected ? 'bg-primary border-primary' : 'bg-white border-slate-300'}`}>
                               {isSelected && <Check className="w-3 h-3 text-white" />}
@@ -554,7 +554,7 @@ export default function ServicesClient() {
                   return (
                     <div className="flex items-center gap-4 w-full sm:w-auto overflow-x-auto">
                       <div className="text-xs text-slate-500 whitespace-nowrap">
-                        Showing {Math.min(filteredLength, (portfolioPage - 1) * PORTFOLIOS_PER_PAGE + 1)} - {Math.min(filteredLength, portfolioPage * PORTFOLIOS_PER_PAGE)} of {filteredLength}
+                        Menampilkan {Math.min(filteredLength, (portfolioPage - 1) * PORTFOLIOS_PER_PAGE + 1)} - {Math.min(filteredLength, portfolioPage * PORTFOLIOS_PER_PAGE)} dari {filteredLength}
                       </div>
                       <div className="flex items-center gap-1">
                         <button 
@@ -580,7 +580,7 @@ export default function ServicesClient() {
                 })()}
 
                 <button onClick={() => setShowPortfolioModal(false)} className="w-full sm:w-auto bg-primary text-white text-sm font-bold px-6 py-2 rounded-lg hover:bg-primary/90 shadow-sm">
-                  Save Selection ({(form.portfolio_ids || []).length}/9)
+                  Simpan Pilihan ({(form.portfolio_ids || []).length}/9)
                 </button>
               </div>
             </div>
@@ -594,20 +594,20 @@ export default function ServicesClient() {
     <div className="pt-6 px-4 pb-10">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Services Directory</h1>
-          <p className="text-sm font-medium text-slate-500 mt-1">Manage professional service offerings and packages.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Direktori Layanan</h1>
+          <p className="text-sm font-medium text-slate-500 mt-1">Kelola penawaran dan paket layanan profesional.</p>
         </div>
         <button
           onClick={openNew}
           className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-sm shadow-indigo-200 transition-colors w-fit"
         >
-          <Plus className="w-4 h-4" /> New Service
+          <Plus className="w-4 h-4" /> Layanan Baru
         </button>
       </div>
       
       <div className="relative mb-6">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-        <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} placeholder="Search services by title or category..."
+        <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} placeholder="Cari layanan berdasarkan judul atau kategori..."
           className="w-full bg-white shadow-sm ring-1 ring-slate-100 border-0 rounded-2xl pl-9 pr-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500/20" />
       </div>
 
@@ -619,7 +619,7 @@ export default function ServicesClient() {
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-32 text-slate-400">
             <Box className="w-10 h-10 mb-3 text-slate-200" />
-            <p className="text-sm font-bold">No services defined</p>
+            <p className="text-sm font-bold">Tidak ada layanan yang ditentukan</p>
           </div>
         ) : (
           <>
@@ -627,10 +627,10 @@ export default function ServicesClient() {
               <table className="w-full text-left">
                 <thead>
                   <tr className="text-slate-400 text-xs font-bold uppercase tracking-wider border-b border-slate-100 bg-slate-50/50">
-                    <th className="px-6 py-4">Service Info</th>
-                    <th className="px-6 py-4">Pricing</th>
+                    <th className="px-6 py-4">Info Layanan</th>
+                    <th className="px-6 py-4">Harga</th>
                     <th className="px-6 py-4">Status</th>
-                    <th className="px-6 py-4 text-right">Actions</th>
+                    <th className="px-6 py-4 text-right">Aksi</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -642,7 +642,7 @@ export default function ServicesClient() {
                               {svc.thumbnail_url ? (
                                 <img src={svc.thumbnail_url} alt={svc.title} className="w-full h-full object-cover" />
                               ) : (
-                                <div className="w-full h-full flex items-center justify-center text-slate-400">
+                                <div className="w-full h-12 flex items-center justify-center text-slate-400">
                                   <Globe className="w-5 h-5" />
                                 </div>
                               )}
@@ -651,7 +651,7 @@ export default function ServicesClient() {
                                <p className="text-sm font-bold text-slate-900 line-clamp-1">{svc.title}</p>
                                <div className="flex items-center gap-2 mt-1">
                                  <span className="text-[10px] font-bold text-primary bg-indigo-50 px-2 py-0.5 rounded uppercase tracking-wider border border-indigo-100">{svc.category}</span>
-                                 {svc.is_featured && <span className="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded uppercase tracking-wider border border-amber-100 flex items-center gap-1"><Star className="w-3 h-3 fill-amber-500" /> Featured</span>}
+                                 {svc.is_featured && <span className="text-[10px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded uppercase tracking-wider border border-amber-100 flex items-center gap-1"><Star className="w-3 h-3 fill-amber-500" /> Unggulan</span>}
                                </div>
                             </div>
                          </div>
@@ -664,21 +664,21 @@ export default function ServicesClient() {
                              </div>
                            ))}
                          </div>
-                         <p className="text-xs text-slate-400 mt-1.5">{svc.packages?.length || 0} Pricing plans</p>
+                         <p className="text-xs text-slate-400 mt-1.5">{svc.packages?.length || 0} Paket harga</p>
                       </td>
                       <td className="px-6 py-4">
                          <button onClick={() => togglePublished(svc)} className="flex items-center gap-1.5 text-xs font-semibold py-1.5 px-3 rounded-lg hover:bg-slate-100 transition-colors">
                            {svc.is_published 
-                             ? <><div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div> <span className="text-emerald-700">Published</span></>
-                             : <><div className="w-2 h-2 rounded-full bg-slate-300"></div> <span className="text-slate-500">Draft</span></>}
+                             ? <><div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div> <span className="text-emerald-700">Diterbitkan</span></>
+                             : <><div className="w-2 h-2 rounded-full bg-slate-300"></div> <span className="text-slate-500">Draf</span></>}
                          </button>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center justify-end gap-2">
-                          <button onClick={() => openEdit(svc)} className="p-2 rounded-lg bg-slate-100 text-slate-500 hover:bg-indigo-50 hover:text-primary transition-colors" title="Edit">
+                          <button onClick={() => openEdit(svc)} className="p-2 rounded-lg bg-slate-100 text-slate-500 hover:bg-indigo-50 hover:text-primary transition-colors" title="Ubah">
                             <Pencil className="w-4 h-4" />
                           </button>
-                          <button onClick={() => handleDelete(svc.id)} className="p-2 rounded-lg bg-slate-100 text-rose-400 hover:bg-rose-50 hover:text-rose-600 transition-colors" title="Delete">
+                          <button onClick={() => handleDelete(svc.id)} className="p-2 rounded-lg bg-slate-100 text-rose-400 hover:bg-rose-50 hover:text-rose-600 transition-colors" title="Hapus">
                             <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
@@ -692,7 +692,7 @@ export default function ServicesClient() {
             {totalPages > 1 && (
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-4 border-t border-slate-100">
                 <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">
-                  Showing {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filtered.length)} of {filtered.length} services
+                  Menampilkan {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filtered.length)} dari {filtered.length} layanan
                 </p>
                 <div className="flex items-center gap-2">
                   <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}

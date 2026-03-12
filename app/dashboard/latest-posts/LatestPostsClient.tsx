@@ -9,8 +9,8 @@ export default function LatestPostsClient({ blogs }: { blogs: any[] }) {
     <div className="pt-6 px-4 pb-16">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Latest Posts</h1>
-          <p className="text-sm font-medium text-slate-500 mt-1">Read our latest news, articles, and insights.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Postingan Terbaru</h1>
+          <p className="text-sm font-medium text-slate-500 mt-1">Baca berita, artikel, dan wawasan terbaru kami.</p>
         </div>
         <div className="w-12 h-12 bg-indigo-50 text-primary rounded-2xl flex items-center justify-center shrink-0">
           <Rss className="w-6 h-6" />

@@ -86,7 +86,7 @@ export default function FAQClient() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.question || !form.answer) return showToast("Question and answer are required", "error");
+    if (!form.question || !form.answer) return showToast("Pertanyaan dan jawaban wajib diisi", "error");
     setSaving(true);
 
     const payload = {
@@ -98,25 +98,25 @@ export default function FAQClient() {
     if (editingFaq) {
       const { error } = await supabase.from("faqs").update(payload).eq("id", editingFaq.id);
       if (error) showToast(error.message, "error");
-      else { showToast("FAQ updated", "success"); setView("list"); fetchData(); }
+      else { showToast("FAQ diperbarui", "success"); setView("list"); fetchData(); }
     } else {
       const { error } = await supabase.from("faqs").insert(payload);
       if (error) showToast(error.message, "error");
-      else { showToast("FAQ created", "success"); setView("list"); fetchData(); }
+      else { showToast("FAQ dibuat", "success"); setView("list"); fetchData(); }
     }
     setSaving(false);
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Delete this FAQ?")) return;
+    if (!confirm("Hapus FAQ ini?")) return;
     const { error } = await supabase.from("faqs").delete().eq("id", id);
-    if (error) showToast("Failed to delete", "error");
-    else { showToast("FAQ deleted", "success"); fetchData(); }
+    if (error) showToast("Gagal menghapus", "error");
+    else { showToast("FAQ dihapus", "success"); fetchData(); }
   };
 
   const togglePublish = async (faq: FAQ) => {
     const { error } = await supabase.from("faqs").update({ is_published: !faq.is_published }).eq("id", faq.id);
-    if (error) showToast("Failed to update", "error");
+    if (error) showToast("Gagal memperbarui", "error");
     else fetchData();
   };
 
@@ -147,7 +147,7 @@ export default function FAQClient() {
             onClick={() => setView("list")}
             className="inline-flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-primary transition-colors"
           >
-            <ArrowLeft className="w-4 h-4" /> Back to FAQs
+            <ArrowLeft className="w-4 h-4" /> Kembali ke FAQ
           </button>
           <button
             type="button"
@@ -156,13 +156,13 @@ export default function FAQClient() {
             className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-6 py-2.5 rounded-xl shadow-sm shadow-indigo-200 transition-colors disabled:opacity-60"
           >
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-            {editingFaq ? "Update FAQ" : "Save FAQ"}
+            {editingFaq ? "Perbarui FAQ" : "Simpan FAQ"}
           </button>
         </div>
 
         <form onSubmit={handleSave} className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-6 space-y-5">
           <h3 className="text-lg font-bold text-slate-800 border-b border-slate-100 pb-3">
-            {editingFaq ? "Edit FAQ" : "New FAQ"}
+            {editingFaq ? "Edit FAQ" : "FAQ Baru"}
           </h3>
 
           <div className="space-y-2">
@@ -189,7 +189,7 @@ export default function FAQClient() {
                 onChange={e => setForm(p => ({ ...p, service_id: e.target.value || null }))}
                 className={inputClass}
               >
-                <option value="">— Select a Service —</option>
+                <option value="">— Pilih Layanan —</option>
                 {services.map(s => (
                   <option key={s.id} value={s.id}>{s.title}</option>
                 ))}
@@ -199,13 +199,13 @@ export default function FAQClient() {
 
           {form.target === "shop" && (
             <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Shop Category</label>
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Kategori Toko</label>
               <select
                 value={form.shop_category || ""}
                 onChange={e => setForm(p => ({ ...p, shop_category: e.target.value || null }))}
                 className={inputClass}
               >
-                <option value="">— All Categories —</option>
+                <option value="">— Semua Kategori —</option>
                 {SHOP_CATEGORIES.map(c => (
                   <option key={c} value={c}>{c}</option>
                 ))}
@@ -214,31 +214,31 @@ export default function FAQClient() {
           )}
 
           <div className="space-y-2">
-            <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Question</label>
+            <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Pertanyaan</label>
             <input
               required
               value={form.question}
               onChange={e => setForm(p => ({ ...p, question: e.target.value }))}
-              placeholder="e.g. How long does it take to deliver?"
+              placeholder="contoh: Berapa lama waktu pengiriman?"
               className={inputClass}
             />
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Answer</label>
+            <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Jawaban</label>
             <textarea
               required
               rows={5}
               value={form.answer}
               onChange={e => setForm(p => ({ ...p, answer: e.target.value }))}
-              placeholder="Write the answer..."
+              placeholder="Tulis jawabannya..."
               className={`${inputClass} resize-none`}
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Sort Order</label>
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Urutan</label>
               <input
                 type="number"
                 value={form.sort_order}
@@ -249,7 +249,7 @@ export default function FAQClient() {
             <div className="space-y-2">
               <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Status</label>
               <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200 h-[46px]">
-                <span className="text-sm font-bold text-slate-700">{form.is_published ? "Published" : "Draft"}</span>
+                <span className="text-sm font-bold text-slate-700">{form.is_published ? "Diterbitkan" : "Draf"}</span>
                 <button
                   type="button"
                   onClick={() => setForm(p => ({ ...p, is_published: !p.is_published }))}
@@ -269,14 +269,14 @@ export default function FAQClient() {
     <div className="pt-6 px-4 pb-10">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">FAQ Management</h1>
-          <p className="text-sm font-medium text-slate-500 mt-1">Manage frequently asked questions for landing page, services, and shop.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Manajemen FAQ</h1>
+          <p className="text-sm font-medium text-slate-500 mt-1">Kelola pertanyaan yang sering diajukan untuk halaman landing, layanan, dan toko.</p>
         </div>
         <button
           onClick={openNew}
           className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-sm shadow-indigo-200 transition-colors w-fit"
         >
-          <Plus className="w-4 h-4" /> New FAQ
+          <Plus className="w-4 h-4" /> FAQ Baru
         </button>
       </div>
 
@@ -287,7 +287,7 @@ export default function FAQClient() {
             <input 
               value={search}
               onChange={e => { setSearch(e.target.value); setPage(1); }}
-              placeholder="Search by question or answer..." 
+              placeholder="Cari berdasarkan pertanyaan atau jawaban..." 
               className="w-full bg-slate-50 border-0 rounded-xl pl-10 pr-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500/20"
             />
           </div>
@@ -311,8 +311,8 @@ export default function FAQClient() {
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-32 text-slate-400">
             <HelpCircle className="w-10 h-10 mb-3 text-slate-200" />
-            <p className="text-sm font-bold">No FAQs yet</p>
-            <p className="text-xs mt-1">Click &apos;New FAQ&apos; to add your first question.</p>
+            <p className="text-sm font-bold">Belum ada FAQ</p>
+            <p className="text-xs mt-1">Klik &apos;FAQ Baru&apos; untuk menambahkan pertanyaan pertama Anda.</p>
           </div>
         ) : (
           <div className="divide-y divide-slate-100">
@@ -337,7 +337,7 @@ export default function FAQClient() {
                         <span className="text-[10px] text-slate-400 font-medium">{faq.shop_category}</span>
                       )}
                       {!faq.is_published && (
-                        <span className="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-400">Draft</span>
+                        <span className="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-400">Draf</span>
                       )}
                     </div>
                     <p className="text-sm font-bold text-slate-800">{faq.question}</p>
@@ -375,7 +375,7 @@ export default function FAQClient() {
         {totalPages > 1 && (
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-4 border-t border-slate-100">
             <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">
-              Showing {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filtered.length)} of {filtered.length} FAQs
+              Menampilkan {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filtered.length)} dari {filtered.length} FAQ
             </p>
             <div className="flex items-center gap-2">
               <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}

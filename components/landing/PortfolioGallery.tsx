@@ -27,13 +27,13 @@ export default function PortfolioGallery({ settings, portfolios = [] }: { settin
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <FadeIn delay={100} className="mb-16 text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-sm font-medium text-primary mb-4">
-              <span>{settings?.portfolio_badge || "View Our Work"}</span>
+              <span>{settings?.portfolio_badge || "Lihat Karya Kami"}</span>
             </div>
             <h2 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-              {settings?.portfolio_title || "Recent Masterpieces"}
+              {settings?.portfolio_title || "Mahakarya Terbaru"}
             </h2>
             <p className="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">
-              {settings?.portfolio_description || "A glimpse into the visual identities we've crafted for brands around the globe. Click any image to view details."}
+              {settings?.portfolio_description || "Sekilas identitas visual yang telah kami buat untuk berbagai merek di seluruh dunia. Klik gambar untuk melihat detailnya."}
             </p>
           </FadeIn>
 
@@ -75,7 +75,7 @@ export default function PortfolioGallery({ settings, portfolios = [] }: { settin
                       {item.title}
                     </h3>
                     <p className="text-sm font-medium text-slate-500 mt-1 line-clamp-1">
-                      {item.category || "Uncategorized"}
+                      {item.category || "Tak Berkategori"}
                     </p>
                   </div>
                 </div>

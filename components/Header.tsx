@@ -1,4 +1,5 @@
 import { Paintbrush } from "lucide-react";
+import Link from "next/link";
 import AuthButton from "./admin/AuthButton";
 import { createClient } from "@/utils/supabase/server";
 
@@ -45,7 +46,7 @@ export default async function Header() {
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className={`flex items-center justify-between ${sizeClasses[size as keyof typeof sizeClasses] || "h-16"}`}>
-          <div className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2">
             {settings?.logo_url ? (
                <img src={settings.logo_url} alt={settings.website_name || "Logo"} className="h-8 w-auto object-contain" />
             ) : (
@@ -61,7 +62,7 @@ export default async function Header() {
                 </span>
               </>
             )}
-          </div>
+          </Link>
           <div className="hidden md:flex items-center gap-8">
             {headerLinks.map((link, idx) => (
               <a

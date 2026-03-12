@@ -6,10 +6,8 @@ import { Star, MessageSquareQuote } from "lucide-react";
 
 import Pagination from "@/components/landing/Pagination";
 
-export const metadata = {
-  title: "Testimonials",
-  description: "Read what our clients have to say about our services.",
-};
+export const revalidate = 60; // Revalidate every minute
+
 
 async function getTestimonials(page: number, limit: number) {
   const supabase = await createClient();
@@ -35,13 +33,22 @@ async function getTestimonials(page: number, limit: number) {
   return { data: mappedData, total: count || 0 };
 }
 
+async function getSettings() {
+  const supabase = await createClient();
+  const { data } = await supabase.from("settings").select("*").eq("id", 1).single();
+  return data;
+}
+
 export default async function TestimonialsPage(props: { searchParams?: Promise<{ [key: string]: string | string[] | undefined }> }) {
   const searchParams = await props.searchParams;
   const pageStr = searchParams?.page;
   const page = typeof pageStr === "string" ? parseInt(pageStr, 10) : 1;
   const limit = 9;
 
-  const { data: testimonials, total } = await getTestimonials(page, limit);
+  const [{ data: testimonials, total }, settings] = await Promise.all([
+    getTestimonials(page, limit),
+    getSettings(),
+  ]);
   const totalPages = Math.ceil(total / limit);
 
   const getProjectTitle = (t: any) => {
@@ -74,27 +81,27 @@ export default async function TestimonialsPage(props: { searchParams?: Promise<{
           <FadeIn delay={100} className="max-w-2xl mb-16">
             <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-sm font-medium text-primary mb-6">
               <MessageSquareQuote size={14} />
-              <span>Client Reviews</span>
+              <span>{settings?.testimonial_badge || "Ulasan Klien"}</span>
             </div>
             <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl mb-4">
-              What Our Clients Say
+              {settings?.testimonial_title || "Apa Kata Klien Kami"}
             </h1>
             <p className="text-lg text-slate-600">
-              Honest feedback and reviews from our amazing clients around the world.
+              {settings?.testimonial_description || "Umpan balik dan ulasan jujur dari klien-klien kami yang luar biasa di seluruh dunia."}
             </p>
           </FadeIn>
 
           {testimonials.length === 0 ? (
             <FadeIn delay={200} className="text-center py-32 rounded-3xl bg-slate-50 ring-1 ring-slate-100">
               <Star className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-              <p className="text-slate-500 font-medium">No testimonials yet.</p>
-              <p className="text-slate-400 text-sm mt-1">Our clients are still writing their amazing stories.</p>
+              <p className="text-slate-500 font-medium">Belum ada testimoni.</p>
+              <p className="text-slate-400 text-sm mt-1">Klien kami sedang menulis kisah-kisah mereka yang luar biasa.</p>
             </FadeIn>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {testimonials.map((t, idx) => {
                 const rating = avgRating(t);
-                const clientName = t.client_name || t.client?.full_name || t.client?.email?.split("@")[0] || "Happy Client";
+                const clientName = t.client_name || t.client?.full_name || t.client?.email?.split("@")[0] || "Klien Bahagia";
                 const projectTitle = getProjectTitle(t);
 
                 return (
@@ -110,7 +117,7 @@ export default async function TestimonialsPage(props: { searchParams?: Promise<{
                       </div>
 
                       <blockquote className="flex-1 mb-8 text-slate-700 leading-relaxed italic">
-                        &ldquo;{t.comment || "Great service and exactly what I needed. Highly recommended!"}&rdquo;
+                        &ldquo;{t.comment || "Layanan yang sangat bagus dan tepat sesuai kebutuhan. Sangat direkomendasikan!"}&rdquo;
                       </blockquote>
 
                       <div className="flex items-center gap-4 mt-auto pt-6 border-t border-slate-100">

@@ -50,7 +50,7 @@ export default async function Footer() {
           </div>
           
           <div>
-            <h3 className="mb-4 text-sm font-semibold tracking-wider text-slate-200 uppercase">Services</h3>
+            <h3 className="mb-4 text-sm font-semibold tracking-wider text-slate-200 uppercase">Layanan</h3>
             <ul className="space-y-3 text-sm">
               {servicesLinks.map((link, idx) => (
                 <li key={idx}><a href={link.url} className="transition-colors hover:text-white">{link.label}</a></li>
@@ -59,7 +59,7 @@ export default async function Footer() {
           </div>
 
           <div>
-            <h3 className="mb-4 text-sm font-semibold tracking-wider text-slate-200 uppercase">Company</h3>
+            <h3 className="mb-4 text-sm font-semibold tracking-wider text-slate-200 uppercase">Perusahaan</h3>
             <ul className="space-y-3 text-sm">
               {companyLinks.map((link, idx) => (
                 <li key={idx}><a href={link.url} className="transition-colors hover:text-white">{link.label}</a></li>
@@ -79,7 +79,7 @@ export default async function Footer() {
         
         <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-slate-800 pt-8 text-sm sm:flex-row">
           <p>
-            {settings?.footer_copyright || `© ${new Date().getFullYear()} Kanglogo. All rights reserved.`}
+            {settings?.footer_copyright || `© ${new Date().getFullYear()} Kanglogo. Hak cipta dilindungi.`}
           </p>
           <div className="flex gap-6">
             {bottomLinks.map((link, idx) => (

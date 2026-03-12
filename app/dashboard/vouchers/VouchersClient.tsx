@@ -16,8 +16,8 @@ export default function VouchersClient({ discounts }: { discounts: any[] }) {
   return (
     <div className="pt-6 px-4 pb-16">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Active Discounts</h1>
-        <p className="text-sm font-medium text-slate-500 mt-1">Discover working promo codes and automatic service deals.</p>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Diskon Aktif</h1>
+        <p className="text-sm font-medium text-slate-500 mt-1">Cari kode promo yang berfungsi dan promo layanan otomatis.</p>
       </div>
 
       {discounts.length === 0 ? (
@@ -25,14 +25,14 @@ export default function VouchersClient({ discounts }: { discounts: any[] }) {
           <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
             <Ticket className="w-8 h-8 text-slate-300" />
           </div>
-          <h3 className="text-lg font-bold text-slate-900">No active discounts</h3>
-          <p className="text-sm text-slate-500 mt-1 max-w-md">There are currently no active vouchers or promos available. Check back later!</p>
+          <h3 className="text-lg font-bold text-slate-900">Tidak ada diskon aktif</h3>
+          <p className="text-sm text-slate-500 mt-1 max-w-md">Saat ini tidak ada voucher atau promo yang aktif. Cek lagi nanti!</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {discounts.map((d) => {
             const isVoucher = !!d.code;
-            const targetName = d.product_id ? d.store_products?.title : d.service_id ? d.store_services?.title : "All Items";
+            const targetName = d.product_id ? d.store_products?.title : d.service_id ? d.store_services?.title : "Semua Produk";
             const isService = !!d.service_id;
             
             return (
@@ -50,7 +50,7 @@ export default function VouchersClient({ discounts }: { discounts: any[] }) {
                   </div>
                   <div className="text-right">
                     <span className="text-2xl font-black tracking-tight text-slate-900 block">
-                      {d.type === 'percentage' ? `${d.value}%` : `Rp${(d.value/1000).toFixed(0)}k`} OFF
+                      {d.type === 'percentage' ? `Diskon ${d.value}%` : `Diskon Rp${(d.value/1000).toFixed(0)}k`}
                     </span>
                     {d.min_purchase > 0 && (
                       <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
@@ -62,12 +62,12 @@ export default function VouchersClient({ discounts }: { discounts: any[] }) {
 
                 <div className="mb-6 relative z-10">
                   <h3 className="text-lg font-bold text-slate-900 mb-1">{d.name}</h3>
-                  <p className="text-sm font-medium text-slate-500 line-clamp-2">{d.description || "Enjoy this special discount on your next order."}</p>
+                  <p className="text-sm font-medium text-slate-500 line-clamp-2">{d.description || "Nikmati diskon khusus ini pada pesanan Anda berikutnya."}</p>
                 </div>
 
                 <div className="flex items-center gap-2 mb-6 text-xs font-bold text-slate-500 bg-slate-50 w-fit px-3 py-1.5 rounded-lg border border-slate-100 relative z-10">
                   {isVoucher ? <ShoppingBag className="w-3.5 h-3.5" /> : <Layers className="w-3.5 h-3.5" />}
-                  <span className="truncate max-w-[180px]">For: {targetName}</span>
+                  <span className="truncate max-w-[180px]">Untuk: {targetName}</span>
                 </div>
 
                 <div className="pt-5 border-t border-slate-100 border-dashed relative z-10 flex gap-3">
@@ -81,9 +81,9 @@ export default function VouchersClient({ discounts }: { discounts: any[] }) {
                       }`}
                     >
                       {copied === d.code ? (
-                        <><CheckCircle2 className="w-4 h-4" /> Copied!</>
+                        <><CheckCircle2 className="w-4 h-4" /> Disalin!</>
                       ) : (
-                        <><Copy className="w-4 h-4" /> Copy "{d.code}"</>
+                        <><Copy className="w-4 h-4" /> Salin "{d.code}"</>
                       )}
                     </button>
                   ) : (
@@ -91,7 +91,7 @@ export default function VouchersClient({ discounts }: { discounts: any[] }) {
                       href={isService ? "/services" : "/shop"}
                       className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-sm font-bold shadow-sm shadow-orange-200 transition-all"
                     >
-                      Use Automatic Discount
+                      Gunakan Diskon Otomatis
                     </Link>
                   )}
                 </div>

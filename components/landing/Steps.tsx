@@ -4,26 +4,26 @@ import DynamicIcon from "../dashboard/DynamicIcon";
 const defaultSteps = [
   {
     id: "01",
-    name: "Discovery",
-    description: "Fill out a quick brief about your brand's vision, target audience, and style preferences.",
+    name: "Eksplorasi",
+    description: "Isi kuesioner singkat tentang visi merek Anda, target audiens, dan preferensi desain.",
     icon: "MessageSquareText",
   },
   {
     id: "02",
-    name: "Ideation",
-    description: "Our expert designers craft multiple unique, initial logo concepts within 24-48 hours.",
+    name: "Ideasi",
+    description: "Desainer berpengalaman kami akan membuat beberapa konsep logo awal dalam waktu 24-48 jam.",
     icon: "PenTool",
   },
   {
     id: "03",
-    name: "Refinement",
-    description: "We work closely with you to tweak, revise, and perfect your chosen design direction.",
+    name: "Revisi",
+    description: "Kami bekerja erat dengan Anda untuk menyesuaikan dan menyempurnakan arah desain yang Anda pilih.",
     icon: "RefreshCw",
   },
   {
     id: "04",
-    name: "Delivery",
-    description: "Receive all your high-res, vector, and source files ready for web and print.",
+    name: "Pengiriman",
+    description: "Terima semua file resolusi tinggi, vektor, dan file master untuk kebutuhan cetak dan digital.",
     icon: "Send",
   },
 ];
@@ -37,13 +37,13 @@ export default function Steps({ settings }: { settings?: any }) {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <FadeIn delay={100} className="mx-auto max-w-2xl text-center mb-16 sm:mb-24">
           <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-sm font-medium text-primary mb-4">
-            <span>{settings?.process_badge || "Our Process"}</span>
+            <span>{settings?.process_badge || "Proses Kami"}</span>
           </div>
           <h2 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-            {settings?.process_title || "4 simple steps to launch"}
+            {settings?.process_title || "4 langkah mudah menuju peluncuran"}
           </h2>
           <p className="mt-4 text-lg text-slate-600">
-            {settings?.process_description || "We've eliminated the friction from traditional agency models. Here is how we deliver world-class identities so quickly."}
+            {settings?.process_description || "Kami telah menghilangkan kerumitan dari model agensi tradisional. Inilah cara kami memberikan identitas kelas dunia dengan sangat cepat."}
           </p>
         </FadeIn>
 
@@ -70,7 +70,7 @@ export default function Steps({ settings }: { settings?: any }) {
                   
 
                   <h3 className="text-xl font-semibold text-slate-900 mb-3 group-hover:text-primary transition-colors duration-300">
-                    Step {parseInt(step.id)}: {step.name}
+                    Langkah {parseInt(step.id)}: {step.name}
                   </h3>
                   <p className="text-slate-600 leading-relaxed max-w-sm">
                     {step.description}

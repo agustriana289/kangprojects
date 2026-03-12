@@ -7,10 +7,7 @@ import { Calendar, ArrowRight, BookOpen } from "lucide-react";
 
 import Pagination from "@/components/landing/Pagination";
 
-export const metadata = {
-  title: "Blog",
-  description: "Read the latest tips, trends, and insights on logo design, branding, and visual identity.",
-};
+export const revalidate = 60;
 
 async function getBlogs(page: number, limit: number) {
   const supabase = await createClient();
@@ -33,8 +30,11 @@ export default async function BlogPage(props: { searchParams?: Promise<{ [key: s
   const page = typeof pageStr === "string" ? parseInt(pageStr, 10) : 1;
   const limit = 9;
 
+  const supabase = await createClient();
   const { data: blogs, total } = await getBlogs(page, limit);
   const totalPages = Math.ceil(total / limit);
+  const { data: settingsData } = await supabase.from("settings").select("blog_badge, blog_title, blog_description").eq("id", 1).single();
+  const settings = settingsData || {};
 
   return (
     <div className="min-h-screen bg-white text-slate-900 font-sans">
@@ -45,21 +45,21 @@ export default async function BlogPage(props: { searchParams?: Promise<{ [key: s
           <FadeIn delay={100} className="max-w-2xl mb-16">
             <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-sm font-medium text-primary mb-6">
               <BookOpen size={14} />
-              <span>Our Blog</span>
+              <span>{(settings as any).blog_badge || "Artikel Terbaru"}</span>
             </div>
             <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl mb-4">
-              Latest Insights
+              {(settings as any).blog_title || "Inspirasi & Tips Desain"}
             </h1>
             <p className="text-lg text-slate-600">
-              Expert advice, design principles, and strategies to help your brand stand out in a crowded market.
+              {(settings as any).blog_description || "Baca berbagai insight tentang desain logo, branding, dan tren desain grafis yang relevan untuk bisnis anda."}
             </p>
           </FadeIn>
 
           {blogs.length === 0 ? (
             <FadeIn delay={200} className="text-center py-32 rounded-3xl bg-slate-50 ring-1 ring-slate-100">
               <BookOpen className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-              <p className="text-slate-500 font-medium">No blog posts published yet.</p>
-              <p className="text-slate-400 text-sm mt-1">Check back soon for new articles.</p>
+              <p className="text-slate-500 font-medium">Belum ada artikel yang dipublikasikan.</p>
+              <p className="text-slate-400 text-sm mt-1">Periksa kembali nanti untuk artikel baru.</p>
             </FadeIn>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -107,7 +107,7 @@ export default async function BlogPage(props: { searchParams?: Promise<{ [key: s
                           href={`/blog/${blog.slug}`}
                           className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:text-primary transition-colors"
                         >
-                          Read article <ArrowRight size={15} className="transition-transform group-hover:translate-x-1" />
+                          Baca artikel <ArrowRight size={15} className="transition-transform group-hover:translate-x-1" />
                         </Link>
                       </div>
                     </div>

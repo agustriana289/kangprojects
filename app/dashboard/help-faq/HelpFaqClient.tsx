@@ -45,8 +45,8 @@ export default function HelpFaqClient({ faqs }: { faqs: any[] }) {
     <div className="pt-6 px-4 pb-16">
       <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Help & FAQ</h1>
-          <p className="text-sm font-medium text-slate-500 mt-1">Find answers to frequently asked questions below.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Bantuan & FAQ</h1>
+          <p className="text-sm font-medium text-slate-500 mt-1">Temukan jawaban atas pertanyaan yang sering diajukan di bawah ini.</p>
         </div>
       </div>
 
@@ -56,7 +56,7 @@ export default function HelpFaqClient({ faqs }: { faqs: any[] }) {
         <div className="lg:col-span-1 xl:col-span-3 space-y-6">
           
           <div className="space-y-2">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 px-2">General</h3>
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 px-2">Umum</h3>
             <button
               onClick={() => { setActiveTab("landing"); setExpandedId(null); }}
               className={`w-full text-left px-4 py-3 rounded-xl transition-all duration-300 flex items-center gap-3 ${
@@ -66,13 +66,13 @@ export default function HelpFaqClient({ faqs }: { faqs: any[] }) {
               }`}
             >
               <HelpCircle className={`w-4 h-4 shrink-0 ${activeTab === 'landing' ? 'text-primary' : 'text-slate-400'}`} />
-              General Information
+              Informasi Umum
             </button>
           </div>
 
           {serviceGroups.size > 0 && (
             <div className="space-y-2">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 px-2 mt-4">Services</h3>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 px-2 mt-4">Layanan</h3>
               {Array.from(serviceGroups.keys()).map((sName) => {
                 const tabId = `service_${sName}`;
                 const isActive = activeTab === tabId;
@@ -96,7 +96,7 @@ export default function HelpFaqClient({ faqs }: { faqs: any[] }) {
 
           {shopGroups.size > 0 && (
             <div className="space-y-2">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 px-2 mt-4">Shop Products</h3>
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 px-2 mt-4">Produk Toko</h3>
               {Array.from(shopGroups.keys()).map((sCat) => {
                 const tabId = `shop_${sCat}`;
                 const isActive = activeTab === tabId;
@@ -127,7 +127,7 @@ export default function HelpFaqClient({ faqs }: { faqs: any[] }) {
             <div className="mb-6 flex items-center justify-between border-b border-slate-100 pb-4">
                <div>
                  <h2 className="text-lg font-bold text-slate-900">{currentTitle}</h2>
-                 <p className="text-xs font-medium text-slate-400 mt-1">Showing {filteredFaqs.length} questions</p>
+                 <p className="text-xs font-medium text-slate-400 mt-1">Menampilkan {filteredFaqs.length} pertanyaan</p>
                </div>
             </div>
 

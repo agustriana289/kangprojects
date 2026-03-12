@@ -34,7 +34,7 @@ export default function AuthButton({ user }: { user: User | null }) {
       onClick={handleSignIn}
       className="rounded-full bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 transition-colors focus:ring-4 focus:ring-indigo-100 shadow-sm shadow-indigo-200"
     >
-      Sign In
+      Masuk / Daftar
     </button>
   );
 }

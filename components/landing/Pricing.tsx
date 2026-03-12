@@ -8,53 +8,53 @@ const tiers = [
     id: "tier-starter",
     href: "#",
     priceMonthly: "$99",
-    description: "Perfect for small projects and new startups.",
+    description: "Cocok untuk proyek kecil dan perusahaan startup baru.",
     features: [
-      "1 Initial Logo Concept",
-      "3 Revisions",
-      "High-Res PNG & JPG",
-      "Standard Delivery (3-5 days)",
-      "Full Commercial Rights",
+      "1 Konsep Awal Logo",
+      "3 Kali Revisi",
+      "PNG & JPG Resolusi Tinggi",
+      "Pengiriman Standar (3-5 hari)",
+      "Hak Komersial Penuh",
     ],
     featured: false,
-    cta: "Get Started",
+    cta: "Mulai Sekarang",
   },
   {
     name: "Professional",
     id: "tier-professional",
     href: "#",
     priceMonthly: "$199",
-    description: "Ideal for growing businesses that need a cohesive identity.",
+    description: "Ideal untuk bisnis berkembang yang membutuhkan identitas yang kuat.",
     features: [
-      "3 Initial Logo Concepts",
-      "Unlimited Revisions",
-      "Source Files (AI, EPS, SVG)",
-      "High-Res PNG & JPG",
-      "Fast Delivery (48 hours)",
-      "Brand Color Palette",
-      "Full Commercial Rights",
+      "3 Konsep Awal Logo",
+      "Revisi Tanpa Batas",
+      "File Master (AI, EPS, SVG)",
+      "PNG & JPG Resolusi Tinggi",
+      "Pengiriman Cepat (48 jam)",
+      "Palet Warna Merek",
+      "Hak Komersial Penuh",
     ],
     featured: true,
-    cta: "Start Your Project",
+    cta: "Mulai Proyek Anda",
   },
   {
     name: "Enterprise",
     id: "tier-enterprise",
     href: "#",
     priceMonthly: "$499",
-    description: "Comprehensive branding for established companies.",
+    description: "Branding komprehensif untuk perusahaan mapan.",
     features: [
-      "5 Initial Logo Concepts",
-      "Unlimited Revisions",
-      "Source & Vector Files",
-      "Priority Delivery (24 hours)",
-      "Full Brand Guidelines",
-      "Social Media Kit",
-      "Stationery Design",
-      "Dedicated Account Manager",
+      "5 Konsep Awal Logo",
+      "Revisi Tanpa Batas",
+      "File Master & Vektor",
+      "Pengiriman Prioritas (24 jam)",
+      "Panduan Merek Lengkap",
+      "Perlengkapan Media Sosial",
+      "Desain Alat Tulis",
+      "Manajer Akun Khusus",
     ],
     featured: false,
-    cta: "Contact Sales",
+    cta: "Hubungi Sales",
   },
 ];
 
@@ -75,7 +75,7 @@ export default function Pricing({ settings, featuredService, type = "service", a
         features: pkg.features || [],
         // Highlight the middle one or a specific one
         featured: index === Math.floor(featuredService.packages.length / 2),
-        cta: "Order Now",
+        cta: "Pesan Sekarang",
       } as any;
     });
   }
@@ -85,13 +85,13 @@ export default function Pricing({ settings, featuredService, type = "service", a
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <FadeIn delay={100} className="mx-auto max-w-4xl text-center">
           <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-sm font-medium text-primary mb-4">
-            <span>{settings?.pricing_badge || "Clear Pricing"}</span>
+            <span>{settings?.pricing_badge || "Harga Transparan"}</span>
           </div>
           <h2 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-5xl">
-            {settings?.pricing_title || "Simple, transparent pricing"}
+            {settings?.pricing_title || "Harga sederhana dan transparan"}
           </h2>
           <p className="mt-6 text-xl leading-8 text-slate-600">
-            {settings?.pricing_description || "No hidden fees. No surprise charges. Choose the plan that best fits your brand's needs."}
+            {settings?.pricing_description || "Tidak ada biaya tersembunyi. Tidak ada kejutan tagihan. Pilih paket yang paling sesuai dengan kebutuhan merek Anda."}
           </p>
         </FadeIn>
 
@@ -108,7 +108,7 @@ export default function Pricing({ settings, featuredService, type = "service", a
             >
               {tier.appliedDiscount && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-indigo-600 text-white text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full shadow-md flex items-center gap-1.5 whitespace-nowrap">
-                  <Tag size={12} /> {tier.appliedDiscount.name} Applied
+                  <Tag size={12} /> {tier.appliedDiscount.name} Diterapkan
                 </div>
               )}
               <div className="flex items-center justify-between gap-x-4">
@@ -122,7 +122,7 @@ export default function Pricing({ settings, featuredService, type = "service", a
                 </h3>
                 {tier.featured && (
                   <p className="rounded-full bg-indigo-500/10 px-3 py-1 text-xs font-semibold leading-5 text-primary border border-indigo-500/20">
-                    Most popular
+                    Paling populer
                   </p>
                 )}
               </div>
@@ -142,7 +142,7 @@ export default function Pricing({ settings, featuredService, type = "service", a
                         {tier.priceMonthly}
                       </span>
                       <span className={`text-sm font-semibold leading-6 ${tier.featured ? "text-slate-400" : "text-slate-500"}`}>
-                        /project
+                        /proyek
                       </span>
                     </p>
                   </div>
@@ -156,7 +156,7 @@ export default function Pricing({ settings, featuredService, type = "service", a
                     <span
                       className={`text-sm font-semibold leading-6 ${tier.featured ? "text-slate-400" : "text-slate-500"}`}
                     >
-                      /project
+                      /proyek
                     </span>
                   </p>
                 )}

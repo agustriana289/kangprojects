@@ -6,10 +6,7 @@ import Link from "next/link";
 import { ArrowRight, BriefcaseBusiness, CheckCircle2 } from "lucide-react";
 import Pagination from "@/components/landing/Pagination";
 
-export const metadata = {
-  title: "Services",
-  description: "Explore our professional design and branding services tailored exactly for your needs.",
-};
+export const revalidate = 60;
 
 async function getServices(page: number, limit: number) {
   const supabase = await createClient();
@@ -32,8 +29,11 @@ export default async function ServicesPage(props: { searchParams?: Promise<{ [ke
   const page = typeof pageStr === "string" ? parseInt(pageStr, 10) : 1;
   const limit = 9;
 
+  const supabase = await createClient();
   const { data: services, total } = await getServices(page, limit);
   const totalPages = Math.ceil(total / limit);
+  const { data: settingsData } = await supabase.from("settings").select("all_services_badge, all_services_title, all_services_description").eq("id", 1).single();
+  const settings = settingsData || {};
 
   return (
     <div className="min-h-screen bg-white text-slate-900 font-sans">
@@ -44,13 +44,13 @@ export default async function ServicesPage(props: { searchParams?: Promise<{ [ke
           <FadeIn delay={100} className="max-w-2xl mb-16">
             <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-sm font-medium text-primary mb-6">
               <BriefcaseBusiness size={14} />
-              <span>Layanan Kami</span>
+              <span>{(settings as any).all_services_badge || "Layanan Kami"}</span>
             </div>
             <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl mb-4">
-              Solusi Desain Profesional
+              {(settings as any).all_services_title || "Solusi Desain Profesional"}
             </h1>
             <p className="text-lg text-slate-600">
-              Tingkatkan identitas brand Anda melalui layanan desain, strategi, dan pengembangan yang dirancang khusus untuk kebutuhan bisnis modern.
+              {(settings as any).all_services_description || "Tingkatkan identitas brand Anda melalui layanan desain, strategi, dan pengembangan yang dirancang khusus untuk kebutuhan bisnis modern."}
             </p>
           </FadeIn>
 
@@ -91,7 +91,7 @@ export default async function ServicesPage(props: { searchParams?: Promise<{ [ke
                           href={`/services/${service.slug}`}
                         >
                           <h2 className="text-xl font-bold text-slate-900 leading-snug mb-3 group-hover:text-primary transition-colors line-clamp-2">
-                            Jasa {service.title}
+                            {service.title}
                           </h2>
                         </Link>
                       {service.description && (

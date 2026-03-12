@@ -10,16 +10,17 @@ import FAQSection from "@/components/landing/FAQSection";
 import Articles from "@/components/landing/Articles";
 import CTA from "@/components/landing/CTA";
 import TestimonialSection from "@/components/landing/TestimonialSection";
+import WhyChooseUs from "@/components/landing/WhyChooseUs";
+import AllServices from "@/components/landing/AllServices";
 import DynamicIcon from "@/components/dashboard/DynamicIcon";
 import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 
-export const revalidate = 60; // Cache the page for 60 seconds
+export const revalidate = 60;
 
 export default async function Home() {
   const supabase = await createClient();
 
-  // Fetch all data in parallel
   const [
     { data: settingsData },
     { data: landingFaqs },
@@ -28,37 +29,35 @@ export default async function Home() {
     { data: testimonialsData },
     { data: usersData },
     { data: featuredService },
+    { data: allServicesData },
+    { count: portfolioCount },
+    { data: nonAdminUsers },
   ] = await Promise.all([
     supabase.from("settings").select("*").eq("id", 1).single(),
     supabase.from("faqs").select("*").eq("target", "landing").eq("is_published", true).order("sort_order", { ascending: true }),
     supabase.from("store_portfolios").select("id, title, category, images, is_favorite").eq("is_published", true).order("created_at", { ascending: false }).limit(13),
     supabase.from("store_portfolios").select("id, title, category, images, is_favorite").eq("is_published", true).eq("is_favorite", true).order("created_at", { ascending: false }).limit(6),
-    supabase.from("store_testimonials").select("*").not("rating_quality", "is", null).order("created_at", { ascending: false }).limit(6),
+    supabase.from("store_testimonials").select("*, store_orders(order_number, form_data, store_products(title), store_services(title))").not("rating_quality", "is", null).order("created_at", { ascending: false }).limit(6),
     supabase.from("users").select("id, full_name, email, avatar_url"),
     supabase.from("store_services").select("*").eq("is_published", true).eq("is_featured", true).order("sort_order", { ascending: true }).limit(1).maybeSingle(),
+    supabase.from("store_services").select("*").eq("is_published", true).order("sort_order", { ascending: true }),
+    supabase.from("store_portfolios").select("*", { count: "exact", head: true }).eq("is_published", true),
+    supabase.from("users").select("id, full_name, email, avatar_url").eq("is_admin", false).order("created_at", { ascending: false }).limit(10),
   ]);
 
   const settings = settingsData || {};
 
-  const featuresList = settings.features_list && settings.features_list.length > 0 
-    ? settings.features_list 
+  const featuresList = settings.features_list && settings.features_list.length > 0
+    ? settings.features_list
     : [
-        { title: "Lightning Fast", desc: "Get your initial logo concepts in less than 24 hours.", icon: "Rocket" },
-        { title: "Premium Quality", desc: "Crafted by expert designers with years of branding experience.", icon: "Sparkles" },
-        { title: "Unlimited Revisions", desc: "We are not happy until you are. Tweak it until it's perfect.", icon: "CheckCircle" },
-      ];
-
-  const statsList = settings.stats_list && settings.stats_list.length > 0
-    ? settings.stats_list
-    : [
-        { value: "24", suffix: "h", label: "Average Delivery" },
-        { value: "∞", suffix: "", label: "Free Revisions" },
-        { value: "200", suffix: "+", label: "Five-star reviews" },
-        { value: "99", suffix: "%", label: "Client Satisfaction" },
+        { title: "Sangat Cepat", desc: "Dapatkan konsep awal logo Anda dalam waktu kurang dari 24 jam.", icon: "Rocket" },
+        { title: "Kualitas Premium", desc: "Dibuat oleh desainer ahli dengan pengalaman branding bertahun-tahun.", icon: "Sparkles" },
+        { title: "Revisi Tanpa Batas", desc: "Kami tidak puas sampai Anda puas. Sesuaikan hingga sempurna.", icon: "CheckCircle" },
       ];
 
   const portfoliosNew = portfoliosNewData || [];
   const portfoliosFav = portfoliosFavData || [];
+  const allServices = allServicesData || [];
 
   const profileMap: Record<string, any> = {};
   (usersData || []).forEach((u: any) => { profileMap[u.id] = u; });
@@ -67,20 +66,49 @@ export default async function Home() {
     const user = t.user_id ? profileMap[t.user_id] : null;
     return {
       ...t,
-      client_name: t.client_name || user?.full_name || user?.email?.split("@")[0] || "Client",
+      client_name: t.client_name || user?.full_name || user?.email?.split("@")[0] || "Klien",
     };
   });
 
-  // Hero Splitting
-  const heroTitleWords = settings?.hero_title ? settings.hero_title.split(" ") : "Design your brand's perfect identity".split(" ");
+  const allTestimonialsForRating = testimonialsData || [];
+  let avgRating = 0;
+  if (allTestimonialsForRating.length > 0) {
+    const sum = allTestimonialsForRating.reduce((acc: number, t: any) => {
+      const ratings = [t.rating_quality, t.rating_communication, t.rating_speed].filter(Boolean);
+      const avg = ratings.length > 0 ? ratings.reduce((a: number, b: number) => a + b, 0) / ratings.length : 0;
+      return acc + avg;
+    }, 0);
+    avgRating = sum / allTestimonialsForRating.length;
+  }
+
+  const totalPortfolios = portfolioCount || 0;
+  const recentNonAdminUsers = nonAdminUsers || [];
+  const portfolioCountDisplay = totalPortfolios > 0 ? String(totalPortfolios) : "200";
+
+  const baseStatsList = settings.stats_list && settings.stats_list.length > 0
+    ? settings.stats_list
+    : [
+        { value: "24", suffix: "j", label: "Rata-rata Pengiriman" },
+        { value: "∞", suffix: "", label: "Revisi Gratis" },
+        { value: portfolioCountDisplay, suffix: "+", label: "Ulasan Bintang 5" },
+        { value: "99", suffix: "%", label: "Kepuasan Klien" },
+      ];
+
+  // Paksa stat ke-3 (index 2) agar selalu nilai total portofolio dinamis
+  const statsList = baseStatsList.map((stat: any, idx: number) => {
+    if (idx === 2) {
+      return { ...stat, value: portfolioCountDisplay };
+    }
+    return stat;
+  });
+
+  const heroTitleWords = settings?.hero_title ? settings.hero_title.split(" ") : "Rancang identitas merek Anda yang sempurna".split(" ");
   const heroTitleStart = heroTitleWords.slice(0, -2).join(" ");
   const heroTitleEnd = heroTitleWords.slice(-2).join(" ");
 
   return (
-    <div className="min-h-screen bg-white text-slate-900 font-sans selection:bg-indigo-100 selection:text-primary">
+    <>
       <Header />
-      
-      
 
       <main className="relative overflow-hidden pt-16 pb-32 lg:pt-32">
         <div
@@ -95,11 +123,11 @@ export default async function Home() {
             }}
           ></div>
         </div>
-        
+
         <FadeIn delay={100} className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
           <div className="inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-indigo-50/50 px-3 py-1 text-sm font-medium text-primary mb-8 backdrop-blur-sm">
             <DynamicIcon name="Sparkles" size={16} />
-            <span>{settings?.hero_badge || "Fast, Premium Logo Design"}</span>
+            <span>{settings?.hero_badge || "Desain Logo Cepat & Premium"}</span>
           </div>
           <h1 className="mx-auto max-w-4xl text-5xl font-extrabold tracking-tight text-slate-900 sm:text-7xl leading-[1.1]">
             {heroTitleStart}{" "}
@@ -108,18 +136,15 @@ export default async function Home() {
             </span>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-slate-600">
-            {settings?.hero_description || "Professional logo design that speaks to your audience. We build visual identities that are memorable, scalable, and fast to deliver. Start your new chapter today."}
+            {settings?.hero_description || "Desain logo profesional yang berbicara kepada audiens Anda. Kami membangun identitas visual yang mudah diingat, dapat dikembangkan, dan cepat dikirimkan. Mulai babak baru Anda hari ini."}
           </p>
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link href="/shop" className="group w-full sm:w-auto flex h-12 items-center justify-center gap-2 rounded-full bg-indigo-600 px-8 text-base font-semibold text-white transition-all hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-200 focus:ring-4 focus:ring-indigo-100">
-              {settings?.cta_button1_text || "Order Your Logo"}
-              <ArrowRight
-                size={18}
-                className="transition-transform group-hover:translate-x-1"
-              />
+            <Link href={settings?.hero_button1_url || "/shop"} className="group w-full sm:w-auto flex h-12 items-center justify-center gap-2 rounded-full bg-indigo-600 px-8 text-base font-semibold text-white transition-all hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-200 focus:ring-4 focus:ring-indigo-100">
+              {settings?.hero_button1_text || "Pesan Logo Anda"}
+              <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
             </Link>
-            <Link href="/#portfolio" className="flex w-full sm:w-auto h-12 items-center justify-center rounded-full border border-slate-200 bg-white px-8 text-base font-semibold text-slate-900 transition-all hover:border-slate-300 hover:bg-slate-50 focus:ring-4 focus:ring-slate-100">
-              {settings?.cta_button2_text || "View Portfolio"}
+            <Link href={settings?.hero_button2_url || "/#portfolio"} className="flex w-full sm:w-auto h-12 items-center justify-center rounded-full border border-slate-200 bg-white px-8 text-base font-semibold text-slate-900 transition-all hover:border-slate-300 hover:bg-slate-50 focus:ring-4 focus:ring-slate-100">
+              {settings?.hero_button2_text || "Lihat Portofolio"}
             </Link>
           </div>
         </FadeIn>
@@ -145,10 +170,11 @@ export default async function Home() {
         </div>
       </main>
 
+
+
       <section className="bg-white py-16 sm:py-24 border-t border-slate-100">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <FadeIn delay={200} className="flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between rounded-3xl bg-primary p-8 sm:p-12">
-            
             <div className="max-w-xl">
               <div className="flex items-center gap-2 mb-4">
                 <div className="flex text-amber-400">
@@ -156,31 +182,43 @@ export default async function Home() {
                     <Star key={i} size={18} fill="currentColor" strokeWidth={0} />
                   ))}
                 </div>
-                <span className="text-sm font-semibold text-white">4.9/5 Average Rating</span>
+                <span className="text-sm font-semibold text-white">
+                  {avgRating > 0 ? avgRating.toFixed(1) : "5.0"}/5 Rata-rata Penilaian
+                </span>
               </div>
               <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-                {settings?.trusted_by_title || "Trusted by 5,000+ ambitious brands"}
+                {settings?.trusted_by_title || `Dipercaya oleh ${totalPortfolios > 0 ? totalPortfolios.toLocaleString("id-ID") : "5.000"}+ merek ambisius`}
               </h2>
               <p className="mt-4 text-lg text-white">
-                {settings?.trusted_by_description || "From stealth startups to global enterprises, we deliver world-class visual identities that command attention."}
+                {settings?.trusted_by_description || "Dari perusahaan rintisan hingga perusahaan global, kami memberikan identitas visual kelas dunia yang menarik perhatian."}
               </p>
-              
+
               <div className="mt-8 flex items-center gap-x-4">
                 <div className="flex -space-x-3">
-                  {['A', 'J', 'S', 'M'].map((letter, i) => (
-                    <div key={i} className="flex h-10 w-10 items-center justify-center rounded-full ring-2 ring-slate-50 bg-indigo-100 text-primary font-bold text-sm">
-                      {letter}
-                    </div>
+                  {recentNonAdminUsers.slice(0, 4).map((user: any) => (
+                    user.avatar_url ? (
+                      <img
+                        key={user.id}
+                        src={user.avatar_url}
+                        alt={user.full_name || user.email || "User"}
+                        className="h-10 w-10 rounded-full ring-2 ring-indigo-500 object-cover"
+                        referrerPolicy="no-referrer"
+                      />
+                    ) : (
+                      <div key={user.id} className="h-10 w-10 flex items-center justify-center rounded-full ring-2 ring-indigo-500 bg-indigo-200 text-indigo-700 font-bold text-sm shrink-0">
+                        {(user.full_name || user.email || "U").charAt(0).toUpperCase()}
+                      </div>
+                    )
                   ))}
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full ring-2 ring-slate-50 bg-white border border-slate-200 text-primary font-medium text-xs">
-                    +5k
-                  </div>
+                  {recentNonAdminUsers.length > 4 && (
+                    <div className="h-10 w-10 flex items-center justify-center rounded-full ring-2 ring-indigo-500 bg-white border border-slate-200 text-primary font-medium text-xs shrink-0">
+                      +{recentNonAdminUsers.length - 4}
+                    </div>
+                  )}
                 </div>
-                <p className="text-sm text-white font-medium">{settings?.stats_title || "Join the club"}</p>
+                <p className="text-sm text-white font-medium">{settings?.stats_title || "Bergabunglah bersama kami"}</p>
               </div>
             </div>
-            
-            
 
             <div className="grid grid-cols-2 gap-8 sm:grid-cols-2 lg:gap-12 pl-0 lg:pl-12 lg:border-l lg:border-slate-200">
               {statsList.map((stat: any, idx: number) => (
@@ -193,23 +231,25 @@ export default async function Home() {
                 </div>
               ))}
             </div>
-            
           </FadeIn>
         </div>
       </section>
+
       <PortfolioGallery settings={settings} portfolios={portfoliosFav} />
+      <WhyChooseUs settings={settings} />
       <TestimonialSection settings={settings} testimonials={testimonials} />
       <Pricing settings={settings} featuredService={featuredService} />
       <Steps settings={settings} />
       <HighlightedPortfolio settings={settings} portfolios={portfoliosNew} />
-      <FAQSection 
-        faqs={landingFaqs || []} 
-        title={settings?.faq_title || "Frequently Asked Questions"}
+      <FAQSection
+        faqs={landingFaqs || []}
+        title={settings?.faq_title || "Pertanyaan yang Sering Diajukan"}
         badge={settings?.faq_badge || "FAQ"}
       />
+      <AllServices settings={settings} services={allServices} />
       <CTA settings={settings} />
       <Articles settings={settings} />
       <Footer />
-    </div>
+    </>
   );
 }

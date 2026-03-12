@@ -8,21 +8,21 @@ export default function CTA({ settings }: { settings?: any }) {
         <FadeIn delay={100}>
           <div className="relative isolate overflow-hidden bg-slate-900 px-6 py-24 text-center shadow-2xl rounded-3xl sm:px-16">
             <h2 className="mx-auto max-w-2xl text-4xl font-bold tracking-tight text-white sm:text-5xl">
-              {settings?.cta_title || "Ready to elevate your brand?"}
+              {settings?.cta_title || "Siap untuk meningkatkan merek Anda?"}
             </h2>
             <p className="mx-auto mt-6 max-w-xl text-lg leading-8 text-slate-300">
-              {settings?.cta_description || "Join thousands of successful businesses who trust us with their visual identity. Start your project today and get your initial concepts in as little as 24 hours."}
+              {settings?.cta_description || "Bergabunglah dengan ribuan bisnis sukses yang memercayakan identitas visual mereka kepada kami. Mulai proyek Anda hari ini dan dapatkan konsep awal Anda dalam waktu 24 jam."}
             </p>
             <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-6">
               <a
-                href="#"
+                href={settings?.cta_button1_url || "/shop"}
                 className="group flex items-center justify-center gap-2 rounded-full bg-indigo-500 px-8 py-4 text-base font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/30 hover:-translate-y-1 w-full sm:w-auto"
               >
-                {settings?.cta_button1_text || "Let's get started"}
+                {settings?.cta_button1_text || "Ayo mulai"}
                 <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
               </a>
-              <a href="#" className="flex items-center justify-center gap-2 text-base font-semibold leading-6 text-white transition-colors hover:text-primary w-full sm:w-auto py-2">
-                {settings?.cta_button2_text || "Talk to our team"}
+              <a href={settings?.cta_button2_url || "/contact"} className="flex items-center justify-center gap-2 text-base font-semibold leading-6 text-white transition-colors hover:text-primary w-full sm:w-auto py-2">
+                {settings?.cta_button2_text || "Bicara dengan tim kami"}
               </a>
             </div>
             

@@ -77,7 +77,7 @@ export default async function AdminDashboard({
   // Calculate Best Seller
   const serviceCounts: Record<string, number> = {};
   const productCounts: Record<string, number> = {};
-  let bestSellerName = "None";
+  let bestSellerName = "Tidak ada";
   let bestSellerCount = 0;
 
   orders.forEach((o) => {
@@ -85,14 +85,14 @@ export default async function AdminDashboard({
       serviceCounts[o.service_id] = (serviceCounts[o.service_id] || 0) + 1;
       if (serviceCounts[o.service_id] > bestSellerCount) {
         bestSellerCount = serviceCounts[o.service_id];
-        bestSellerName = (o.store_services as any)?.title || "Agency Service";
+        bestSellerName = (o.store_services as any)?.title || "Layanan Agensi";
       }
     }
     if (o.product_id) {
       productCounts[o.product_id] = (productCounts[o.product_id] || 0) + 1;
       if (productCounts[o.product_id] > bestSellerCount) {
         bestSellerCount = productCounts[o.product_id];
-        bestSellerName = (o.store_products as any)?.title || "Shop Item";
+        bestSellerName = (o.store_products as any)?.title || "Item Toko";
       }
     }
   });
@@ -106,25 +106,24 @@ export default async function AdminDashboard({
     .order("created_at", { ascending: false })
     .limit(1);
 
-  let latestTicketText = "No open tickets";
+  let latestTicketText = "Tidak ada tiket terbuka";
   if (latestTickets && latestTickets.length > 0) {
     const t = latestTickets[0];
     const userRef = t.users as any;
     const authorName =
       userRef?.full_name ||
-      (userRef?.email ? userRef.email.split("@")[0] : "Unknown");
-    latestTicketText = `${t.subject} from ${authorName}`;
+      (userRef?.email ? userRef.email.split("@")[0] : "Tanpa Nama");
+    latestTicketText = `${t.subject} dari ${authorName}`;
   }
 
   const latestClientText =
     recentClients && recentClients.length > 0
-      ? `New Client: ${recentClients[0].full_name || recentClients[0].email.split("@")[0]}`
-      : "No clients yet";
+      ? `Klien Baru: ${recentClients[0].full_name || recentClients[0].email.split("@")[0]}`
+      : "Belum ada klien";
 
-  // Fetch recent portfolios
   const { data: portfolios } = await supabase
     .from("store_portfolios")
-    .select("id, title, images")
+    .select("id, title, images, slug")
     .eq("is_published", true)
     .order("created_at", { ascending: false })
     .limit(4);
@@ -132,27 +131,27 @@ export default async function AdminDashboard({
   // Fetch services with order counts
   const { data: services } = await supabase
     .from("store_services")
-    .select("id, title, category");
+    .select("id, title, category, slug");
 
-  // Calculate service sales (this is simplified, ideally we'd join but let's count from memory for now)
   const serviceSales = ((services as Record<string, unknown>[]) || [])
     .map((s) => ({
       name: s.title as string,
       cat: s.category as string,
+      slug: s.slug as string,
       sold: orders.filter((o: any) => o.store_services?.title === s.title).length,
     }))
     .sort((a, b) => b.sold - a.sold)
     .slice(0, 5);
 
-  // Fetch products with sales
   const { data: products } = await supabase
     .from("store_products")
-    .select("id, title, category");
+    .select("id, title, category, slug");
 
   const productSales = ((products as Record<string, unknown>[]) || [])
     .map((p) => ({
       name: p.title as string,
       cat: p.category as string,
+      slug: p.slug as string,
       sold: orders.filter((o: any) => o.store_products?.title === p.title).length,
     }))
     .sort((a, b) => b.sold - a.sold)
@@ -177,7 +176,7 @@ export default async function AdminDashboard({
       })
       .reduce((sum, o) => sum + Number(o.total_amount || 0), 0);
     return {
-      month: new Date(displayYear, month).toLocaleString("default", {
+      month: new Date(displayYear, month).toLocaleString("id-ID", {
         month: "short",
       }),
       value: revenue,
@@ -188,7 +187,7 @@ export default async function AdminDashboard({
   const currentMonthRevenue =
     monthlyRevenue.find(
       (m) =>
-        m.month === new Date().toLocaleString("default", { month: "short" }),
+        m.month === new Date().toLocaleString("id-ID", { month: "short" }),
     )?.value || 0;
 
   const getFormData = (o: any) => {
@@ -221,7 +220,7 @@ export default async function AdminDashboard({
     if (baseTitle && pkgName) return `${baseTitle} (${pkgName})`;
     if (baseTitle) return baseTitle;
     if (pkgName) return pkgName;
-    return fd.customer_name || "Project";
+    return fd.customer_name || "Proyek";
   };
 
   const getClientName = (o: any) => {
@@ -230,7 +229,7 @@ export default async function AdminDashboard({
     if (u?.email) return u.email.split("@")[0];
     const fd = getFormData(o);
     return (
-      fd.customer_name || fd["Client Name"] || fd["Nama"] || "Offline Client"
+      fd.customer_name || fd["Client Name"] || fd["Nama"] || "Klien Offline"
     );
   };
 
@@ -241,34 +240,34 @@ export default async function AdminDashboard({
       <div className="w-full bg-linear-to-r from-indigo-600 to-indigo-500 rounded-3xl p-6 sm:p-8 mb-6 text-white shadow-lg shadow-indigo-200">
         <div className="mb-8">
           <h1 className="text-2xl font-bold tracking-tight mb-2">
-            Good morning, {name || "Admin"}
+            Selamat pagi, {name || "Admin"}
           </h1>
           <p className="text-sm font-medium text-slate-200">
-            Here&apos;s what&apos;s happening with your agency today.
+            Inilah yang terjadi dengan agensi Anda hari ini.
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
           {[
             {
-              title: "Total Revenue",
+              title: "Total Pendapatan",
               value: `Rp ${totalRevenue.toLocaleString("id-ID")}`,
-              tag: `↗ ${completedOrders.length} orders`,
+              tag: `↗ ${completedOrders.length} pesanan`,
               icon: Wallet,
             },
             {
-              title: "Best Seller",
+              title: "Terlaris",
               value: bestSellerName,
-              tag: `↗ ${bestSellerCount} Sold`,
+              tag: `↗ ${bestSellerCount} Terjual`,
               icon: TrendingUp,
             },
             {
-              title: "Total Clients",
+              title: "Total Klien",
               value: totalClientsCount?.toString() || "0",
               tag: latestClientText,
               icon: Users,
             },
             {
-              title: "Support Tickets",
+              title: "Tiket Dukungan",
               value: openTicketsCount?.toString() || "0",
               tag: latestTicketText,
               icon: Ticket,
@@ -299,7 +298,7 @@ export default async function AdminDashboard({
         <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-4 sm:p-6 xl:p-8 2xl:col-span-2 flex flex-col">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-              Revenue Report
+              Laporan Pendapatan
             </h3>
             <div className="flex items-center gap-3">
               <YearFilter
@@ -318,7 +317,7 @@ export default async function AdminDashboard({
                   Rp {totalRevenue.toLocaleString("id-ID")}
                 </span>
                 <span className="text-sm font-medium text-slate-500">
-                  Total earnings
+                  Total penghasilan
                 </span>
               </div>
 
@@ -326,7 +325,7 @@ export default async function AdminDashboard({
                 <div className="flex items-center gap-2 mb-1">
                   <div className="w-2.5 h-2.5 bg-indigo-300 rounded-[2px]"></div>
                   <span className="text-sm font-medium text-slate-500">
-                    Earnings this month
+                    Penghasilan bulan ini
                   </span>
                 </div>
                 <span className="text-lg font-bold text-slate-900 block">
@@ -338,7 +337,7 @@ export default async function AdminDashboard({
                 <div className="flex items-center gap-2 mb-1">
                   <div className="w-2.5 h-2.5 bg-indigo-700 rounded-[2px]"></div>
                   <span className="text-sm font-medium text-slate-500">
-                    Expense tracked
+                    Pengeluaran terlacak
                   </span>
                 </div>
                 <span className="text-lg font-bold text-slate-900 block">
@@ -381,22 +380,24 @@ export default async function AdminDashboard({
         <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-4 sm:p-6 xl:p-8 flex flex-col">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-bold text-slate-900 tracking-tight">
-              Portfolio Gallery
+              Galeri Portofolio
             </h3>
-            <span className="text-xs font-bold uppercase tracking-wider text-primary hover:bg-slate-50 rounded-lg px-3 py-2 cursor-pointer transition-colors">
-              View all
-            </span>
+            <Link href="/portfolios" className="text-xs font-bold uppercase tracking-wider text-primary hover:bg-slate-50 rounded-lg px-3 py-2 transition-colors">
+              Lihat semua
+            </Link>
           </div>
           <div className="grid grid-cols-2 gap-3 mb-8">
             {portfolios?.length === 0 ? (
               <div className="col-span-2 h-40 bg-slate-50 border border-dashed border-slate-200 rounded-xl flex items-center justify-center text-xs font-bold text-slate-400">
-                No published portfolios
+                Tidak ada portofolio yang dipublikasikan
               </div>
             ) : (
-              portfolios?.map((p, idx) => (
-                <div
+              portfolios?.map((p) => (
+                <Link
                   key={p.id}
-                  className={`bg-slate-100 rounded-xl overflow-hidden border border-slate-200 aspect-video ${idx === 2 ? "col-span-2 h-40" : ""} relative group`}
+                  href={`/portfolios/${p.slug || p.id}`}
+                  target="_blank"
+                  className="bg-slate-100 rounded-xl overflow-hidden border border-slate-200 aspect-video relative group block"
                 >
                   <img
                     src={
@@ -407,17 +408,17 @@ export default async function AdminDashboard({
                     className="w-full h-full object-cover opacity-90 group-hover:scale-105 group-hover:opacity-100 transition-all duration-500"
                   />
                   <div className="absolute inset-0 bg-slate-900/10 group-hover:bg-transparent transition-colors duration-500"></div>
-                </div>
+                </Link>
               ))
             )}
           </div>
           <div className="mt-auto pt-4 border-t border-slate-100">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold text-slate-900">
-                Recent Clients
+                Klien Terbaru
               </h3>
               <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                {totalClientsCount || 0} Total
+                Total {totalClientsCount || 0}
               </span>
             </div>
             <div className="flex -space-x-3">
@@ -441,7 +442,7 @@ export default async function AdminDashboard({
               <Link
                 href="/dashboard/user"
                 className="h-10 w-10 rounded-full border-[3px] border-white bg-slate-50 border-dashed flex items-center justify-center text-slate-400 hover:z-10 hover:text-primary hover:border-indigo-100 transition-colors cursor-pointer relative"
-                title="View All Users"
+                title="Lihat Semua Pengguna"
               >
                 <Users size={14} />
               </Link>
@@ -457,29 +458,30 @@ export default async function AdminDashboard({
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="text-lg font-bold text-slate-900 mb-1">
-                Available Services
+                Layanan Tersedia
               </h3>
               <span className="text-sm font-medium text-slate-500">
-                Agency core offerings
+                Penawaran utama agensi
               </span>
             </div>
-            <span className="text-xs font-bold uppercase tracking-wider text-primary hover:bg-slate-50 rounded-lg px-3 py-2 cursor-pointer transition-colors">
-              View all
-            </span>
+            <Link href="/services" target="_blank" className="text-xs font-bold uppercase tracking-wider text-primary hover:bg-slate-50 rounded-lg px-3 py-2 transition-colors">
+              Lihat semua
+            </Link>
           </div>
           <div className="flow-root mt-8">
             <ul role="list" className="divide-y divide-slate-100">
               {serviceSales.length === 0 ? (
                 <li className="py-4 text-center text-xs font-bold text-slate-400 italic">
-                  No services created yet.
+                  Belum ada layanan yang dibuat.
                 </li>
               ) : (
                 serviceSales.map((s, i) => (
-                  <li
-                    key={i}
-                    className="py-3 sm:py-4 hover:bg-slate-50 transition-colors -mx-4 px-4 rounded-xl text-left"
-                  >
-                    <div className="flex items-center justify-between">
+                  <li key={i}>
+                    <Link
+                      href={s.slug ? `/services/${s.slug}` : "/services"}
+                      target="_blank"
+                      className="flex items-center justify-between py-3 sm:py-4 hover:bg-slate-50 transition-colors -mx-4 px-4 rounded-xl"
+                    >
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-bold text-slate-900 truncate">
                           {s.name}
@@ -491,9 +493,9 @@ export default async function AdminDashboard({
                       <div
                         className={`inline-flex items-center text-xs font-bold uppercase tracking-wider ${s.sold > 0 ? "text-amber-500" : "text-slate-400"}`}
                       >
-                        {s.sold} Orders
+                        {s.sold} Pesanan
                       </div>
-                    </div>
+                    </Link>
                   </li>
                 ))
               )}
@@ -507,35 +509,36 @@ export default async function AdminDashboard({
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="text-lg font-bold text-slate-900 mb-1">
-                Shop Products
+                Produk Toko
               </h3>
               <span className="text-sm font-medium text-slate-500">
-                Asset & store inventory
+                Aset & inventaris toko
               </span>
             </div>
-            <span className="text-xs font-bold uppercase tracking-wider text-primary hover:bg-slate-50 rounded-lg px-3 py-2 cursor-pointer transition-colors">
-              View all
-            </span>
+            <Link href="/shop" target="_blank" className="text-xs font-bold uppercase tracking-wider text-primary hover:bg-slate-50 rounded-lg px-3 py-2 transition-colors">
+              Lihat semua
+            </Link>
           </div>
           <div className="flow-root mt-8">
             <ul role="list" className="divide-y divide-slate-100">
               {productSales.length === 0 ? (
                 <li className="py-4 text-center text-xs font-bold text-slate-400 italic">
-                  No products created yet.
+                  Belum ada produk yang dibuat.
                 </li>
               ) : (
                 productSales.map((s, i) => (
-                  <li
-                    key={i}
-                    className="py-3 sm:py-4 hover:bg-slate-50 transition-colors -mx-4 px-4 rounded-xl text-left"
-                  >
-                    <div className="flex items-center space-x-4">
+                  <li key={i}>
+                    <Link
+                      href={s.slug ? `/shop/${s.slug}` : "/shop"}
+                      target="_blank"
+                      className="flex items-center space-x-4 py-3 sm:py-4 hover:bg-slate-50 transition-colors -mx-4 px-4 rounded-xl"
+                    >
                       <div className="shrink-0">
                         <div className="h-10 w-10 rounded-lg border border-slate-200 bg-slate-50 flex items-center justify-center p-2.5 shadow-sm text-slate-400">
                           <Box size={20} />
                         </div>
                       </div>
-                      <div className="flex-1 min-w-0 text-left">
+                      <div className="flex-1 min-w-0">
                         <p className="text-sm font-bold text-slate-900 truncate">
                           {s.name}
                         </p>
@@ -544,9 +547,9 @@ export default async function AdminDashboard({
                         </p>
                       </div>
                       <div className="inline-flex items-center text-xs font-bold uppercase tracking-wider text-slate-400">
-                        {s.sold} Sold
+                        {s.sold} Terjual
                       </div>
-                    </div>
+                    </Link>
                   </li>
                 ))
               )}
@@ -564,10 +567,10 @@ export default async function AdminDashboard({
           <div className="mb-6 flex items-center justify-between">
             <div>
               <h3 className="text-lg font-bold text-slate-900 mb-1">
-                Latest projects
+                Proyek terbaru
               </h3>
               <span className="text-sm font-medium text-slate-500">
-                List of all recent jobs
+                Daftar semua pekerjaan terbaru
               </span>
             </div>
           </div>
@@ -583,19 +586,19 @@ export default async function AdminDashboard({
                           scope="col"
                           className="p-4 text-left text-xs font-bold uppercase tracking-wider text-slate-500"
                         >
-                          Order Reference
+                          Referensi Pesanan
                         </th>
                         <th
                           scope="col"
                           className="p-4 text-left text-xs font-bold uppercase tracking-wider text-slate-500"
                         >
-                          Product / Service
+                          Produk / Layanan
                         </th>
                         <th
                           scope="col"
                           className="p-4 text-left text-xs font-bold uppercase tracking-wider text-slate-500"
                         >
-                          Amount
+                          Jumlah
                         </th>
                         <th
                           scope="col"
@@ -607,13 +610,13 @@ export default async function AdminDashboard({
                           scope="col"
                           className="p-4 text-right text-xs font-bold uppercase tracking-wider text-slate-500"
                         >
-                          Date
+                          Tanggal
                         </th>
                         <th
                           scope="col"
                           className="p-4 text-right text-xs font-bold uppercase tracking-wider text-slate-500"
                         >
-                          Workspace
+                          Ruang Kerja
                         </th>
                       </tr>
                     </thead>
@@ -624,7 +627,7 @@ export default async function AdminDashboard({
                             colSpan={5}
                             className="p-4 whitespace-nowrap text-sm font-medium text-slate-400 italic text-center py-12"
                           >
-                            No orders found yet.
+                            Belum ada pesanan yang ditemukan.
                           </td>
                         </tr>
                       ) : (
@@ -676,7 +679,7 @@ export default async function AdminDashboard({
                                 <span
                                   className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded shadow-sm border ${statusColor}`}
                                 >
-                                  {order.status.replace("_", " ")}
+                                  {order.status.replace("_", " ").replace("pending", "menunggu").replace("waiting payment", "menunggu pembayaran").replace("paid", "dibayar").replace("processing", "diproses").replace("completed", "selesai").replace("cancelled", "dibatalkan")}
                                 </span>
                               </td>
                               <td className="p-4 whitespace-nowrap text-sm font-medium text-slate-400 text-right">
@@ -695,7 +698,7 @@ export default async function AdminDashboard({
                                 <Link
                                   href={`/workspace/${order.id}`}
                                   className="text-primary hover:text-primary bg-indigo-50 hover:bg-indigo-100 p-2 rounded-lg inline-flex items-center transition-colors shadow-sm"
-                                  title="Open Workspace"
+                                  title="Buka Ruang Kerja"
                                 >
                                   <svg
                                     className="w-4 h-4"
@@ -728,7 +731,7 @@ export default async function AdminDashboard({
 
         <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-4 sm:p-6 xl:p-8">
           <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-8 border-b border-slate-100 pb-4">
-            Timeline
+            Timeline Aktivitas
           </h3>
           <div className="flow-root">
             <ul className="relative border-l border-slate-200 ml-3">
@@ -741,9 +744,9 @@ export default async function AdminDashboard({
                     <div className="flex justify-between items-start gap-4">
                       <p className="text-sm font-medium text-slate-600 leading-relaxed pt-0.5">
                         <span className="font-bold text-slate-900">
-                          {act.users?.full_name || act.users?.email || "A user"}
+                          {act.users?.full_name || act.users?.email || "Seorang pengguna"}
                         </span>{" "}
-                        {act.title}{" "}
+                        {act.title?.replace('Service request submitted for', 'Permintaan layanan dikirim untuk').replace('Product purchase submitted for', 'Pembelian produk dikirim untuk')}{" "}
                         {act.highlight && (
                           <span
                             className={`font-bold ${act.highlight_color || "text-slate-900"}`}
@@ -760,7 +763,7 @@ export default async function AdminDashboard({
                 ))
               ) : (
                 <li className="mb-7 ml-6 relative text-sm text-slate-500 font-medium">
-                  No recent activities on the platform.
+                  Tidak ada aktivitas terbaru di platform.
                 </li>
               )}
             </ul>

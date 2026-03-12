@@ -33,7 +33,7 @@ export default function Error({ error, reset }: ErrorProps) {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-32 lg:py-48 text-center">
           <div className="inline-flex items-center gap-2 rounded-full border border-rose-100 bg-rose-50/60 px-3 py-1 text-sm font-medium text-rose-600 mb-8 backdrop-blur-sm">
             <AlertTriangle size={16} />
-            <span>Something went wrong</span>
+            <span>Terjadi kesalahan</span>
           </div>
 
           <p className="text-8xl sm:text-9xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-600 leading-none mb-6">
@@ -41,11 +41,11 @@ export default function Error({ error, reset }: ErrorProps) {
           </p>
 
           <h1 className="mx-auto max-w-2xl text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mb-4">
-            An unexpected error occurred
+            Terjadi kesalahan yang tidak terduga
           </h1>
 
           <p className="mx-auto max-w-xl text-lg text-slate-500 leading-relaxed mb-10">
-            Something went wrong on our end. Please try again or return to the homepage.
+            Terjadi kesalahan di server kami. Silakan coba lagi atau kembali ke halaman utama.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -54,20 +54,20 @@ export default function Error({ error, reset }: ErrorProps) {
               className="group flex h-12 items-center justify-center gap-2 rounded-full bg-indigo-600 px-8 text-base font-semibold text-white transition-all hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-200 focus:ring-4 focus:ring-indigo-100"
             >
               <RefreshCw size={18} className="transition-transform group-hover:rotate-180 duration-500" />
-              Try Again
+              Coba Lagi
             </button>
             <Link
               href="/"
               className="flex h-12 items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-8 text-base font-semibold text-slate-900 transition-all hover:border-slate-300 hover:bg-slate-50 focus:ring-4 focus:ring-slate-100"
             >
               <ArrowLeft size={18} />
-              Back to Home
+              Kembali ke Beranda
             </Link>
           </div>
 
           {error?.digest && (
             <p className="mt-10 text-xs text-slate-400">
-              Error reference: <code className="font-mono bg-slate-100 px-2 py-0.5 rounded">{error.digest}</code>
+              Referensi error: <code className="font-mono bg-slate-100 px-2 py-0.5 rounded">{error.digest}</code>
             </p>
           )}
         </div>

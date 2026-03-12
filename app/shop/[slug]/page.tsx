@@ -78,7 +78,7 @@ export default async function ProductDetail({ params }: ProductProps) {
                 <div className="flex items-center">
                   <ChevronRight className="h-4 w-4 shrink-0 text-slate-300" />
                   <Link href="/shop" className="ml-2 hover:text-primary transition-colors">
-                    Shop
+                    Toko
                   </Link>
                 </div>
               </li>
@@ -142,7 +142,7 @@ export default async function ProductDetail({ params }: ProductProps) {
             <FadeIn delay={200} className="flex flex-col">
               <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-sm font-medium text-primary mb-6 w-max">
                 <ShoppingBag size={14} />
-                <span>{prod.category || "Digital Asset"}</span>
+                <span>{prod.category || "Aset Digital"}</span>
               </div>
               <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl mb-6">
                 {prod.title}
@@ -169,7 +169,7 @@ export default async function ProductDetail({ params }: ProductProps) {
                      </span>
                    )
                  })()}
-                 <span className="text-slate-500 font-medium pb-1.5 ml-2">starting price</span>
+                 <span className="text-slate-500 font-medium pb-1.5 ml-2">harga mulai dari</span>
               </div>
               
               
@@ -185,7 +185,7 @@ export default async function ProductDetail({ params }: ProductProps) {
               <div className="mt-8 pt-8 border-t border-slate-100">
                  {prod.packages && prod.packages.length > 0 ? (
                     <div className="space-y-4">
-                      <h3 className="text-lg font-bold text-slate-900 mb-4">Choose License</h3>
+                      <h3 className="text-lg font-bold text-slate-900 mb-4">Pilih Lisensi</h3>
                       {prod.packages.map((pkg: any, idx: number) => {
                          const { originalPrice, discountedPrice, appliedDiscount } = calculateDiscountedPrice(pkg.price, activeDiscounts, prod.id, 'product');
                          
@@ -193,7 +193,7 @@ export default async function ProductDetail({ params }: ProductProps) {
                            <div key={idx} className={`relative flex flex-col sm:flex-row sm:items-center justify-between p-5 rounded-2xl border ${appliedDiscount ? 'border-indigo-200 bg-indigo-50/30' : 'border-slate-200 bg-white'} shadow-sm hover:shadow-md transition-shadow gap-4`}>
                               {appliedDiscount && (
                                 <div className="absolute -top-3 left-6 bg-indigo-600 text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full shadow-sm flex items-center gap-1">
-                                  <Tag size={12} /> Discount Applied
+                                  <Tag size={12} /> Diskon Diterapkan
                                 </div>
                               )}
                               <div className={appliedDiscount ? "pt-2" : ""}>
@@ -222,7 +222,7 @@ export default async function ProductDetail({ params }: ProductProps) {
                                     )}
                                  </div>
                                  <Link href={`/checkout?type=product&slug=${prod.slug}&plan=${encodeURIComponent(pkg.name)}`} className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl shadow-sm transition-all focus:ring-2 focus:ring-indigo-500/50 whitespace-nowrap">
-                                    Buy Now
+                                     Beli Sekarang
                                  </Link>
                               </div>
                            </div>
@@ -231,7 +231,7 @@ export default async function ProductDetail({ params }: ProductProps) {
                     </div>
                  ) : (
                     <Link href={`/checkout?type=product&slug=${prod.slug}&plan=${encodeURIComponent(prod.packages?.[0]?.name || "Standard")}`} className="flex items-center justify-center w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-6 rounded-xl shadow-sm shadow-indigo-200 transition-all focus:ring-2 focus:ring-indigo-500/50 text-lg">
-                       <ShoppingBag className="w-5 h-5 mr-3" /> Purchase Item — Rp {Number(prod.packages?.[0]?.price || 0).toLocaleString('id-ID')}
+                        <ShoppingBag className="w-5 h-5 mr-3" /> Beli Sekarang — Rp {Number(prod.packages?.[0]?.price || 0).toLocaleString('id-ID')}
                     </Link>
                  )}
               </div>
@@ -243,8 +243,8 @@ export default async function ProductDetail({ params }: ProductProps) {
 
       <FAQSection 
         faqs={shopFaqs || []} 
-        title={`Questions about our ${prod.category} designs`}
-        badge="Shop FAQ"
+        title={`Pertanyaan tentang desain ${prod.category} kami`}
+        badge="FAQ Toko"
       />
 
       <Footer />

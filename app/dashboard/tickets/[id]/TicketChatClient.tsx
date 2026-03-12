@@ -96,7 +96,7 @@ export default function TicketChatClient({ ticket, user }: { ticket: any; user: 
             <Link href="/dashboard/tickets" className="w-8 h-8 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-center text-slate-400 hover:text-primary transition-all">
               <ArrowLeft className="w-4 h-4" />
             </Link>
-            <h2 className="text-sm font-bold text-slate-900">Ticket Detail</h2>
+            <h2 className="text-sm font-bold text-slate-900">Detail Tiket</h2>
           </div>
           <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-indigo-50 text-primary mb-3 mx-auto">
             <LifeBuoy className="w-5 h-5" />
@@ -108,7 +108,7 @@ export default function TicketChatClient({ ticket, user }: { ticket: any; user: 
           </span>
         </div>
         <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-5">
-          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Details</p>
+          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Detail</p>
           <div className="space-y-2.5">
             <div className="flex items-center gap-2.5 bg-slate-50 rounded-xl px-3 py-2.5">
               <Tag className="w-3.5 h-3.5 text-slate-400 shrink-0" />
@@ -116,7 +116,7 @@ export default function TicketChatClient({ ticket, user }: { ticket: any; user: 
             </div>
             <div className="flex items-center gap-2.5 bg-slate-50 rounded-xl px-3 py-2.5">
               <User className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-              <span className="text-xs font-medium text-slate-600">Priority: {ticket.priority}</span>
+              <span className="text-xs font-medium text-slate-600">Prioritas: {ticket.priority === "urgent" ? "Mendesak" : ticket.priority === "high" ? "Tinggi" : ticket.priority === "normal" ? "Normal" : "Rendah"}</span>
             </div>
             <div className="flex items-center gap-2.5 bg-slate-50 rounded-xl px-3 py-2.5">
               <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
@@ -136,7 +136,7 @@ export default function TicketChatClient({ ticket, user }: { ticket: any; user: 
 
       <div className="xl:col-span-2 bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl overflow-hidden flex flex-col flex-1 min-h-0">
         <div className="px-5 py-4 border-b border-slate-100 bg-slate-50/50 shrink-0">
-          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">{messages.length} message{messages.length !== 1 ? "s" : ""}</p>
+          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">{messages.length} pesan</p>
         </div>
         <div className="flex-1 overflow-y-auto p-5 space-y-3" ref={scrollRef}>
           {isInitializing ? (
@@ -145,14 +145,14 @@ export default function TicketChatClient({ ticket, user }: { ticket: any; user: 
             </div>
           ) : messages.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-slate-400 opacity-40 gap-3">
-              <p className="text-xs font-bold uppercase tracking-wider">No replies yet</p>
+              <p className="text-xs font-bold uppercase tracking-wider">Belum ada balasan</p>
             </div>
           ) : messages.map((m, idx) => {
             const isMe = m.sender_id === user.id;
             return (
               <div key={m.id || idx} className={`flex gap-3 ${isMe ? "flex-row-reverse" : "flex-row"}`}>
                 <div className="w-7 h-7 rounded-xl bg-indigo-50 flex items-center justify-center text-primary font-bold text-xs shrink-0 self-end">
-                  {isMe ? (user?.user_metadata?.full_name?.charAt(0) || "Y") : "A"}
+                  {isMe ? (user?.user_metadata?.full_name?.charAt(0) || "A") : "A"}
                 </div>
                 <div className={`max-w-[75%] space-y-1 ${isMe ? "items-end" : "items-start"} flex flex-col`}>
                   <div className={`px-4 py-2.5 text-sm font-medium leading-relaxed rounded-2xl ${isMe ? "bg-indigo-600 text-white" : "bg-slate-100 text-slate-700"}`}>
@@ -160,6 +160,7 @@ export default function TicketChatClient({ ticket, user }: { ticket: any; user: 
                   </div>
                   <span className="text-[10px] font-medium text-slate-300 px-1">
                     {!isMe && <span className="mr-1">{m.sender?.full_name ?? "Admin"} ·</span>}
+                    {isMe && <span className="mr-1">Anda ·</span>}
                     {m.created_at ? format(new Date(m.created_at), "HH:mm") : "--:--"}
                   </span>
                 </div>
@@ -172,7 +173,7 @@ export default function TicketChatClient({ ticket, user }: { ticket: any; user: 
             <input
               value={newMessage}
               onChange={e => setNewMessage(e.target.value)}
-              placeholder="Reply to this ticket..."
+              placeholder="Balas tiket ini..."
               className="flex-1 bg-white border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 px-4 py-2.5 transition-all outline-none"
             />
             <button type="submit" disabled={loading || !newMessage.trim()} className="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center hover:bg-indigo-700 active:scale-95 transition-all disabled:opacity-50 shrink-0">

@@ -98,7 +98,7 @@ export default function AdminTicketChatClient({ ticket, user }: { ticket: any; u
       const { error } = await supabaseRef.current.from("support_tickets").update({ status: newStatus, updated_at: new Date().toISOString() }).eq("id", ticket.id);
       if (error) throw error;
       setStatus(newStatus);
-      showToast(`Status updated to ${newStatus.replace("_", " ")}`, "success");
+      showToast(`Status diperbarui menjadi ${newStatus === "open" ? "terbuka" : newStatus === "in_progress" ? "diproses" : newStatus === "resolved" ? "selesai" : "ditutup"}`, "success");
     } catch (err: any) { showToast(err.message, "error"); }
   }
 
@@ -110,7 +110,7 @@ export default function AdminTicketChatClient({ ticket, user }: { ticket: any; u
       <div className="xl:col-span-2 bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl overflow-hidden flex flex-col flex-1 min-h-0">
         <div className="px-5 py-4 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between shrink-0">
           <Link href="/dashboard/tickets" className="flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-primary transition-colors">
-            <ArrowLeft className="w-4 h-4" /> All Tickets
+            <ArrowLeft className="w-4 h-4" /> Semua Tiket
           </Link>
           <div className="flex items-center gap-3">
             <label className="text-xs font-bold text-slate-400 uppercase tracking-wider hidden sm:block">Status</label>
@@ -120,7 +120,7 @@ export default function AdminTicketChatClient({ ticket, user }: { ticket: any; u
               className="bg-slate-50 border border-slate-200 text-slate-900 text-xs font-bold rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 px-3 py-2 transition-all outline-none"
             >
               {STATUS_OPTIONS.map(s => (
-                <option key={s} value={s}>{s.replace("_", " ").replace(/\b\w/g, c => c.toUpperCase())}</option>
+                <option key={s} value={s}>{s === "open" ? "Terbuka" : s === "in_progress" ? "Diproses" : s === "resolved" ? "Selesai" : "Ditutup"}</option>
               ))}
             </select>
           </div>
@@ -132,7 +132,7 @@ export default function AdminTicketChatClient({ ticket, user }: { ticket: any; u
             </div>
           ) : messages.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-slate-400 opacity-40 gap-3">
-              <p className="text-xs font-bold uppercase tracking-wider">No messages yet</p>
+              <p className="text-xs font-bold uppercase tracking-wider">Belum ada pesan</p>
             </div>
           ) : messages.map((m, idx) => {
             const isMe = m.sender_id === user.id;
@@ -146,7 +146,7 @@ export default function AdminTicketChatClient({ ticket, user }: { ticket: any; u
                     {m.content}
                   </div>
                   <span className="text-[10px] font-medium text-slate-300 px-1">
-                    {!isMe && <span className="mr-1">{m.sender?.full_name ?? "Client"} ·</span>}
+                    {!isMe && <span className="mr-1">{m.sender?.full_name ?? "Klien"} ·</span>}
                     {m.created_at ? format(new Date(m.created_at), "HH:mm") : "--:--"}
                   </span>
                 </div>
@@ -159,7 +159,7 @@ export default function AdminTicketChatClient({ ticket, user }: { ticket: any; u
             <input
               value={newMessage}
               onChange={e => setNewMessage(e.target.value)}
-              placeholder="Reply to the client..."
+              placeholder="Balas ke klien..."
               className="flex-1 bg-white border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 px-4 py-2.5 transition-all outline-none"
             />
             <button type="submit" disabled={loading || !newMessage.trim()} className="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center hover:bg-indigo-700 active:scale-95 transition-all disabled:opacity-50 shrink-0">
@@ -171,14 +171,14 @@ export default function AdminTicketChatClient({ ticket, user }: { ticket: any; u
 
       <div className="xl:col-span-1 flex flex-col gap-4 shrink-0">
         <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-5">
-          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 pb-3 border-b border-slate-100">Ticket Info</p>
+          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 pb-3 border-b border-slate-100">Info Tiket</p>
           <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-indigo-50 text-primary mb-3 mx-auto">
             <LifeBuoy className="w-5 h-5" />
           </div>
           <p className="text-xs font-bold text-slate-400 uppercase tracking-wider text-center">#{ticket.id.slice(0, 8)}</p>
           <p className="text-sm font-bold text-slate-800 text-center mt-1 mb-3">{ticket.subject}</p>
           <span className={`text-xs font-bold uppercase px-3 py-1 rounded-lg block text-center w-fit mx-auto mb-4 ${statusMap[status] || "bg-slate-100 text-slate-500"}`}>
-            {status?.replace("_", " ")}
+            {status === "open" ? "terbuka" : status === "in_progress" ? "diproses" : status === "resolved" ? "selesai" : "ditutup"}
           </span>
           <div className="space-y-2">
             <div className="flex items-center gap-2 bg-slate-50 rounded-xl px-3 py-2.5">
@@ -192,13 +192,13 @@ export default function AdminTicketChatClient({ ticket, user }: { ticket: any; u
           </div>
         </div>
         <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-5">
-          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 pb-3 border-b border-slate-100">Client</p>
+          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 pb-3 border-b border-slate-100">Klien</p>
           <div className="flex items-center gap-3 mb-3">
             <div className="w-9 h-9 rounded-xl bg-indigo-50 flex items-center justify-center text-primary font-bold text-sm shrink-0">
               {clientProfile?.full_name?.charAt(0)?.toUpperCase() || "?"}
             </div>
             <div>
-              <p className="text-sm font-bold text-slate-800">{clientProfile?.full_name || "Unknown"}</p>
+              <p className="text-sm font-bold text-slate-800">{clientProfile?.full_name || "Tanpa Nama"}</p>
               <div className="flex items-center gap-1.5 mt-0.5">
                 <span className={`w-1.5 h-1.5 rounded-full ${isPartnerOnline ? "bg-emerald-500 animate-pulse" : "bg-slate-300"}`} />
                 <span className={`text-xs font-bold ${isPartnerOnline ? "text-emerald-600" : "text-slate-400"}`}>

@@ -20,7 +20,7 @@ export default function ImageUploader({ value, onChange, label = "Image", folder
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (!file.type.startsWith("image/")) return showToast("Please upload an image file", "error");
+    if (!file.type.startsWith("image/")) return showToast("Harap unggah file gambar", "error");
 
     setUploading(true);
     try {
@@ -36,9 +36,9 @@ export default function ImageUploader({ value, onChange, label = "Image", folder
 
       const { data: { publicUrl } } = supabase.storage.from("assets").getPublicUrl(filePath);
       onChange(publicUrl);
-      showToast("Image uploaded successfully!", "success");
+      showToast("Gambar berhasil diunggah!", "success");
     } catch (error: any) {
-      showToast("Upload failed. Make sure 'assets' bucket exists and is public.", "error");
+      showToast("Gagal mengunggah. Pastikan bucket 'assets' ada dan bersifat publik.", "error");
     } finally {
       setUploading(false);
     }
@@ -76,10 +76,10 @@ export default function ImageUploader({ value, onChange, label = "Image", folder
             />
             <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl px-4 py-4 flex items-center justify-center gap-2 text-slate-400 hover:bg-slate-100 hover:border-indigo-200 hover:text-primary transition-all cursor-pointer">
               {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-              <span className="text-sm font-medium">{uploading ? "Uploading..." : "Click to Upload"}</span>
+              <span className="text-sm font-medium">{uploading ? "Mengunggah..." : "Klik untuk Unggah"}</span>
             </div>
           </div>
-          <p className="text-[10px] text-slate-400 font-medium mt-2 px-1">Square ratio recommended. Max 2MB.</p>
+          <p className="text-[10px] text-slate-400 font-medium mt-2 px-1">Rasio persegi disarankan. Maks 2MB.</p>
         </div>
       </div>
     </div>

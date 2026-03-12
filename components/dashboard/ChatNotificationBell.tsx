@@ -167,14 +167,14 @@ export default function ChatNotificationBell({ role = "user", userId }: { role?:
         <div className="absolute right-0 mt-3 w-80 bg-white rounded-2xl shadow-lg ring-1 ring-slate-100 overflow-hidden origin-top-right z-50">
           <div className="px-4 py-3 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-slate-700">Chat Messages</p>
-              <p className="text-[10px] text-slate-400 mt-0.5">{unreadCount} unread message(s)</p>
+              <p className="text-xs font-bold uppercase tracking-wider text-slate-700">Pesan Chat</p>
+              <p className="text-[10px] text-slate-400 mt-0.5">{unreadCount} pesan belum dibaca</p>
             </div>
             {unreadCount > 0 && (
               <button
                 onClick={clearAll}
                 className="p-1.5 bg-indigo-50 text-primary rounded-lg hover:bg-indigo-600 hover:text-white transition-all"
-                title="Mark all as read"
+                title="Tandai semua telah dibaca"
               >
                 <Check className="w-3.5 h-3.5" />
               </button>
@@ -211,7 +211,7 @@ export default function ChatNotificationBell({ role = "user", userId }: { role?:
                       </span>
                       {chat.link && (
                         <Link href={chat.link} className="text-[10px] font-bold text-primary hover:underline">
-                          Reply
+                          Balas
                         </Link>
                       )}
                     </div>
@@ -219,7 +219,7 @@ export default function ChatNotificationBell({ role = "user", userId }: { role?:
                   <button
                     onClick={(e) => { e.stopPropagation(); handleMarkAsRead(chat); }}
                     className="opacity-0 group-hover:opacity-100 p-1 text-slate-300 hover:text-slate-500 transition-all self-start mt-0.5"
-                    title="Mark as read"
+                    title="Tandai telah dibaca"
                   >
                     <Check className="w-4 h-4" />
                   </button>
@@ -228,7 +228,7 @@ export default function ChatNotificationBell({ role = "user", userId }: { role?:
             ) : (
               <div className="py-12 flex flex-col items-center justify-center text-slate-300">
                 <MessageCircle className="w-8 h-8 mb-2" />
-                <p className="text-xs font-bold uppercase tracking-widest">Inbox Zero</p>
+                <p className="text-xs font-bold uppercase tracking-widest">Kosong</p>
               </div>
             )}
           </div>
@@ -236,7 +236,7 @@ export default function ChatNotificationBell({ role = "user", userId }: { role?:
           {allChats.length > 0 && (
             <div className="py-3 text-center bg-slate-50 border-t border-slate-100">
               <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                — End of chat messages —
+                — Akhir dari pesan chat —
               </span>
             </div>
           )}

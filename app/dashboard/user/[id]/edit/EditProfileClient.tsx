@@ -38,7 +38,7 @@ export default function EditProfileClient({ profile }: { profile: any }) {
 
     if (error) {
       console.error("Supabase update error:", error);
-      setErrorMsg(`Failed to save profile changes: ${error.message} (${error.code})`);
+      setErrorMsg(`Gagal menyimpan perubahan profil: ${error.message} (${error.code})`);
       setLoading(false);
       return;
     }
@@ -58,8 +58,8 @@ export default function EditProfileClient({ profile }: { profile: any }) {
           <ArrowLeft className="w-5 h-5" />
         </Link>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Edit Profile</h1>
-          <p className="text-sm font-medium text-slate-500">Update your personal and business details here.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Edit Profil</h1>
+          <p className="text-sm font-medium text-slate-500">Perbarui detail pribadi dan bisnis Anda di sini.</p>
         </div>
       </div>
 
@@ -78,9 +78,9 @@ export default function EditProfileClient({ profile }: { profile: any }) {
               />
           </div>
           <div className="flex-1 text-center sm:text-left space-y-2">
-            <h3 className="text-lg font-bold text-slate-900">Profile Picture Reference</h3>
+            <h3 className="text-lg font-bold text-slate-900">Foto Profil</h3>
             <p className="text-sm font-medium text-slate-500 max-w-lg leading-relaxed">
-              For now, please provide a valid public image URL to update your avatar. Make sure it starts with "http://" or "https://". Upload feature is currently disabled.
+              Untuk saat ini, masukkan URL gambar publik yang valid untuk memperbarui avatar Anda. Pastikan dimulai dengan &quot;http://&quot; atau &quot;https://&quot;. Fitur unggah gambar belum tersedia.
             </p>
           </div>
         </div>
@@ -97,7 +97,7 @@ export default function EditProfileClient({ profile }: { profile: any }) {
             
 
             <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Full Name</label>
+              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Nama Lengkap</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                   <User className="w-4 h-4 text-slate-400" />
@@ -106,7 +106,7 @@ export default function EditProfileClient({ profile }: { profile: any }) {
                   type="text" 
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  placeholder="e.g. John Doe"
+                  placeholder="contoh: Budi Santoso"
                   required
                   className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 text-sm font-medium text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm"
                 />
@@ -134,7 +134,7 @@ export default function EditProfileClient({ profile }: { profile: any }) {
             
 
             <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Company / Organization</label>
+              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Perusahaan / Organisasi</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                   <Building2 className="w-4 h-4 text-slate-400" />
@@ -143,7 +143,7 @@ export default function EditProfileClient({ profile }: { profile: any }) {
                   type="text" 
                   value={company}
                   onChange={(e) => setCompany(e.target.value)}
-                  placeholder="e.g. Kanglogo Studio"
+                  placeholder="contoh: Kanglogo Studio"
                   className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 text-sm font-medium text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm"
                 />
               </div>
@@ -152,7 +152,7 @@ export default function EditProfileClient({ profile }: { profile: any }) {
             
 
             <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Location</label>
+              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Lokasi</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                   <MapPin className="w-4 h-4 text-slate-400" />
@@ -161,7 +161,7 @@ export default function EditProfileClient({ profile }: { profile: any }) {
                   type="text" 
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  placeholder="e.g. Jakarta, Indonesia"
+                  placeholder="contoh: Jakarta, Indonesia"
                   className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 text-sm font-medium text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm"
                 />
               </div>
@@ -171,8 +171,8 @@ export default function EditProfileClient({ profile }: { profile: any }) {
 
             <div className="sm:col-span-2 space-y-2">
                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
-                 Account Email 
-                 <span className="bg-slate-100 text-slate-400 px-1.5 py-0.5 rounded text-[10px]">LOCKED</span>
+                 Email Akun 
+                 <span className="bg-slate-100 text-slate-400 px-1.5 py-0.5 rounded text-[10px]">TERKUNCI</span>
                </label>
                <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
@@ -185,7 +185,7 @@ export default function EditProfileClient({ profile }: { profile: any }) {
                     className="w-full pl-10 pr-4 py-3 bg-slate-100/50 border border-slate-200 text-sm font-medium text-slate-500 rounded-xl cursor-not-allowed shadow-none focus:outline-none"
                   />
                </div>
-               <p className="text-xs font-medium text-slate-400/80 mt-1.5">Email addresses are tied to Google Authentication and cannot be changed here.</p>
+               <p className="text-xs font-medium text-slate-400/80 mt-1.5">Alamat email terhubung dengan Google Authentication dan tidak dapat diubah di sini.</p>
             </div>
           </div>
 
@@ -197,11 +197,11 @@ export default function EditProfileClient({ profile }: { profile: any }) {
             >
               {loading ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin" /> Saving...
+                  <Loader2 className="w-4 h-4 animate-spin" /> Menyimpan...
                 </>
               ) : (
                 <>
-                  <Save className="w-4 h-4" /> Save Changes
+                  <Save className="w-4 h-4" /> Simpan Perubahan
                 </>
               )}
             </button>

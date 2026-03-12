@@ -127,8 +127,8 @@ export default function NotificationBell({ role }: { role: "admin" | "user" }) {
               id: "profile-warning-local",
               user_id: user.id,
               role: "user",
-              title: "Complete Your Profile",
-              message: "Missing Company/Organization and Location. Please update them.",
+              title: "Lengkapi Profil Anda",
+              message: "Perusahaan/Organisasi dan Lokasi belum diisi. Harap perbarui data Anda.",
               type: "warning",
               link: "/dashboard/settings",
               is_read: false,
@@ -195,11 +195,59 @@ export default function NotificationBell({ role }: { role: "admin" | "user" }) {
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();
     const diffMin = Math.floor(diffMs / 60000);
-    if (diffMin < 1) return "Just now";
-    if (diffMin < 60) return `${diffMin}m ago`;
+    if (diffMin < 1) return "Baru saja";
+    if (diffMin < 60) return `${diffMin}mnt yang lalu`;
     const diffHr = Math.floor(diffMin / 60);
-    if (diffHr < 24) return `${diffHr}h ago`;
+    if (diffHr < 24) return `${diffHr}jam yang lalu`;
     return date.toLocaleDateString("id-ID", { day: "numeric", month: "short" });
+  };
+
+  const translateText = (text: string) => {
+    let t = text;
+    // Titles
+    t = t.replace("New Project Order", "Pesanan Proyek Baru");
+    t = t.replace("Project Created", "Proyek Dibuat");
+    t = t.replace("Project Completed", "Proyek Selesai");
+    t = t.replace("Discount Expiring Soon", "Diskon Hampir Habis");
+    t = t.replace("New Support Ticket", "Tiket Bantuan Baru");
+    t = t.replace("Ticket Created", "Tiket Dibuat");
+    t = t.replace("New Testimonial", "Testimoni Baru");
+    t = t.replace("Testimonial Submitted", "Testimoni Terkirim");
+    t = t.replace("New User Registered", "Pengguna Baru Terdaftar");
+    
+    // Messages
+    if (t.startsWith("Order #") && t.endsWith(" has been created.")) {
+      t = t.replace("Order #", "Pesanan #").replace(" has been created.", " telah dibuat.");
+    }
+    if (t.startsWith("Your project order #") && t.endsWith(" has been created successfully.")) {
+      t = t.replace("Your project order #", "Pesanan proyek Anda #").replace(" has been created successfully.", " berhasil dibuat.");
+    }
+    if (t.startsWith("Order #") && t.endsWith(" has been marked as completed.")) {
+      t = t.replace("Order #", "Pesanan #").replace(" has been marked as completed.", " telah ditandai sebagai selesai.");
+    }
+    if (t.startsWith("Your project order #") && t.endsWith(" has been completed!")) {
+      t = t.replace("Your project order #", "Pesanan proyek Anda #").replace(" has been completed!", " telah selesai!");
+    }
+    if (t.startsWith("Discount code ") && t.includes("is running out of uses")) {
+      t = t.replace("Discount code ", "Kode diskon ").replace(" is running out of uses (", " akan segera habis (tersisa ").replace(" left).", ").");
+    }
+    if (t.startsWith("A new support ticket ") && t.endsWith(" has been created.")) {
+      t = t.replace("A new support ticket ", "Tiket bantuan baru ").replace(" has been created.", " telah dibuat.");
+    }
+    if (t.startsWith("Your support ticket ") && t.endsWith(" has been received.")) {
+      t = t.replace("Your support ticket ", "Tiket bantuan Anda ").replace(" has been received.", " telah diterima.");
+    }
+    if (t.endsWith(" just left a new testimonial.")) {
+      t = t.replace(" just left a new testimonial.", " baru saja memberikan testimoni.");
+    }
+    if (t === "Thank you! Your testimonial has been submitted successfully.") {
+      t = "Terima kasih! Testimoni Anda berhasil dikirim.";
+    }
+    if (t.startsWith("A new user (") && t.endsWith(") has registered.")) {
+      t = t.replace("A new user (", "Pengguna baru (").replace(") has registered.", ") telah mendaftar.");
+    }
+
+    return t;
   };
 
   const typeStyles: Record<string, { icon: React.ReactNode; bg: string; text: string }> = {
@@ -228,14 +276,14 @@ export default function NotificationBell({ role }: { role: "admin" | "user" }) {
         <div className="absolute right-0 mt-3 w-80 bg-white rounded-2xl shadow-lg ring-1 ring-slate-100 overflow-hidden origin-top-right z-50">
           <div className="px-4 py-3 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
             <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-slate-700">Notifications</p>
-              <p className="text-[10px] text-slate-400 mt-0.5">{unreadCount} unread</p>
+              <p className="text-xs font-bold uppercase tracking-wider text-slate-700">Notifikasi</p>
+              <p className="text-[10px] text-slate-400 mt-0.5">{unreadCount} belum dibaca</p>
             </div>
             {unreadCount > 0 && (
               <button
                 onClick={markAllRead}
                 disabled={loading}
-                title="Mark all as read"
+                title="Tandai semua telah dibaca"
                 className="p-1.5 bg-indigo-50 text-primary rounded-lg hover:bg-indigo-600 hover:text-white transition-all"
               >
                 {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
@@ -256,13 +304,13 @@ export default function NotificationBell({ role }: { role: "admin" | "user" }) {
                     {typeStyles[n.type]?.icon || <Info className="w-4 h-4" />}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-bold text-slate-800 leading-tight">{n.title}</p>
-                    <p className="text-[11px] text-slate-500 mt-0.5 line-clamp-2 leading-relaxed">{n.message}</p>
+                    <p className="text-xs font-bold text-slate-800 leading-tight">{translateText(n.title)}</p>
+                    <p className="text-[11px] text-slate-500 mt-0.5 line-clamp-2 leading-relaxed">{translateText(n.message)}</p>
                     <div className="flex items-center gap-2 mt-1.5">
                       <span className="text-[10px] text-slate-400">{formatTime(n.created_at)}</span>
                       {n.link && (
                         <Link href={n.link} className="text-[10px] font-bold text-primary hover:underline">
-                          View
+                          Lihat
                         </Link>
                       )}
                     </div>
@@ -278,14 +326,14 @@ export default function NotificationBell({ role }: { role: "admin" | "user" }) {
             ) : (
               <div className="py-12 flex flex-col items-center justify-center text-slate-300">
                 <Bell className="w-8 h-8 mb-2" />
-                <p className="text-xs font-bold uppercase tracking-widest">All clear</p>
+                <p className="text-xs font-bold uppercase tracking-widest">Kosong</p>
               </div>
             )}
           </div>
 
           {notifications.length > 0 && (
             <div className="py-3 text-center bg-slate-50 border-t border-slate-100">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">— End of notifications —</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">— Akhir pemberitahuan —</span>
             </div>
           )}
         </div>

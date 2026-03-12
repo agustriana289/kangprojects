@@ -6,10 +6,7 @@ import { BriefcaseBusiness, Eye } from "lucide-react";
 
 import Pagination from "@/components/landing/Pagination";
 
-export const metadata = {
-  title: "Portfolios",
-  description: "Explore our creative portfolios and successful projects.",
-};
+export const revalidate = 60;
 
 async function getPortfolios(page: number, limit: number) {
   const supabase = await createClient();
@@ -32,8 +29,11 @@ export default async function PortfoliosPage(props: { searchParams?: Promise<{ [
   const page = typeof pageStr === "string" ? parseInt(pageStr, 10) : 1;
   const limit = 9;
 
+  const supabase = await createClient();
   const { data: portfolios, total } = await getPortfolios(page, limit);
   const totalPages = Math.ceil(total / limit);
+  const { data: settingsData } = await supabase.from("settings").select("portfolio_badge, portfolio_title, portfolio_description").eq("id", 1).single();
+  const settings = settingsData || {};
 
   return (
     <div className="min-h-screen bg-white text-slate-900 font-sans">
@@ -44,21 +44,21 @@ export default async function PortfoliosPage(props: { searchParams?: Promise<{ [
           <FadeIn delay={100} className="max-w-2xl mb-16">
             <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-sm font-medium text-primary mb-6">
               <BriefcaseBusiness size={14} />
-              <span>Our Work</span>
+              <span>{(settings as any).portfolio_badge || "Karya Kami"}</span>
             </div>
             <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl mb-4">
-              Creative Portfolios
+              {(settings as any).portfolio_title || "Portofolio Kreatif"}
             </h1>
             <p className="text-lg text-slate-600">
-              Discover our latest projects and successful design solutions delivered to our clients.
+              {(settings as any).portfolio_description || "Temukan proyek terbaru dan solusi desain sukses yang telah kami kerjakan untuk klien kami."}
             </p>
           </FadeIn>
 
           {portfolios.length === 0 ? (
             <FadeIn delay={200} className="text-center py-32 rounded-3xl bg-slate-50 ring-1 ring-slate-100">
               <BriefcaseBusiness className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-              <p className="text-slate-500 font-medium">No portfolios currently published.</p>
-              <p className="text-slate-400 text-sm mt-1">Check back later for our new updates.</p>
+              <p className="text-slate-500 font-medium">Belum ada portofolio yang dipublikasikan.</p>
+              <p className="text-slate-400 text-sm mt-1">Kunjungi kembali nanti untuk pembaruan terbaru kami.</p>
             </FadeIn>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

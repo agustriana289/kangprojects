@@ -67,8 +67,8 @@ export default async function CheckoutPage({ searchParams }: CheckoutPageProps) 
       <main className="flex-1 py-6 pt-8">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
           <div className="mb-8 text-center">
-            <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">Secure Checkout</h1>
-            <p className="mt-2 text-slate-500">Review your order details below and complete the purchase.</p>
+            <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">Pembayaran Aman</h1>
+            <p className="mt-2 text-slate-500">Periksa detail pesanan Anda di bawah ini dan selesaikan pembelian.</p>
           </div>
           
           <CheckoutClient 

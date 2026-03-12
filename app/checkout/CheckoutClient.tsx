@@ -139,7 +139,7 @@ export default function CheckoutClient({ user, item, type, selectedPlan, initial
 
       await supabase.from('user_activities').insert({
         user_id: user.id,
-        title: `${type === "service" ? "Service request" : "Product purchase"} submitted for`,
+        title: `${type === "service" ? "Permintaan layanan" : "Pembelian produk"} dikirim untuk`,
         highlight: `#${orderData.id.split('-')[0].toUpperCase()}`,
         highlight_color: 'text-primary',
       });
@@ -194,7 +194,7 @@ export default function CheckoutClient({ user, item, type, selectedPlan, initial
         <div className="flex-1 p-8 border-b md:border-b-0 md:border-r border-slate-100 bg-slate-50/50">
           <h2 className="text-lg font-bold tracking-tight text-slate-900 flex items-center gap-2 mb-6 border-b border-slate-200 pb-4">
              <Package size={20} className="text-primary" />
-             Order Summary
+             Ringkasan Pesanan
           </h2>
 
           <div className="flex items-start gap-4 mb-6">
@@ -221,16 +221,16 @@ export default function CheckoutClient({ user, item, type, selectedPlan, initial
             </div>
             {appliedDiscount && (
               <div className="flex items-center justify-between text-sm text-emerald-600 font-bold pb-2">
-                <span className="flex items-center gap-1.5"><Tag size={14} /> Discount ({appliedDiscount.name})</span>
+                <span className="flex items-center gap-1.5"><Tag size={14} /> Diskon ({appliedDiscount.name})</span>
                 <span>- Rp {Number(originalPrice - discountedPrice).toLocaleString('id-ID')}</span>
               </div>
             )}
             <div className="flex items-center justify-between text-sm text-slate-500 font-medium pb-4 border-b border-slate-200">
-              <span>Taxes & Fees</span>
-              <span className="text-slate-900 font-bold">Free</span>
+              <span> pajak & Biaya</span>
+              <span className="text-slate-900 font-bold">Gratis</span>
             </div>
             <div className="flex items-center justify-between text-lg pt-2">
-              <span className="font-extrabold text-slate-900">Total Price</span>
+              <span className="font-extrabold text-slate-900">Harga Total</span>
               <div className="text-right">
                 {appliedDiscount && (
                   <span className="text-xs text-slate-400 line-through mr-2 font-medium">Rp {Number(originalPrice).toLocaleString('id-ID')}</span>
@@ -244,7 +244,7 @@ export default function CheckoutClient({ user, item, type, selectedPlan, initial
 
           <div className="mt-8 bg-white rounded-2xl p-5 ring-1 ring-slate-200">
             <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 mb-3 flex items-center gap-2">
-              <Ticket size={16} className="text-primary" /> Have a promo code?
+              <Ticket size={16} className="text-primary" /> Punya kode promo?
             </h4>
             <div className="flex gap-2">
               <input 
@@ -291,7 +291,7 @@ export default function CheckoutClient({ user, item, type, selectedPlan, initial
           <div>
             <h2 className="text-lg font-bold tracking-tight text-slate-900 flex items-center gap-2 mb-6 border-b border-slate-100 pb-4">
               <Mail size={20} className="text-primary" />
-              Information
+              Informasi
             </h2>
             
             <div className="mb-6">
@@ -300,7 +300,7 @@ export default function CheckoutClient({ user, item, type, selectedPlan, initial
                 {user.email}
               </div>
               <p className="text-[10px] uppercase tracking-wider text-emerald-600 mt-2 flex items-center gap-1.5 font-bold">
-                 <ShieldCheck size={14} /> Logged in securely
+                 <ShieldCheck size={14} /> Masuk secara aman
               </p>
             </div>
           </div>
@@ -310,7 +310,7 @@ export default function CheckoutClient({ user, item, type, selectedPlan, initial
           {item.form_fields && item.form_fields.length > 0 && (
             <div className="mt-4 border-t border-slate-100 pt-6">
               <h2 className="text-sm font-bold tracking-tight text-slate-900 mb-5 uppercase">
-                Project Requirements
+                Persyaratan Proyek
               </h2>
               <div className="space-y-5">
                 {item.form_fields.map((field: any, idx: number) => (
@@ -334,7 +334,7 @@ export default function CheckoutClient({ user, item, type, selectedPlan, initial
                         onChange={(e) => handleFieldChange(field.label, e.target.value)}
                         className="w-full bg-white border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 p-3 transition-all outline-none shadow-sm"
                       >
-                        <option value="" disabled>Select an option</option>
+                        <option value="" disabled>Pilih sebuah opsi</option>
                         {field.options.map((opt: string) => (
                           <option key={opt} value={opt}>{opt}</option>
                         ))}
@@ -371,7 +371,7 @@ export default function CheckoutClient({ user, item, type, selectedPlan, initial
               )}
             </button>
             <p className="text-center text-[10px] uppercase tracking-wider text-slate-400 font-bold mt-4 leading-relaxed max-w-[250px] mx-auto">
-              By confirming, you agree to our Terms of Service.
+              Dengan mengkonfirmasi, Anda menyetujui Ketentuan Layanan kami.
             </p>
           </div>
         </div>

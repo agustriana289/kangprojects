@@ -17,20 +17,20 @@ export default async function Articles({ settings }: { settings?: any }) {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <FadeIn delay={100} className="mx-auto max-w-2xl text-center mb-16">
           <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-sm font-medium text-primary mb-4">
-            <span>{settings?.blog_badge || "Our Blog"}</span>
+            <span>{settings?.blog_badge || "Blog Kami"}</span>
           </div>
           <h2 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-            {settings?.blog_title || "Latest insights"}
+            {settings?.blog_title || "Wawasan terbaru"}
           </h2>
           <p className="mt-4 text-lg text-slate-600">
-            {settings?.blog_description || "Expert advice, design principles, and strategies to help your brand stand out in a crowded market."}
+            {settings?.blog_description || "Saran ahli, prinsip desain, dan strategi untuk membantu merek Anda menonjol di pasar yang ramai."}
           </p>
         </FadeIn>
 
         {!blogs || blogs.length === 0 ? (
           <FadeIn delay={200} className="text-center py-20 rounded-3xl bg-white ring-1 ring-slate-100">
             <BookOpen className="w-10 h-10 text-slate-300 mx-auto mb-3" />
-            <p className="text-slate-400 font-medium text-sm">No articles published yet.</p>
+            <p className="text-slate-400 font-medium text-sm">Belum ada artikel yang diterbitkan.</p>
           </FadeIn>
         ) : (
           <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-12 lg:mx-0 lg:max-w-none lg:grid-cols-3">
@@ -83,7 +83,7 @@ export default async function Articles({ settings }: { settings?: any }) {
                     )}
 
                     <div className="mt-auto flex items-center text-sm font-semibold text-primary group-hover:text-primary transition-colors">
-                      Read article
+                      Baca artikel
                       <ArrowRight size={16} className="ml-1 transition-transform group-hover:translate-x-1" />
                     </div>
                   </div>
@@ -98,7 +98,7 @@ export default async function Articles({ settings }: { settings?: any }) {
             href="/blog"
             className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-6 py-2.5 text-sm font-semibold text-slate-700 hover:border-indigo-200 hover:text-primary hover:bg-indigo-50 transition-all shadow-sm"
           >
-            View all articles <ArrowRight size={15} />
+            Lihat semua artikel <ArrowRight size={15} />
           </Link>
         </FadeIn>
       </div>

@@ -1,7 +1,7 @@
 import BlogsClient from "./BlogsClient";
 
 export const metadata = {
-  title: "Blog Management",
+  title: "Manajemen Blog",
 };
 
 export default function BlogsPage() {

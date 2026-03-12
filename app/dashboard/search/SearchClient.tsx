@@ -71,8 +71,8 @@ export default function SearchClient({ isAdmin, userId }: { isAdmin: boolean, us
   return (
     <div className="pt-6 px-4 pb-16 max-w-5xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900">Search Results</h1>
-        <p className="text-sm font-medium text-slate-500 mt-1">Showing all matches across the platform.</p>
+        <h1 className="text-3xl font-bold tracking-tight text-slate-900">Hasil Pencarian</h1>
+        <p className="text-sm font-medium text-slate-500 mt-1">Menampilkan semua kecocokan di seluruh platform.</p>
       </div>
 
       <form onSubmit={handleSubmit} className="relative mb-10 group max-w-2xl">
@@ -83,7 +83,7 @@ export default function SearchClient({ isAdmin, userId }: { isAdmin: boolean, us
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="What are you looking for?"
+          placeholder="Apa yang Anda cari?"
           className="w-full bg-white border border-slate-200 text-slate-900 sm:text-lg font-medium rounded-2xl pl-12 pr-32 py-4 shadow-sm focus:ring-4 focus:ring-indigo-100 focus:border-indigo-400 transition-all outline-none"
         />
         <div className="absolute inset-y-0 right-2 flex items-center">
@@ -92,7 +92,7 @@ export default function SearchClient({ isAdmin, userId }: { isAdmin: boolean, us
             disabled={loading}
             className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
           >
-            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Search"}
+            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Cari"}
           </button>
         </div>
       </form>
@@ -109,7 +109,7 @@ export default function SearchClient({ isAdmin, userId }: { isAdmin: boolean, us
               <div className="flex items-center gap-4 mb-6">
                 <h2 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">{type}</h2>
                 <div className="h-px bg-slate-100 flex-1"></div>
-                <span className="text-xs font-bold text-slate-400">{items.length} items</span>
+                <span className="text-xs font-bold text-slate-400">{items.length} item</span>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {items.map((item) => (

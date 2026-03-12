@@ -64,7 +64,7 @@ export default function AnnouncementsClient() {
           .update({ ...form })
           .eq("id", editingId);
         if (error) throw error;
-        showToast("Announcement updated", "success");
+        showToast("Pengumuman diperbarui", "succes");
       } else {
         const { error } = await supabase
           .from("site_announcements")
@@ -77,13 +77,13 @@ export default function AnnouncementsClient() {
           payload: {
             role: "user",
             type: form.type === "warning" ? "error" : "info",
-            title: "New Announcement",
+            title: "Pengumuman Baru",
             message: form.title,
             link: "/dashboard",
           },
         });
 
-        showToast("Announcement published", "success");
+        showToast("Pengumuman dipublikasikan", "succes");
       }
 
       setIsModalOpen(false);
@@ -110,14 +110,14 @@ export default function AnnouncementsClient() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Delete this announcement?")) return;
+    if (!confirm("Hapus pengumuman ini?")) return;
     try {
       const { error } = await supabase.from("site_announcements").delete().eq("id", id);
       if (error) throw error;
-      showToast("Announcement deleted", "success");
+      showToast("Pengumuman dihapus", "success");
       fetchAnnouncements();
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : "An unknown error occurred";
+      const message = error instanceof Error ? error.message : "Terjadi kesalahan yang tidak diketahui.";
       showToast(message, "error");
     }
   };
@@ -143,8 +143,8 @@ export default function AnnouncementsClient() {
     <div className="pt-6 px-4 pb-10">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Announcements</h1>
-          <p className="text-sm font-medium text-slate-500 mt-1">Manage global broadcast messages for all clients.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Pengumuman</h1>
+          <p className="text-sm font-medium text-slate-500 mt-1">Kelola pesan siaran global untuk semua klien.</p>
         </div>
         <button
           onClick={() => {
@@ -155,7 +155,7 @@ export default function AnnouncementsClient() {
           className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-sm shadow-indigo-200 transition-colors w-fit"
         >
           <Plus className="w-4 h-4" />
-          New Announcement
+          Pengumuman Baru
         </button>
       </div>
 
@@ -166,7 +166,7 @@ export default function AnnouncementsClient() {
             <input 
               value={search}
               onChange={e => { setSearch(e.target.value); setPage(1); }}
-              placeholder="Search announcements..." 
+              placeholder="Cari pengumuman..." 
               className="w-full bg-slate-50 border-0 rounded-xl pl-9 pr-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500/20"
             />
           </div>
@@ -178,18 +178,18 @@ export default function AnnouncementsClient() {
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-32 text-slate-400">
             <Megaphone className="w-10 h-10 mb-3 text-slate-200" />
-            <p className="text-sm font-bold">{search ? "No results found" : "No announcements yet"}</p>
-            {!search && <p className="text-xs mt-1">Create your first announcement to get started.</p>}
+            <p className="text-sm font-bold">{search ? "Tidak ada hasil yang ditemukan" : "Belum ada pengumuman"}</p>
+            {!search && <p className="text-xs mt-1">Buat pengumuman pertama Anda untuk memulai.</p>}
           </div>
         ) : (
           <table className="w-full text-left">
             <thead>
               <tr className="text-slate-400 text-xs font-bold uppercase tracking-wider border-b border-slate-100 bg-slate-50/50">
                 <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4">Title & Content</th>
-                <th className="px-6 py-4">Type</th>
-                <th className="px-6 py-4">Created At</th>
-                <th className="px-6 py-4 text-right">Actions</th>
+                <th className="px-6 py-4">Judul & Konten</th>
+                <th className="px-6 py-4">Tipe</th>
+                <th className="px-6 py-4">Dibuat Pada</th>
+                <th className="px-6 py-4 text-right">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -198,11 +198,11 @@ export default function AnnouncementsClient() {
                   <td className="px-6 py-4">
                     {ann.is_active ? (
                       <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-lg text-xs font-bold border border-emerald-100">
-                        <Check className="w-3.5 h-3.5" /> Active
+                        <Check className="w-3.5 h-3.5" /> Aktif
                       </span>
                     ) : (
                       <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 text-slate-500 rounded-lg text-xs font-bold">
-                        <X className="w-3.5 h-3.5" /> Inactive
+                        <X className="w-3.5 h-3.5" /> Tidak Aktif
                       </span>
                     )}
                   </td>
@@ -247,7 +247,7 @@ export default function AnnouncementsClient() {
         {totalPages > 1 && (
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-4 border-t border-slate-100">
             <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">
-              Showing {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filtered.length)} of {filtered.length} items
+              Menampilkan {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, filtered.length)} dari {filtered.length} item
             </p>
             <div className="flex items-center gap-2">
               <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
@@ -287,7 +287,7 @@ export default function AnnouncementsClient() {
           <div className="relative w-full max-w-2xl bg-white rounded-2xl shadow-xl ring-1 ring-slate-100 overflow-hidden">
             <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
               <h2 className="text-base font-bold text-slate-900">
-                {editingId ? "Edit Announcement" : "New Announcement"}
+                {editingId ? "Edit Pengumuman" : "Pengumuman Baru"}
               </h2>
               <button
                 onClick={() => setIsModalOpen(false)}
@@ -299,35 +299,35 @@ export default function AnnouncementsClient() {
 
             <form onSubmit={handleSubmit} className="p-6 space-y-5">
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Title</label>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Judul</label>
                 <input
                   required
                   type="text"
                   value={form.title}
                   onChange={(e) => setForm({ ...form, title: e.target.value })}
-                  placeholder="Main headline..."
+                  placeholder="Judul utama..."
                   className={inputClass}
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Type</label>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Tipe</label>
                   <select
                     value={form.type}
                     onChange={(e) => setForm({ ...form, type: e.target.value })}
                     className={inputClass}
                   >
-                    <option value="info">Information (Blue)</option>
-                    <option value="success">Success (Green)</option>
-                    <option value="warning">Alert (Amber)</option>
+                    <option value="info">Informasi (Biru)</option>
+                    <option value="success">Berhasil (Hijau)</option>
+                    <option value="warning">Peringatan (Kuning)</option>
                   </select>
                 </div>
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Status</label>
                   <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200 h-[46px]">
                     <span className="text-sm font-bold text-slate-700">
-                      {form.is_active ? "Active" : "Inactive"}
+                      {form.is_active ? "Aktif" : "Tidak Aktif"}
                     </span>
                     <button
                       type="button"
@@ -341,12 +341,12 @@ export default function AnnouncementsClient() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Content / Message</label>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Konten / Pesan</label>
                 <textarea
                   rows={4}
                   value={form.content}
                   onChange={(e) => setForm({ ...form, content: e.target.value })}
-                  placeholder="Provide more details here..."
+                  placeholder="Berikan detail lebih lanjut di sini..."
                   className={`${inputClass} resize-none`}
                 />
               </div>
@@ -357,14 +357,14 @@ export default function AnnouncementsClient() {
                   onClick={() => setIsModalOpen(false)}
                   className="flex-1 bg-slate-100 text-slate-600 text-sm font-bold py-2.5 rounded-xl hover:bg-slate-200 transition-colors"
                 >
-                  Cancel
+                  Batal
                 </button>
                 <button
                   disabled={submitting}
                   className="flex-2 inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold py-2.5 rounded-xl shadow-sm shadow-indigo-200 transition-colors disabled:opacity-60"
                 >
                   {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
-                  {submitting ? "Saving..." : editingId ? "Update Announcement" : "Publish Now"}
+                  {submitting ? "Menyimpan..." : editingId ? "Perbarui Pengumuman" : "Terbitkan Sekarang"}
                 </button>
               </div>
             </form>

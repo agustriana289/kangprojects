@@ -21,15 +21,15 @@ export default function BrowseShopClient({ products }: { products: any[] }) {
     <div className="pt-6 px-4 pb-16">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Browse Shop</h1>
-          <p className="text-sm font-medium text-slate-500 mt-1">Discover premium templates, logos, and digital products.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Telusuri Toko</h1>
+          <p className="text-sm font-medium text-slate-500 mt-1">Temukan template, logo, dan produk digital premium.</p>
         </div>
         <div className="relative w-full sm:w-72 shrink-0">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input 
             value={search}
             onChange={e => setSearch(e.target.value)}
-            placeholder="Search products..." 
+            placeholder="Cari produk..." 
             className="w-full bg-white border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 pl-9 pr-4 py-2.5 transition-all outline-none"
           />
         </div>
@@ -62,8 +62,8 @@ export default function BrowseShopClient({ products }: { products: any[] }) {
               <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
                 <ShoppingBag className="w-8 h-8 text-slate-300" />
               </div>
-              <h3 className="text-lg font-bold text-slate-900 mb-1">No products found</h3>
-              <p className="text-sm font-medium text-slate-500 max-w-md">We couldn't find any items matching your criteria.</p>
+              <h3 className="text-lg font-bold text-slate-900 mb-1">Produk tidak ditemukan</h3>
+              <p className="text-sm font-medium text-slate-500 max-w-md">Kami tidak dapat menemukan item yang sesuai dengan kriteria Anda.</p>
             </div>
           ) : (
             <div className="flex flex-col gap-4">

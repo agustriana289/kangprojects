@@ -60,7 +60,7 @@ export default function UserChatClient({ user, profile }: { user: any; profile: 
         setMessages((msgs ?? []).map((m: any) => ({ ...m, sender: pm[m.sender_id] ?? null })));
         await sb.from("admin_chat_messages").update({ is_read: true }).eq("chat_id", chatRoom.id).neq("sender_id", uid).eq("is_read", false);
       } catch (err: any) {
-        showToast(err.message || "Failed to load chat", "error");
+        showToast(err.message || "Gagal memuat chat", "error");
       } finally { setIsInitializing(false); }
     }
     init();
@@ -125,12 +125,12 @@ export default function UserChatClient({ user, profile }: { user: any; profile: 
             <Link href="/dashboard" className="w-8 h-8 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-center text-slate-400 hover:text-primary transition-all">
               <ArrowLeft className="w-4 h-4" />
             </Link>
-            <h2 className="text-sm font-bold text-slate-900">Live Chat</h2>
+            <h2 className="text-sm font-bold text-slate-900">Chat Langsung</h2>
           </div>
           <div className="space-y-3">
             <div className="w-14 h-14 rounded-2xl bg-indigo-50 flex items-center justify-center text-primary font-black text-lg mx-auto">A</div>
             <div className="text-center">
-              <p className="text-sm font-bold text-slate-800">Admin Support</p>
+              <p className="text-sm font-bold text-slate-800">Dukungan Admin</p>
               <div className="flex items-center justify-center gap-1.5 mt-1">
                 <span className={`w-1.5 h-1.5 rounded-full ${isPartnerOnline ? "bg-emerald-500 animate-pulse" : "bg-slate-300"}`} />
                 <span className={`text-xs font-bold uppercase tracking-wider ${isPartnerOnline ? "text-emerald-600" : "text-slate-400"}`}>
@@ -144,22 +144,22 @@ export default function UserChatClient({ user, profile }: { user: any; profile: 
         <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-5">
           <div className="flex items-center gap-2 mb-3">
             <Info className="w-4 h-4 text-slate-400" />
-            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Support Info</h3>
+            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Info Dukungan</h3>
           </div>
           <div className="space-y-3 text-sm">
             <div className="bg-indigo-50 rounded-xl px-4 py-3">
-              <p className="text-xs font-bold text-primary uppercase tracking-wider mb-1">Response Time</p>
-              <p className="text-sm font-medium text-primary">Usually within 2 hours</p>
+              <p className="text-xs font-bold text-primary uppercase tracking-wider mb-1">Waktu Respons</p>
+              <p className="text-sm font-medium text-primary">Biasanya dalam 2 jam</p>
             </div>
             <div className="bg-slate-50 rounded-xl px-4 py-3">
-              <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Support Hours</p>
-              <p className="text-sm font-medium text-slate-700">Mon–Fri, 09:00–18:00</p>
+              <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Jam Dukungan</p>
+              <p className="text-sm font-medium text-slate-700">Sen–Jum, 09:00–18:00</p>
             </div>
           </div>
           <div className="mt-4 pt-3 border-t border-slate-100">
             <Link href="/dashboard/tickets/new" className="flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-primary transition-colors">
               <HelpCircle className="w-3.5 h-3.5" />
-              Submit a formal ticket instead
+              Kirim tiket bantuan resmi
             </Link>
           </div>
         </div>
@@ -167,12 +167,12 @@ export default function UserChatClient({ user, profile }: { user: any; profile: 
 
       <div className="xl:col-span-2 bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl overflow-hidden flex flex-col flex-1 min-h-0">
         <div className="px-5 py-4 border-b border-slate-100 bg-slate-50/50 shrink-0">
-          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">{messages.length} message{messages.length !== 1 ? "s" : ""} in this conversation</p>
+          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">{messages.length} pesan dalam percakapan ini</p>
         </div>
         <div className="flex-1 overflow-y-auto p-5 space-y-3" ref={scrollRef}>
           {messages.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-slate-400 opacity-40 gap-3">
-              <p className="text-xs font-bold uppercase tracking-wider">Start the conversation below</p>
+              <p className="text-xs font-bold uppercase tracking-wider">Mulai percakapan di bawah</p>
             </div>
           ) : messages.map((m, idx) => {
             const isMe = m.sender_id === user.id;
@@ -198,7 +198,7 @@ export default function UserChatClient({ user, profile }: { user: any; profile: 
             <input
               value={newMessage}
               onChange={e => setNewMessage(e.target.value)}
-              placeholder="Type your message..."
+              placeholder="Ketik pesan Anda..."
               className="flex-1 bg-white border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 px-4 py-2.5 transition-all outline-none"
             />
             <button type="submit" disabled={loading || !newMessage.trim()} className="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center hover:bg-indigo-700 active:scale-95 transition-all disabled:opacity-50 shrink-0">

@@ -50,15 +50,15 @@ export default function AdminChatListClient() {
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-lg font-bold text-slate-900 tracking-tight">Live Chat</h2>
-          <p className="text-sm font-medium text-slate-500 mt-0.5">{chats.length} active conversation{chats.length !== 1 ? "s" : ""}</p>
+          <h2 className="text-lg font-bold text-slate-900 tracking-tight">Chat Langsung</h2>
+          <p className="text-sm font-medium text-slate-500 mt-0.5">{chats.length} percakapan aktif</p>
         </div>
         <div className="relative w-full sm:w-64">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input
             value={search}
             onChange={e => setSearch(e.target.value)}
-            placeholder="Search client..."
+            placeholder="Cari klien..."
             className="w-full bg-white border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 pl-10 pr-4 py-2.5 transition-all outline-none shadow-sm"
           />
         </div>
@@ -71,7 +71,7 @@ export default function AdminChatListClient() {
       ) : filtered.length === 0 ? (
         <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl flex flex-col items-center justify-center py-20 text-slate-400">
           <Users className="w-10 h-10 mb-3 opacity-20" strokeWidth={1.5} />
-          <p className="text-xs font-bold uppercase tracking-wider">No active conversations</p>
+          <p className="text-xs font-bold uppercase tracking-wider">Tidak ada percakapan aktif</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -90,7 +90,7 @@ export default function AdminChatListClient() {
                     }
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-slate-800">{chat.user?.full_name || "Unknown"}</p>
+                    <p className="text-sm font-bold text-slate-800">{chat.user?.full_name || "Tidak Diketahui"}</p>
                     <p className="text-xs font-medium text-slate-400 truncate max-w-[120px]">{chat.user?.email}</p>
                   </div>
                 </div>
@@ -107,7 +107,7 @@ export default function AdminChatListClient() {
                     {formatDistanceToNow(new Date(chat.last_message_at), { addSuffix: true })}
                   </span>
                 </div>
-                <span className="text-xs font-bold text-primary opacity-0 group-hover:opacity-100 transition-opacity">Open →</span>
+                <span className="text-xs font-bold text-primary opacity-0 group-hover:opacity-100 transition-opacity">Buka →</span>
               </div>
             </Link>
           ))}
