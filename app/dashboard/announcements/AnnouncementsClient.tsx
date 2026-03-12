@@ -83,7 +83,7 @@ export default function AnnouncementsClient() {
           },
         });
 
-        showToast("Pengumuman dipublikasikan", "succes");
+        showToast("Pengumuman dipublikasikan", "success");
       }
 
       setIsModalOpen(false);
