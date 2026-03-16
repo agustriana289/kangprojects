@@ -5,6 +5,8 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { LiveChatPopupProvider } from "@/components/providers/LiveChatPopupProvider";
 
+export const dynamic = 'force-dynamic';
+
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -13,11 +15,15 @@ export default async function DashboardLayout({ children }: { children: ReactNod
     redirect("/");
   }
 
-  const { data: profile } = await supabase
+  const { data: profile, error } = await supabase
     .from("users")
     .select("is_admin, full_name")
     .eq("id", user.id)
     .single();
+
+  if (error) {
+    console.error("Layout fetching profile error:", error);
+  }
 
   const { data: settings } = await supabase.from("settings").select("*").eq("id", 1).single();
   const isAdmin = profile?.is_admin || false;

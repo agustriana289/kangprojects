@@ -3,6 +3,8 @@ import AdminDashboard from "./AdminDashboard";
 import UserDashboard from "./UserDashboard";
 import { redirect } from "next/navigation";
 
+export const dynamic = 'force-dynamic';
+
 export default async function DashboardPage(props: { searchParams?: Promise<{ [key: string]: string | string[] | undefined }> }) {
   const searchParams = props.searchParams ? await props.searchParams : {};
   const yearParam = searchParams?.year as string | undefined;
@@ -14,11 +16,15 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
     redirect("/");
   }
 
-  const { data: profile } = await supabase
+  const { data: profile, error } = await supabase
     .from("users")
     .select("is_admin, full_name")
     .eq("id", user.id)
     .single();
+
+  if (error) {
+    console.error("Error fetching user profile:", error);
+  }
 
   const isAdmin = profile?.is_admin || false;
   const fullName = profile?.full_name || user.email || "Pengguna";
