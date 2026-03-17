@@ -284,7 +284,7 @@ export default function NotificationBell({ role }: { role: "admin" | "user" }) {
                 onClick={markAllRead}
                 disabled={loading}
                 title="Tandai semua telah dibaca"
-                className="p-1.5 bg-indigo-50 text-primary rounded-lg hover:bg-indigo-600 hover:text-white transition-all"
+                className="p-1.5 bg-indigo-50 text-primary rounded-lg hover:bg-primary hover:text-white transition-all"
               >
                 {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
               </button>
@@ -299,7 +299,7 @@ export default function NotificationBell({ role }: { role: "admin" | "user" }) {
                   onClick={() => markAsRead(n.id)}
                   className={`flex gap-3 px-4 py-3.5 hover:bg-slate-50 transition-colors cursor-pointer group relative ${!n.is_read ? "bg-indigo-50/30" : ""}`}
                 >
-                  {!n.is_read && <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-indigo-500 rounded-r" />}
+                  {!n.is_read && <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-primary rounded-r" />}
                   <div className={`w-9 h-9 rounded-xl shrink-0 flex items-center justify-center ${typeStyles[n.type]?.bg || "bg-slate-50"} ${typeStyles[n.type]?.text || "text-slate-400"}`}>
                     {typeStyles[n.type]?.icon || <Info className="w-4 h-4" />}
                   </div>

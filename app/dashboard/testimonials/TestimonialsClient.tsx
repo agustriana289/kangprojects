@@ -191,7 +191,7 @@ export default function TestimonialsClient() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }}
               placeholder="Cari berdasarkan klien, proyek, atau komentar..."
-              className="w-full bg-slate-50 border-0 rounded-xl pl-9 pr-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500/20" />
+              className="w-full bg-slate-50 border-0 rounded-xl pl-9 pr-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20" />
           </div>
         </div>
 
@@ -300,7 +300,7 @@ export default function TestimonialsClient() {
                   <span key={`ellipsis-${i}`} className="px-2 text-slate-400 text-sm font-bold">…</span>
                 ) : (
                   <button key={p} onClick={() => setPage(p as number)}
-                    className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${page === p ? "bg-indigo-600 text-white shadow-indigo-200 shadow-md" : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"}`}>
+                    className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${page === p ? "bg-primary text-white shadow-indigo-200 shadow-md" : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"}`}>
                     {p}
                   </button>
                 ))}
@@ -334,7 +334,7 @@ export default function TestimonialsClient() {
                   value={editForm.client_name}
                   onChange={(e) => setEditForm({ ...editForm, client_name: e.target.value })}
                   placeholder="Ganti nama klien default..."
-                  className="w-full bg-white border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 p-3 transition-all outline-none"
+                  className="w-full bg-white border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-secondary p-3 transition-all outline-none"
                 />
                 <p className="text-[10px] text-slate-400 mt-1.5 font-medium">Biarkan kosong untuk menggunakan nama akun asli pengguna.</p>
               </div>
@@ -346,7 +346,7 @@ export default function TestimonialsClient() {
                     value={editForm.order_id || ""}
                     onChange={(e) => setEditForm(f => ({ ...f, order_id: e.target.value }))}
                     disabled={fetchingOrders}
-                    className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-indigo-500/20 p-3 transition-all outline-none appearance-none disabled:opacity-50"
+                    className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-primary/20 p-3 transition-all outline-none appearance-none disabled:opacity-50"
                   >
                     <option value="">-- Tidak Ada Pesanan Terhubung --</option>
                     {orders.map(o => (
@@ -368,7 +368,7 @@ export default function TestimonialsClient() {
                   value={editForm.custom_project_title}
                   onChange={(e) => setEditForm({ ...editForm, custom_project_title: e.target.value })}
                   placeholder="E.g. Branding Toko Baju..."
-                  className="w-full bg-white border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 p-3 transition-all outline-none"
+                  className="w-full bg-white border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-secondary p-3 transition-all outline-none"
                 />
                 <p className="text-[10px] text-slate-400 mt-1.5 font-medium mb-1">
                   Jika diisi, ini akan menggantikan judul proyek yang ditampilkan di halaman publik.
@@ -379,7 +379,7 @@ export default function TestimonialsClient() {
                 <button type="button" onClick={() => setIsEditModalOpen(false)} className="flex-1 bg-slate-100 text-slate-600 text-sm font-bold py-2.5 rounded-xl hover:bg-slate-200 transition-colors">
                   Batal
                 </button>
-                <button type="submit" disabled={savingEdit} className="flex-2 inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold py-2.5 rounded-xl shadow-sm shadow-indigo-200 transition-colors disabled:opacity-60">
+                <button type="submit" disabled={savingEdit} className="flex-2 inline-flex items-center justify-center gap-2 bg-primary hover:bg-secondary text-white text-sm font-bold py-2.5 rounded-xl shadow-sm shadow-indigo-200 transition-colors disabled:opacity-60">
                   {savingEdit ? <Loader2 className="w-4 h-4 animate-spin" /> : "Simpan Perubahan"}
                 </button>
               </div>

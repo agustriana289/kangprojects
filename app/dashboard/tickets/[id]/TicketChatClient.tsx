@@ -155,7 +155,7 @@ export default function TicketChatClient({ ticket, user }: { ticket: any; user: 
                   {isMe ? (user?.user_metadata?.full_name?.charAt(0) || "A") : "A"}
                 </div>
                 <div className={`max-w-[75%] space-y-1 ${isMe ? "items-end" : "items-start"} flex flex-col`}>
-                  <div className={`px-4 py-2.5 text-sm font-medium leading-relaxed rounded-2xl ${isMe ? "bg-indigo-600 text-white" : "bg-slate-100 text-slate-700"}`}>
+                  <div className={`px-4 py-2.5 text-sm font-medium leading-relaxed rounded-2xl ${isMe ? "bg-primary text-white" : "bg-slate-100 text-slate-700"}`}>
                     {m.content}
                   </div>
                   <span className="text-[10px] font-medium text-slate-300 px-1">
@@ -174,9 +174,9 @@ export default function TicketChatClient({ ticket, user }: { ticket: any; user: 
               value={newMessage}
               onChange={e => setNewMessage(e.target.value)}
               placeholder="Balas tiket ini..."
-              className="flex-1 bg-white border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 px-4 py-2.5 transition-all outline-none"
+              className="flex-1 bg-white border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary px-4 py-2.5 transition-all outline-none"
             />
-            <button type="submit" disabled={loading || !newMessage.trim()} className="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center hover:bg-indigo-700 active:scale-95 transition-all disabled:opacity-50 shrink-0">
+            <button type="submit" disabled={loading || !newMessage.trim()} className="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center hover:bg-secondary active:scale-95 transition-all disabled:opacity-50 shrink-0">
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
             </button>
           </form>

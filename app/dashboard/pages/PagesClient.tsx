@@ -84,7 +84,7 @@ export default function PagesClient() {
         </div>
         <Link
           href="/dashboard/pages/new"
-          className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-sm shadow-indigo-200 transition-colors w-fit"
+          className="inline-flex items-center gap-2 bg-primary hover:bg-secondary text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-sm shadow-indigo-200 transition-colors w-fit"
         >
           <Plus className="w-4 h-4" />
           Halaman Baru
@@ -99,7 +99,7 @@ export default function PagesClient() {
               value={search}
               onChange={e => { setSearch(e.target.value); setCurrentPage(1); }}
               placeholder="Cari berdasarkan judul atau slug..."
-              className="w-full rounded-xl bg-slate-50 border border-slate-200 pl-10 pr-4 py-2.5 text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 transition-all"
+              className="w-full rounded-xl bg-slate-50 border border-slate-200 pl-10 pr-4 py-2.5 text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-secondary transition-all"
             />
           </div>
           <div className="flex bg-slate-100 p-1 rounded-xl gap-1">
@@ -207,7 +207,7 @@ export default function PagesClient() {
                 <button
                   key={p}
                   onClick={() => setCurrentPage(p as number)}
-                  className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${currentPage === p ? "bg-indigo-600 text-white shadow-indigo-200 shadow-md" : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"}`}
+                  className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${currentPage === p ? "bg-primary text-white shadow-indigo-200 shadow-md" : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"}`}
                 >
                   {p}
                 </button>

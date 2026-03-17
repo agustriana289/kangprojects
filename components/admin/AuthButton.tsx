@@ -22,7 +22,7 @@ export default function AuthButton({ user }: { user: User | null }) {
     return (
       <Link
         href="/dashboard"
-        className="rounded-full bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 transition-colors focus:ring-4 focus:ring-indigo-100 shadow-sm shadow-indigo-200"
+        className="rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-white hover:bg-secondary transition-colors focus:ring-4 focus:ring-indigo-100 shadow-sm shadow-indigo-200"
       >
         Dashboard
       </Link>
@@ -32,7 +32,7 @@ export default function AuthButton({ user }: { user: User | null }) {
   return (
     <button
       onClick={handleSignIn}
-      className="rounded-full bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 transition-colors focus:ring-4 focus:ring-indigo-100 shadow-sm shadow-indigo-200"
+      className="rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-white hover:bg-secondary transition-colors focus:ring-4 focus:ring-indigo-100 shadow-sm shadow-indigo-200"
     >
       Masuk / Daftar
     </button>

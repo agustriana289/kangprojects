@@ -24,7 +24,7 @@ export default async function Footer() {
                  <img src={settings.logo_url} alt={settings.website_name || "Logo"} className="h-8 w-auto object-contain" />
               ) : (
                 <>
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-white">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-white">
                     <Paintbrush size={18} strokeWidth={2.5} />
                   </div>
                   <span className="text-xl font-bold tracking-tight text-white">
@@ -41,7 +41,7 @@ export default async function Footer() {
             </p>
             <div className="flex items-center gap-4">
               {socialLinks.map((social, idx) => (
-                <a key={idx} href={social.url} target="_blank" rel="noopener noreferrer" className="rounded-full bg-slate-900 p-2 text-slate-400 transition-colors hover:bg-indigo-600 hover:text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                <a key={idx} href={social.url} target="_blank" rel="noopener noreferrer" className="rounded-full bg-slate-900 p-2 text-slate-400 transition-colors hover:bg-primary hover:text-white focus:ring-2 focus:ring-primary focus:outline-none">
                   <DynamicIcon name={social.platform} size={18} />
                   <span className="sr-only">{social.platform}</span>
                 </a>

@@ -50,7 +50,7 @@ export default function TicketsClient({ initialUser }: { initialUser: any }) {
             </button>
             <Link
               href="/dashboard/tickets/new"
-              className="bg-indigo-600 text-sm font-bold text-white px-4 py-2.5 rounded-xl flex items-center gap-2 hover:bg-indigo-700 active:scale-95 transition-all shadow-sm"
+              className="bg-primary text-sm font-bold text-white px-4 py-2.5 rounded-xl flex items-center gap-2 hover:bg-secondary active:scale-95 transition-all shadow-sm"
             >
               <Plus className="w-4 h-4" /> Tiket Baru
             </Link>

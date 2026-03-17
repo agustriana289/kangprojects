@@ -65,7 +65,7 @@ export default async function UserDashboard({ name }: { name: string }) {
 
       
 
-      <div className="w-full bg-linear-to-r from-indigo-600 to-indigo-500 rounded-3xl p-6 sm:p-8 mb-6 text-white shadow-lg shadow-indigo-200">
+      <div className="w-full bg-linear-to-r from-primary to-primary rounded-3xl p-6 sm:p-8 mb-6 text-white shadow-lg shadow-indigo-200">
         <div className="mb-8">
           <h1 className="text-2xl font-bold tracking-tight mb-2">Selamat pagi, {name || "Pengguna"}</h1>
           <p className="text-sm font-medium text-white">Inilah yang terjadi dengan proyek Anda hari ini.</p>
@@ -196,7 +196,7 @@ export default async function UserDashboard({ name }: { name: string }) {
                                 </td>
                                 <td className="p-4 whitespace-nowrap text-right">
                                   <div className="flex justify-end">
-                                    <a href={`/workspace/${order.id}`} className="text-white bg-indigo-600 hover:bg-indigo-700 px-3 py-1.5 rounded-lg inline-flex items-center gap-2 transition-colors shadow-sm text-xs font-bold uppercase tracking-wider" title="Open Workspace">
+                                    <a href={`/workspace/${order.id}`} className="text-white bg-primary hover:bg-secondary px-3 py-1.5 rounded-lg inline-flex items-center gap-2 transition-colors shadow-sm text-xs font-bold uppercase tracking-wider" title="Open Workspace">
                                       <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
                                       </svg>
@@ -229,7 +229,7 @@ export default async function UserDashboard({ name }: { name: string }) {
                 {latestAnnouncement ? (
                   <li className="mb-2 ml-6">
                     <span className="absolute flex items-center justify-center w-5 h-5 bg-indigo-100 rounded-full -left-2.5 ring-4 ring-white shadow-sm">
-                      <div className="w-2.5 h-2.5 bg-indigo-600 rounded-full"></div>
+                      <div className="w-2.5 h-2.5 bg-primary rounded-full"></div>
                     </span>
                     <div className="flex justify-between items-start mb-1.5 mt-0.5">
                       <h3 className="flex items-center text-lg font-bold text-slate-900 tracking-tight">

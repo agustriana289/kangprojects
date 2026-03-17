@@ -43,7 +43,7 @@ export default function HighlightedPortfolio({ settings, portfolios = [] }: { se
               return (
                 <div
                   key={item.id}
-                  className={`group relative cursor-pointer overflow-hidden rounded-3xl bg-slate-100 shadow-sm transition-all duration-500 hover:shadow-xl hover:ring-2 hover:ring-indigo-400 hover:ring-offset-2 ${
+                  className={`group relative cursor-pointer overflow-hidden rounded-3xl bg-slate-100 shadow-sm transition-all duration-500 hover:shadow-xl hover:ring-2 hover:ring-secondary hover:ring-offset-2 ${
                     isLarge ? "col-span-2 row-span-2" : "col-span-1 row-span-1"
                   }`}
                   onClick={() => setSelectedImage(imageUrl)}

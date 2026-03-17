@@ -66,7 +66,7 @@ export default function EditProfileClient({ profile }: { profile: any }) {
       <div className="bg-white rounded-2xl shadow-sm ring-1 ring-slate-100 overflow-hidden relative">
         
 
-        <div className="absolute top-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-indigo-600"></div>
+        <div className="absolute top-0 w-full h-1 bg-gradient-to-r from-primary to-primary"></div>
 
         <div className="p-6 sm:p-8 border-b border-slate-100 flex flex-col sm:flex-row gap-6 items-center sm:items-start">
           <div className="shrink-0 p-1.5 bg-slate-50 ring-1 ring-slate-100 rounded-2xl shadow-sm">
@@ -108,7 +108,7 @@ export default function EditProfileClient({ profile }: { profile: any }) {
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="contoh: Budi Santoso"
                   required
-                  className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 text-sm font-medium text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm"
+                  className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 text-sm font-medium text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
                 />
               </div>
             </div>
@@ -126,7 +126,7 @@ export default function EditProfileClient({ profile }: { profile: any }) {
                   value={avatarUrl}
                   onChange={(e) => setAvatarUrl(e.target.value)}
                   placeholder="https://example.com/photo.jpg"
-                  className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 text-sm font-medium text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm"
+                  className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 text-sm font-medium text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
                 />
               </div>
             </div>
@@ -144,7 +144,7 @@ export default function EditProfileClient({ profile }: { profile: any }) {
                   value={company}
                   onChange={(e) => setCompany(e.target.value)}
                   placeholder="contoh: Kangjasa Studio"
-                  className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 text-sm font-medium text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm"
+                  className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 text-sm font-medium text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
                 />
               </div>
             </div>
@@ -162,7 +162,7 @@ export default function EditProfileClient({ profile }: { profile: any }) {
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
                   placeholder="contoh: Jakarta, Indonesia"
-                  className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 text-sm font-medium text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm"
+                  className="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 text-sm font-medium text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
                 />
               </div>
             </div>
@@ -193,7 +193,7 @@ export default function EditProfileClient({ profile }: { profile: any }) {
             <button 
               type="submit" 
               disabled={loading}
-              className="w-full sm:w-auto bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-70 disabled:cursor-not-allowed text-sm font-bold uppercase tracking-wider px-6 py-3 rounded-full shadow-sm transition-colors flex items-center justify-center gap-2"
+              className="w-full sm:w-auto bg-primary text-white hover:bg-secondary disabled:opacity-70 disabled:cursor-not-allowed text-sm font-bold uppercase tracking-wider px-6 py-3 rounded-full shadow-sm transition-colors flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>

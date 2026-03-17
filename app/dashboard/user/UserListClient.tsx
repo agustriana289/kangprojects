@@ -89,7 +89,7 @@ export default function UserListClient() {
               setSearchQuery(e.target.value);
               setPage(1); // Reset to page 1 on new search
             }}
-            className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 text-sm font-medium text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm placeholder:text-slate-400"
+            className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 text-sm font-medium text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm placeholder:text-slate-400"
           />
         </div>
 
@@ -235,7 +235,7 @@ export default function UserListClient() {
               <button
                 key={p}
                 onClick={() => setPage(p as number)}
-                className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${page === p ? "bg-indigo-600 text-white shadow-indigo-200 shadow-md" : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shadow-sm"}`}
+                className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${page === p ? "bg-primary text-white shadow-indigo-200 shadow-md" : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 shadow-sm"}`}
               >
                 {p}
               </button>

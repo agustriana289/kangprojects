@@ -158,7 +158,7 @@ export default function UserProjectsClient({ userId }: { userId: string }) {
             <RefreshCcw className="w-4 h-4" /> Segarkan
           </button>
           <Link href="/services"
-            className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-sm shadow-indigo-200 transition-colors">
+            className="inline-flex items-center gap-2 bg-primary hover:bg-secondary text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-sm shadow-indigo-200 transition-colors">
             Telusuri Layanan
           </Link>
         </div>
@@ -170,7 +170,7 @@ export default function UserProjectsClient({ userId }: { userId: string }) {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input value={search} onChange={e => setSearch(e.target.value)}
               placeholder="Cari berdasarkan ID pesanan atau judul..."
-              className="w-full bg-slate-50 border-0 rounded-xl pl-9 pr-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500/20" />
+              className="w-full bg-slate-50 border-0 rounded-xl pl-9 pr-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20" />
           </div>
         </div>
 
@@ -316,7 +316,7 @@ export default function UserProjectsClient({ userId }: { userId: string }) {
                       </div>
                       {paymentProofUrl && (
                         <button type="button" onClick={handleSubmitProof} disabled={savingProof}
-                          className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 disabled:opacity-60">
+                          className="w-full py-2.5 bg-primary hover:bg-secondary text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 disabled:opacity-60">
                           {savingProof ? <Loader2 className="w-4 h-4 animate-spin" /> : <><CreditCard className="w-4 h-4" /> Kirim Bukti Pembayaran</>}
                         </button>
                       )}
@@ -344,7 +344,7 @@ export default function UserProjectsClient({ userId }: { userId: string }) {
 
             <div className="px-6 py-4 border-t border-slate-100 flex gap-3">
               <Link href={`/workspace/${selected.id}`}
-                className="flex-1 inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl text-sm font-bold transition-colors">
+                className="flex-1 inline-flex items-center justify-center gap-2 bg-primary hover:bg-secondary text-white py-2.5 rounded-xl text-sm font-bold transition-colors">
                 <MessageSquare className="w-4 h-4" /> Buka Ruang Kerja
               </Link>
             </div>

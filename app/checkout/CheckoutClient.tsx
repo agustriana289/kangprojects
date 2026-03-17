@@ -252,12 +252,12 @@ export default function CheckoutClient({ user, item, type, selectedPlan, initial
                 value={voucherCode}
                 onChange={e => setVoucherCode(e.target.value)}
                 placeholder="Enter code" 
-                className="flex-1 bg-slate-50 border border-slate-200 text-slate-900 text-sm font-bold uppercase tracking-wider rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 px-4 py-2.5 transition-all outline-none"
+                className="flex-1 bg-slate-50 border border-slate-200 text-slate-900 text-sm font-bold uppercase tracking-wider rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-secondary px-4 py-2.5 transition-all outline-none"
               />
               <button 
                 onClick={handleApplyVoucher}
                 disabled={verifyingVoucher || !voucherCode.trim()}
-                className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 rounded-xl text-sm font-bold shadow-sm transition-colors disabled:opacity-50"
+                className="bg-primary hover:bg-secondary text-white px-5 rounded-xl text-sm font-bold shadow-sm transition-colors disabled:opacity-50"
               >
                 {verifyingVoucher ? <Loader2 className="w-4 h-4 animate-spin" /> : "Apply"}
               </button>
@@ -324,7 +324,7 @@ export default function CheckoutClient({ user, item, type, selectedPlan, initial
                         value={formData[field.label] || ""}
                         onChange={(e) => handleFieldChange(field.label, e.target.value)}
                         rows={3} 
-                        className="w-full bg-white border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 p-3 transition-all outline-none resize-none shadow-sm"
+                        className="w-full bg-white border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-secondary p-3 transition-all outline-none resize-none shadow-sm"
                         placeholder={`Enter ${field.label.toLowerCase()}`}
                       />
                     ) : field.type === "select" && field.options ? (
@@ -332,7 +332,7 @@ export default function CheckoutClient({ user, item, type, selectedPlan, initial
                         required={field.required}
                         value={formData[field.label] || ""}
                         onChange={(e) => handleFieldChange(field.label, e.target.value)}
-                        className="w-full bg-white border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 p-3 transition-all outline-none shadow-sm"
+                        className="w-full bg-white border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-secondary p-3 transition-all outline-none shadow-sm"
                       >
                         <option value="" disabled>Pilih sebuah opsi</option>
                         {field.options.map((opt: string) => (
@@ -345,7 +345,7 @@ export default function CheckoutClient({ user, item, type, selectedPlan, initial
                         required={field.required}
                         value={formData[field.label] || ""}
                         onChange={(e) => handleFieldChange(field.label, e.target.value)}
-                        className="w-full bg-white border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 p-3 transition-all outline-none shadow-sm"
+                        className="w-full bg-white border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-secondary p-3 transition-all outline-none shadow-sm"
                         placeholder={field.type === 'file' ? 'Provide a drive link...' : `Enter ${field.label.toLowerCase()}`}
                       />
                     )}
@@ -359,7 +359,7 @@ export default function CheckoutClient({ user, item, type, selectedPlan, initial
             <button
               onClick={handleCheckout}
               disabled={loading}
-              className="w-full flex items-center justify-center gap-2 rounded-xl bg-indigo-600 py-4 px-8 text-sm font-bold uppercase tracking-wider text-white shadow-sm hover:bg-indigo-700 hover:shadow-indigo-500/30 hover:shadow-lg focus:ring-4 focus:ring-indigo-100 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+              className="w-full flex items-center justify-center gap-2 rounded-xl bg-primary py-4 px-8 text-sm font-bold uppercase tracking-wider text-white shadow-sm hover:bg-secondary hover:shadow-primary/30 hover:shadow-lg focus:ring-4 focus:ring-indigo-100 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <Loader2 className="w-5 h-5 animate-spin" />

@@ -71,7 +71,7 @@ export default function EditPagePage() {
     }
   };
 
-  const inputClass = "w-full bg-white border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 p-3 transition-all outline-none";
+  const inputClass = "w-full bg-white border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-secondary p-3 transition-all outline-none";
 
   if (fetching) {
     return (
@@ -90,7 +90,7 @@ export default function EditPagePage() {
         <button
           onClick={handleSave}
           disabled={saving}
-          className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-6 py-2.5 rounded-xl shadow-sm shadow-indigo-200 transition-colors disabled:opacity-60"
+          className="inline-flex items-center gap-2 bg-primary hover:bg-secondary text-white text-sm font-bold px-6 py-2.5 rounded-xl shadow-sm shadow-indigo-200 transition-colors disabled:opacity-60"
         >
           {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
           Update Page
@@ -175,7 +175,7 @@ export default function EditPagePage() {
               <button
                 type="button"
                 onClick={() => setFormData(prev => ({ ...prev, is_published: !prev.is_published }))}
-                className={`w-11 h-6 rounded-full relative transition-all ${formData.is_published ? "bg-indigo-600" : "bg-slate-300"}`}
+                className={`w-11 h-6 rounded-full relative transition-all ${formData.is_published ? "bg-primary" : "bg-slate-300"}`}
               >
                 <div className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow-sm transition-all ${formData.is_published ? "right-1" : "left-1"}`} />
               </button>

@@ -333,14 +333,14 @@ export default function SettingsClient() {
                   value={link.label}
                   onChange={(e) => handleLinkChange(field, idx, "label", e.target.value)}
                   placeholder="Label (misal: Tentang Kami)"
-                  className="w-full sm:flex-1 bg-white border border-slate-200 text-slate-900 text-xs font-medium rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 p-2.5 transition-all outline-none"
+                  className="w-full sm:flex-1 bg-white border border-slate-200 text-slate-900 text-xs font-medium rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary p-2.5 transition-all outline-none"
                 />
                 <input
                   type="text"
                   value={link.url}
                   onChange={(e) => handleLinkChange(field, idx, "url", e.target.value)}
                   placeholder="URL (misal: /tentang atau https://...)"
-                  className="w-full sm:flex-[1.5] bg-white border border-slate-200 text-slate-900 text-xs font-medium rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 p-2.5 transition-all outline-none"
+                  className="w-full sm:flex-[1.5] bg-white border border-slate-200 text-slate-900 text-xs font-medium rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary p-2.5 transition-all outline-none"
                 />
                 <button type="button" onClick={() => removeLink(field, idx)} className="self-end sm:self-center p-2.5 text-rose-400 hover:bg-rose-50 hover:text-rose-600 rounded-lg transition-colors">
                   <Trash2 className="w-4 h-4" />
@@ -420,20 +420,20 @@ export default function SettingsClient() {
                   value={item.title}
                   onChange={(e) => handleListChange(field, idx, "title", e.target.value)}
                   placeholder="Judul"
-                  className="w-full sm:flex-1 bg-white border border-slate-200 text-slate-900 text-xs font-medium rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 p-2.5 transition-all outline-none"
+                  className="w-full sm:flex-1 bg-white border border-slate-200 text-slate-900 text-xs font-medium rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary p-2.5 transition-all outline-none"
                 />
                 <input
                   type="text"
                   value={item.desc}
                   onChange={(e) => handleListChange(field, idx, "desc", e.target.value)}
                   placeholder="Deskripsi..."
-                  className="w-full sm:flex-[1.5] bg-white border border-slate-200 text-slate-900 text-xs font-medium rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 p-2.5 transition-all outline-none"
+                  className="w-full sm:flex-[1.5] bg-white border border-slate-200 text-slate-900 text-xs font-medium rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary p-2.5 transition-all outline-none"
                 />
                 <div className="w-full sm:w-auto flex flex-col relative">
                    <select
                      value={item.icon}
                      onChange={(e) => handleListChange(field, idx, "icon", e.target.value)}
-                     className="w-full sm:w-auto bg-white border border-slate-200 text-slate-900 text-xs font-medium rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 p-2.5 transition-all outline-none cursor-pointer"
+                     className="w-full sm:w-auto bg-white border border-slate-200 text-slate-900 text-xs font-medium rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary p-2.5 transition-all outline-none cursor-pointer"
                    >
                      {AVAILABLE_ICONS.map(i => <option key={i} value={i}>{i}</option>)}
                    </select>
@@ -480,21 +480,21 @@ export default function SettingsClient() {
                   value={item.value}
                   onChange={(e) => handleListChange(field, idx, "value", e.target.value)}
                   placeholder="Nilai (misal: 24)"
-                  className="w-full sm:w-24 bg-white border border-slate-200 text-slate-900 text-xs font-medium rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 p-2.5 transition-all outline-none"
+                  className="w-full sm:w-24 bg-white border border-slate-200 text-slate-900 text-xs font-medium rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary p-2.5 transition-all outline-none"
                 />
                 <input
                   type="text"
                   value={item.suffix}
                   onChange={(e) => handleListChange(field, idx, "suffix", e.target.value)}
                   placeholder="Akhiran (misal: j)"
-                  className="w-full sm:w-20 bg-white border border-slate-200 text-slate-900 text-xs font-medium rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 p-2.5 transition-all outline-none"
+                  className="w-full sm:w-20 bg-white border border-slate-200 text-slate-900 text-xs font-medium rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary p-2.5 transition-all outline-none"
                 />
                 <input
                   type="text"
                   value={item.label}
                   onChange={(e) => handleListChange(field, idx, "label", e.target.value)}
                   placeholder="Label (misal: Rata-rata Pengiriman)"
-                  className="w-full sm:flex-[2] bg-white border border-slate-200 text-slate-900 text-xs font-medium rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 p-2.5 transition-all outline-none"
+                  className="w-full sm:flex-[2] bg-white border border-slate-200 text-slate-900 text-xs font-medium rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary p-2.5 transition-all outline-none"
                 />
                 <button type="button" onClick={() => removeListItem(field, idx)} className="self-end sm:self-center p-2.5 text-rose-400 hover:bg-rose-50 hover:text-rose-600 rounded-lg transition-colors">
                   <Trash2 className="w-4 h-4" />
@@ -537,7 +537,7 @@ export default function SettingsClient() {
                 <select
                   value={item.platform}
                   onChange={(e) => handleListChange(field, idx, "platform", e.target.value)}
-                  className="w-full sm:w-40 bg-white border border-slate-200 text-slate-900 text-xs font-medium rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 p-2.5 outline-none"
+                  className="w-full sm:w-40 bg-white border border-slate-200 text-slate-900 text-xs font-medium rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary p-2.5 outline-none"
                 >
                   {AVAILABLE_SOCIALS.map(soc => (
                     <option key={soc} value={soc}>{soc}</option>
@@ -548,7 +548,7 @@ export default function SettingsClient() {
                   value={item.url}
                   onChange={(e) => handleListChange(field, idx, "url", e.target.value)}
                   placeholder="URL (misal: https://instagram.com/username)"
-                  className="w-full sm:flex-1 bg-white border border-slate-200 text-slate-900 text-xs font-medium rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 p-2.5 transition-all outline-none"
+                  className="w-full sm:flex-1 bg-white border border-slate-200 text-slate-900 text-xs font-medium rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary p-2.5 transition-all outline-none"
                 />
                 <button type="button" onClick={() => removeListItem(field, idx)} className="self-end sm:self-center p-2.5 text-rose-400 hover:bg-rose-50 hover:text-rose-600 rounded-lg transition-colors">
                   <Trash2 className="w-4 h-4" />
@@ -593,21 +593,21 @@ export default function SettingsClient() {
                   value={item.bank_name}
                   onChange={(e) => handleListChange(field, idx, "bank_name", e.target.value)}
                   placeholder="Nama Bank (misal: BCA, PayPal)"
-                  className="w-full sm:w-40 bg-white border border-slate-200 text-slate-900 text-xs font-medium rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 p-2.5 outline-none uppercase"
+                  className="w-full sm:w-40 bg-white border border-slate-200 text-slate-900 text-xs font-medium rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary p-2.5 outline-none uppercase"
                 />
                 <input
                   type="text"
                   value={item.account_number}
                   onChange={(e) => handleListChange(field, idx, "account_number", e.target.value)}
                   placeholder="Nomor Rekening"
-                  className="w-full sm:w-48 bg-white border border-slate-200 text-slate-900 text-xs font-medium rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 p-2.5 outline-none font-mono tracking-wider"
+                  className="w-full sm:w-48 bg-white border border-slate-200 text-slate-900 text-xs font-medium rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary p-2.5 outline-none font-mono tracking-wider"
                 />
                 <input
                   type="text"
                   value={item.account_name}
                   onChange={(e) => handleListChange(field, idx, "account_name", e.target.value)}
                   placeholder="Nama Pemegang Rekening"
-                  className="w-full sm:flex-1 bg-white border border-slate-200 text-slate-900 text-xs font-medium rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 p-2.5 transition-all outline-none"
+                  className="w-full sm:flex-1 bg-white border border-slate-200 text-slate-900 text-xs font-medium rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary p-2.5 transition-all outline-none"
                 />
                 <button type="button" onClick={() => removeListItem(field, idx)} className="self-end sm:self-center p-2.5 text-rose-400 hover:bg-rose-50 hover:text-rose-600 rounded-lg transition-colors">
                   <Trash2 className="w-4 h-4" />
@@ -630,7 +630,7 @@ export default function SettingsClient() {
           onChange={handleChange}
           rows={3}
           placeholder={placeholder}
-          className="bg-white border border-slate-200 text-slate-900 text-sm rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 block w-full p-3 transition-all outline-none resize-none"
+          className="bg-white border border-slate-200 text-slate-900 text-sm rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary block w-full p-3 transition-all outline-none resize-none"
         />
       ) : (
         <input
@@ -639,7 +639,7 @@ export default function SettingsClient() {
           value={(settings[field] as string) || ""}
           onChange={handleChange}
           placeholder={placeholder}
-          className="bg-white border border-slate-200 text-slate-900 text-sm rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 block w-full p-3 transition-all outline-none"
+          className="bg-white border border-slate-200 text-slate-900 text-sm rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary block w-full p-3 transition-all outline-none"
         />
       )}
     </div>
@@ -725,7 +725,7 @@ export default function SettingsClient() {
                     name="website_name"
                     value={settings.website_name || ""}
                     onChange={handleChange}
-                    className="bg-slate-50 border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 block w-full p-3 transition-all"
+                    className="bg-slate-50 border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary block w-full p-3 transition-all"
                   />
                 </div>
                 <div>
@@ -736,7 +736,7 @@ export default function SettingsClient() {
                     name="phone_number"
                     value={settings.phone_number || ""}
                     onChange={handleChange}
-                    className="bg-slate-50 border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 block w-full p-3 transition-all"
+                    className="bg-slate-50 border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary block w-full p-3 transition-all"
                   />
                 </div>
                 <div className="sm:col-span-2">
@@ -747,7 +747,7 @@ export default function SettingsClient() {
                     name="email"
                     value={settings.email || ""}
                     onChange={handleChange}
-                    className="bg-slate-50 border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 block w-full p-3 transition-all"
+                    className="bg-slate-50 border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary block w-full p-3 transition-all"
                   />
                 </div>
                 <div className="sm:col-span-2">
@@ -758,7 +758,7 @@ export default function SettingsClient() {
                     rows={3}
                     value={settings.description || ""}
                     onChange={handleChange}
-                    className="bg-slate-50 border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 block w-full p-3 transition-all resize-none"
+                    className="bg-slate-50 border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary block w-full p-3 transition-all resize-none"
                   ></textarea>
                 </div>
               </div>
@@ -846,7 +846,7 @@ export default function SettingsClient() {
                 ].map((col) => (
                    <div key={col.id} className="relative group">
                      <label htmlFor={col.id} className="block mb-2 text-xs font-bold uppercase tracking-wider text-slate-700">{col.label}</label>
-                     <div className="flex items-center border border-slate-200 bg-white rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-indigo-500/20 p-1 pr-3">
+                     <div className="flex items-center border border-slate-200 bg-white rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-primary/20 p-1 pr-3">
                        <input
                          type="color"
                          id={col.id}
@@ -888,7 +888,7 @@ export default function SettingsClient() {
               <button
                 type="submit"
                 disabled={saving}
-                className="w-full sm:w-auto bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-70 disabled:cursor-not-allowed text-sm font-bold uppercase tracking-wider px-8 py-3.5 rounded-xl shadow-sm transition-colors flex items-center justify-center gap-2"
+                className="w-full sm:w-auto bg-primary text-white hover:bg-secondary disabled:opacity-70 disabled:cursor-not-allowed text-sm font-bold uppercase tracking-wider px-8 py-3.5 rounded-xl shadow-sm transition-colors flex items-center justify-center gap-2"
               >
                 {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                 {saving ? "Menyimpan..." : "Simpan Pengaturan"}
@@ -920,7 +920,7 @@ export default function SettingsClient() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="w-full sm:w-auto bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-70 disabled:cursor-not-allowed text-sm font-bold uppercase tracking-wider px-8 py-3.5 rounded-xl shadow-sm transition-colors flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto bg-primary text-white hover:bg-secondary disabled:opacity-70 disabled:cursor-not-allowed text-sm font-bold uppercase tracking-wider px-8 py-3.5 rounded-xl shadow-sm transition-colors flex items-center justify-center gap-2"
                 >
                   {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                   {saving ? "Menyimpan..." : "Simpan Navigasi"}
@@ -1067,7 +1067,7 @@ export default function SettingsClient() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="w-full sm:w-auto bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-70 disabled:cursor-not-allowed text-sm font-bold uppercase tracking-wider px-8 py-3.5 rounded-xl shadow-sm transition-colors flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto bg-primary text-white hover:bg-secondary disabled:opacity-70 disabled:cursor-not-allowed text-sm font-bold uppercase tracking-wider px-8 py-3.5 rounded-xl shadow-sm transition-colors flex items-center justify-center gap-2"
                 >
                   {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                   {saving ? "Menyimpan..." : "Simpan Halaman Utama"}
@@ -1089,7 +1089,7 @@ export default function SettingsClient() {
                   <select
                     value={settings.header_size}
                     onChange={(e) => setSettings({ ...settings, header_size: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 block p-3 outline-hidden transition-all shadow-sm"
+                    className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl focus:ring-2 focus:ring-primary focus:border-primary block p-3 outline-hidden transition-all shadow-sm"
                   >
                     <option value="sm">Small (Compact)</option>
                     <option value="md">Medium (Default)</option>
@@ -1103,7 +1103,7 @@ export default function SettingsClient() {
                     id="header_sticky"
                     checked={settings.header_sticky}
                     onChange={(e) => setSettings({ ...settings, header_sticky: e.target.checked })}
-                    className="w-5 h-5 rounded border-slate-300 text-primary focus:ring-indigo-500"
+                    className="w-5 h-5 rounded border-slate-300 text-primary focus:ring-primary"
                   />
                   <label htmlFor="header_sticky" className="text-sm font-semibold text-slate-700">Enable Sticky Header (Fixed on Scroll)</label>
                </div>
@@ -1114,7 +1114,7 @@ export default function SettingsClient() {
                     id="header_transparent"
                     checked={settings.header_transparent}
                     onChange={(e) => setSettings({ ...settings, header_transparent: e.target.checked })}
-                    className="w-5 h-5 rounded border-slate-300 text-primary focus:ring-indigo-500"
+                    className="w-5 h-5 rounded border-slate-300 text-primary focus:ring-primary"
                   />
                   <label htmlFor="header_transparent" className="text-sm font-semibold text-slate-700">Transparent Background</label>
                </div>
@@ -1134,7 +1134,7 @@ export default function SettingsClient() {
                           type="text"
                           value={settings.header_bg_color}
                           onChange={(e) => setSettings({ ...settings, header_bg_color: e.target.value })}
-                          className="flex-1 bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 block p-3 outline-hidden transition-all uppercase"
+                          className="flex-1 bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl focus:ring-2 focus:ring-primary focus:border-primary block p-3 outline-hidden transition-all uppercase"
                         />
                       </div>
                     </div>
@@ -1150,7 +1150,7 @@ export default function SettingsClient() {
                         max="100"
                         value={settings.header_bg_opacity}
                         onChange={(e) => setSettings({ ...settings, header_bg_opacity: parseInt(e.target.value) })}
-                        className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                        className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-primary"
                       />
                       <div className="flex justify-between text-xs text-slate-400 font-medium mt-1">
                         <span>Transparent (0%)</span>
@@ -1171,7 +1171,7 @@ export default function SettingsClient() {
                     value={settings.header_custom_html}
                     onChange={(e) => setSettings({ ...settings, header_custom_html: e.target.value })}
                     rows={8}
-                    className="w-full bg-slate-900 border border-slate-800 text-green-400 font-mono text-xs rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 block p-4 outline-hidden transition-all shadow-inner"
+                    className="w-full bg-slate-900 border border-slate-800 text-green-400 font-mono text-xs rounded-xl focus:ring-2 focus:ring-primary focus:border-primary block p-4 outline-hidden transition-all shadow-inner"
                     placeholder="<!-- Analytics -->&#10;<script src='https://analytics.example.com/js'></script>&#10;&#10;<meta name='google-site-verification' content='...' />"
                   />
                 </div>
@@ -1181,7 +1181,7 @@ export default function SettingsClient() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="w-full sm:w-auto bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-70 disabled:cursor-not-allowed text-sm font-bold uppercase tracking-wider px-8 py-3.5 rounded-xl shadow-sm transition-colors flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto bg-primary text-white hover:bg-secondary disabled:opacity-70 disabled:cursor-not-allowed text-sm font-bold uppercase tracking-wider px-8 py-3.5 rounded-xl shadow-sm transition-colors flex items-center justify-center gap-2"
                 >
                   {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                   {saving ? "Menyimpan..." : "Simpan Pengaturan Header"}
@@ -1215,7 +1215,7 @@ export default function SettingsClient() {
                     value={settings.footer_custom_html}
                     onChange={(e) => setSettings({ ...settings, footer_custom_html: e.target.value })}
                     rows={8}
-                    className="w-full bg-slate-900 border border-slate-800 text-green-400 font-mono text-xs rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 block p-4 outline-hidden transition-all shadow-inner"
+                    className="w-full bg-slate-900 border border-slate-800 text-green-400 font-mono text-xs rounded-xl focus:ring-2 focus:ring-primary focus:border-primary block p-4 outline-hidden transition-all shadow-inner"
                     placeholder="<!-- Chat Widget ID -->&#10;<script src='https://js.example.com/widget.js'></script>"
                   />
                 </div>
@@ -1225,7 +1225,7 @@ export default function SettingsClient() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="w-full sm:w-auto bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-70 disabled:cursor-not-allowed text-sm font-bold uppercase tracking-wider px-8 py-3.5 rounded-xl shadow-sm transition-colors flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto bg-primary text-white hover:bg-secondary disabled:opacity-70 disabled:cursor-not-allowed text-sm font-bold uppercase tracking-wider px-8 py-3.5 rounded-xl shadow-sm transition-colors flex items-center justify-center gap-2"
                 >
                   {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                   {saving ? "Menyimpan..." : "Simpan Pengaturan Footer"}
@@ -1248,7 +1248,7 @@ export default function SettingsClient() {
                   <select
                     value={settings.seo_meta_robots}
                     onChange={(e) => setSettings({ ...settings, seo_meta_robots: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 block p-3 outline-hidden transition-all shadow-sm"
+                    className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl focus:ring-2 focus:ring-primary focus:border-primary block p-3 outline-hidden transition-all shadow-sm"
                   >
                     <option value="index, follow">Index, Follow (Recommended)</option>
                     <option value="noindex, follow">NoIndex, Follow</option>
@@ -1305,7 +1305,7 @@ export default function SettingsClient() {
                   <select
                     value={settings.seo_twitter_card}
                     onChange={(e) => setSettings({ ...settings, seo_twitter_card: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 block p-3 outline-hidden transition-all shadow-sm"
+                    className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm rounded-xl focus:ring-2 focus:ring-primary focus:border-primary block p-3 outline-hidden transition-all shadow-sm"
                   >
                     <option value="summary_large_image">Summary Large Image</option>
                     <option value="summary">Summary (Small Image)</option>
@@ -1320,7 +1320,7 @@ export default function SettingsClient() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="w-full sm:w-auto bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-70 disabled:cursor-not-allowed text-sm font-bold uppercase tracking-wider px-8 py-3.5 rounded-xl shadow-sm transition-colors flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto bg-primary text-white hover:bg-secondary disabled:opacity-70 disabled:cursor-not-allowed text-sm font-bold uppercase tracking-wider px-8 py-3.5 rounded-xl shadow-sm transition-colors flex items-center justify-center gap-2"
                 >
                   {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                   {saving ? "Menyimpan..." : "Simpan Metadata SEO"}
@@ -1348,7 +1348,7 @@ export default function SettingsClient() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="w-full sm:w-auto bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-70 disabled:cursor-not-allowed text-sm font-bold uppercase tracking-wider px-8 py-3.5 rounded-xl shadow-sm transition-colors flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto bg-primary text-white hover:bg-secondary disabled:opacity-70 disabled:cursor-not-allowed text-sm font-bold uppercase tracking-wider px-8 py-3.5 rounded-xl shadow-sm transition-colors flex items-center justify-center gap-2"
                 >
                   {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                   {saving ? "Menyimpan..." : "Simpan Metode Pembayaran"}

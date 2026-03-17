@@ -326,7 +326,7 @@ export default function AdminProjectsClient() {
     cancelled: "bg-red-50 text-red-700 border-red-100",
   };
 
-  const inputClass = "w-full bg-slate-50 border-0 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-indigo-500/20 p-3 transition-all outline-none";
+  const inputClass = "w-full bg-slate-50 border-0 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-primary/20 p-3 transition-all outline-none";
 
   // Calculation for Cards
   const completedStats = orders.filter(o => ['paid', 'processing', 'completed'].includes(o.status));
@@ -385,7 +385,7 @@ export default function AdminProjectsClient() {
             ))}
           </div>
           <button onClick={() => setIsCreateModalOpen(true)}
-            className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-sm shadow-indigo-200 transition-colors">
+            className="inline-flex items-center gap-2 bg-primary hover:bg-secondary text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-sm shadow-indigo-200 transition-colors">
             <Briefcase className="w-4 h-4" /> Proyek Baru
           </button>
         </div>
@@ -415,10 +415,10 @@ export default function AdminProjectsClient() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }}
               placeholder="Cari berdasarkan ID pesanan, nama proyek, atau klien..."
-              className="w-full bg-slate-50 border-0 rounded-xl pl-9 pr-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500/20" />
+              className="w-full bg-slate-50 border-0 rounded-xl pl-9 pr-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20" />
           </div>
           <select value={statusFilter} onChange={e => { setStatusFilter(e.target.value); setPage(1); }}
-            className="bg-slate-50 border-0 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-600 min-w-[160px] outline-none focus:ring-2 focus:ring-indigo-500/20">
+            className="bg-slate-50 border-0 rounded-xl px-4 py-2.5 text-sm font-bold text-slate-600 min-w-[160px] outline-none focus:ring-2 focus:ring-primary/20">
             <option value="all">Semua Status</option>
             <option value="pending">Menunggu</option>
             <option value="waiting_payment">Menunggu Pembayaran</option>
@@ -527,7 +527,7 @@ export default function AdminProjectsClient() {
                       <span key={`ellipsis-${i}`} className="px-2 text-slate-400 text-sm">…</span>
                     ) : (
                       <button key={p} onClick={() => setPage(p as number)}
-                        className={`w-8 h-8 rounded-lg text-xs font-bold transition-all ${page === p ? "bg-indigo-600 text-white shadow-sm" : "hover:bg-slate-100 text-slate-600"}`}>
+                        className={`w-8 h-8 rounded-lg text-xs font-bold transition-all ${page === p ? "bg-primary text-white shadow-sm" : "hover:bg-slate-100 text-slate-600"}`}>
                         {p}
                       </button>
                     ))}
@@ -682,7 +682,7 @@ export default function AdminProjectsClient() {
                     {selectedProject.testimonial ? (
                       <div className="space-y-3 w-full">
                          <div className="flex items-center gap-2 mb-2">
-                           <Star className="w-4 h-4 text-indigo-500 shrink-0 fill-indigo-500" />
+                           <Star className="w-4 h-4 text-primary shrink-0 fill-primary" />
                            <p className="text-xs font-bold leading-none">Diterima</p>
                         </div>
                         <div className="bg-white/60 p-3 rounded-lg border border-indigo-100/50 relative">
@@ -735,7 +735,7 @@ export default function AdminProjectsClient() {
                 </button>
               )}
               <button onClick={() => openEditModal(selectedProject)}
-                className="flex-1 inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl text-sm font-bold transition-colors">
+                className="flex-1 inline-flex items-center justify-center gap-2 bg-primary hover:bg-secondary text-white py-2.5 rounded-xl text-sm font-bold transition-colors">
                 <Edit className="w-4 h-4" /> Edit Proyek
               </button>
               <button
@@ -886,7 +886,7 @@ export default function AdminProjectsClient() {
 
               <div className="flex gap-3 pt-2">
                 <button type="button" onClick={() => setIsEditModalOpen(false)} className="flex-1 py-2.5 rounded-xl text-sm font-bold text-slate-500 hover:bg-slate-50 transition-colors">Batal</button>
-                <button type="submit" disabled={updating} className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl text-sm font-bold transition-colors disabled:opacity-60 flex items-center justify-center gap-2">
+                <button type="submit" disabled={updating} className="flex-1 bg-primary hover:bg-secondary text-white py-2.5 rounded-xl text-sm font-bold transition-colors disabled:opacity-60 flex items-center justify-center gap-2">
                   {updating ? <Loader2 className="w-4 h-4 animate-spin" /> : "Simpan Perubahan"}
                 </button>
               </div>
@@ -957,7 +957,7 @@ export default function AdminProjectsClient() {
               </div>
               <div className="flex gap-3 pt-2">
                 <button type="button" onClick={() => setIsCreateModalOpen(false)} className="flex-1 py-2.5 rounded-xl text-sm font-bold text-slate-500 hover:bg-slate-50 transition-colors">Batal</button>
-                <button type="submit" disabled={creatingProject} className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl text-sm font-bold transition-colors disabled:opacity-60 flex items-center justify-center gap-2">
+                <button type="submit" disabled={creatingProject} className="flex-1 bg-primary hover:bg-secondary text-white py-2.5 rounded-xl text-sm font-bold transition-colors disabled:opacity-60 flex items-center justify-center gap-2">
                   {creatingProject ? <Loader2 className="w-4 h-4 animate-spin" /> : "Buat Proyek"}
                 </button>
               </div>

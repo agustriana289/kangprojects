@@ -74,7 +74,7 @@ export default function AllServices({ settings, services }: { settings?: any; se
                       </div>
                       <Link
                         href={`/services/${service.slug}`}
-                        className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-50 text-slate-600 group-hover:bg-indigo-600 group-hover:text-white transition-all shadow-sm group-hover:shadow-md"
+                        className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-50 text-slate-600 group-hover:bg-primary group-hover:text-white transition-all shadow-sm group-hover:shadow-md"
                       >
                         <ArrowRight size={18} className="transition-transform group-hover:translate-x-0.5" />
                       </Link>

@@ -84,13 +84,13 @@ export default function SearchClient({ isAdmin, userId }: { isAdmin: boolean, us
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Apa yang Anda cari?"
-          className="w-full bg-white border border-slate-200 text-slate-900 sm:text-lg font-medium rounded-2xl pl-12 pr-32 py-4 shadow-sm focus:ring-4 focus:ring-indigo-100 focus:border-indigo-400 transition-all outline-none"
+          className="w-full bg-white border border-slate-200 text-slate-900 sm:text-lg font-medium rounded-2xl pl-12 pr-32 py-4 shadow-sm focus:ring-4 focus:ring-indigo-100 focus:border-secondary transition-all outline-none"
         />
         <div className="absolute inset-y-0 right-2 flex items-center">
           <button
             type="submit"
             disabled={loading}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            className="bg-primary hover:bg-secondary text-white font-bold py-2 px-6 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
           >
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Cari"}
           </button>

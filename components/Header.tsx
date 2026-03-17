@@ -51,7 +51,7 @@ export default async function Header() {
                <img src={settings.logo_url} alt={settings.website_name || "Logo"} className="h-8 w-auto object-contain" />
             ) : (
               <>
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-white">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-white">
                   <Paintbrush size={18} strokeWidth={2.5} />
                 </div>
                 <span className="text-xl font-bold tracking-tight text-slate-900">

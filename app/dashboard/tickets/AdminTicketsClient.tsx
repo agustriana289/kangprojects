@@ -57,7 +57,7 @@ export default function AdminTicketsClient() {
               value={search}
               onChange={e => { setSearch(e.target.value); setPage(1); }}
               placeholder="Cari tiket atau klien..."
-              className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 pl-10 pr-4 py-2.5 transition-all outline-none"
+              className="w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary pl-10 pr-4 py-2.5 transition-all outline-none"
             />
           </div>
         </div>
@@ -152,7 +152,7 @@ export default function AdminTicketsClient() {
                   <span key={`ellipsis-${i}`} className="px-2 text-slate-400 text-sm font-bold">…</span>
                 ) : (
                   <button key={p} onClick={() => setPage(p as number)}
-                    className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${page === p ? "bg-indigo-600 text-white shadow-indigo-200 shadow-md" : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"}`}>
+                    className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${page === p ? "bg-primary text-white shadow-indigo-200 shadow-md" : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"}`}>
                     {p}
                   </button>
                 ))}

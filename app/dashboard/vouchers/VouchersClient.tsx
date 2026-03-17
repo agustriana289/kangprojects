@@ -42,7 +42,7 @@ export default function VouchersClient({ discounts }: { discounts: any[] }) {
               >
                 
 
-                <div className={`absolute -right-6 -top-6 w-24 h-24 rounded-full blur-2xl opacity-20 ${isVoucher ? 'bg-indigo-500' : 'bg-orange-500'}`} />
+                <div className={`absolute -right-6 -top-6 w-24 h-24 rounded-full blur-2xl opacity-20 ${isVoucher ? 'bg-primary' : 'bg-orange-500'}`} />
 
                 <div className="flex items-start justify-between mb-4 relative z-10">
                   <div className={`p-3 rounded-xl shrink-0 ${isVoucher ? 'bg-indigo-50 text-primary' : 'bg-orange-50 text-orange-500'}`}>
@@ -77,7 +77,7 @@ export default function VouchersClient({ discounts }: { discounts: any[] }) {
                       className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-bold transition-all ${
                         copied === d.code 
                           ? 'bg-emerald-50 text-emerald-600 border border-emerald-200 shadow-sm' 
-                          : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm shadow-indigo-200'
+                          : 'bg-primary hover:bg-secondary text-white shadow-sm shadow-indigo-200'
                       }`}
                     >
                       {copied === d.code ? (
@@ -100,7 +100,7 @@ export default function VouchersClient({ discounts }: { discounts: any[] }) {
 
                 {d.end_date && (
                    <div className="absolute top-0 right-0 left-0 h-1 bg-slate-100">
-                      <div className={`h-full ${isVoucher ? 'bg-indigo-500' : 'bg-orange-500'} w-full`}></div>
+                      <div className={`h-full ${isVoucher ? 'bg-primary' : 'bg-orange-500'} w-full`}></div>
                    </div>
                 )}
               </div>

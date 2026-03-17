@@ -177,7 +177,7 @@ export default function DiscountsClient() {
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
-  const inputClass = "w-full bg-white border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 p-3 transition-all outline-none";
+  const inputClass = "w-full bg-white border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-secondary p-3 transition-all outline-none";
 
   return (
     <div className="pt-6 px-4 pb-16">
@@ -188,7 +188,7 @@ export default function DiscountsClient() {
         </div>
         <button 
           onClick={openAdd}
-          className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-sm shadow-indigo-200 transition-colors w-fit"
+          className="inline-flex items-center gap-2 bg-primary hover:bg-secondary text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-sm shadow-indigo-200 transition-colors w-fit"
         >
           <Plus className="w-4 h-4" /> Buat Promo
         </button>
@@ -202,7 +202,7 @@ export default function DiscountsClient() {
               value={search}
               onChange={e => { setSearch(e.target.value); setPage(1); }}
               placeholder="Cari nama promo atau kode..." 
-              className="w-full bg-slate-50 border-0 rounded-xl pl-9 pr-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500/20"
+              className="w-full bg-slate-50 border-0 rounded-xl pl-9 pr-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
         </div>
@@ -281,7 +281,7 @@ export default function DiscountsClient() {
                     <div className="flex items-center gap-3 w-32">
                       <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
                         <div 
-                          className="h-full bg-indigo-500 transition-all rounded-full" 
+                          className="h-full bg-primary transition-all rounded-full" 
                           style={{ width: `${d.usage_limit ? Math.min((d.used_count / d.usage_limit) * 100, 100) : 0}%` }}
                         />
                       </div>
@@ -335,7 +335,7 @@ export default function DiscountsClient() {
                   <span key={`ellipsis-${i}`} className="px-2 text-slate-400 text-sm font-bold">…</span>
                 ) : (
                   <button key={p} onClick={() => setPage(p as number)}
-                    className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${page === p ? "bg-indigo-600 text-white shadow-indigo-200 shadow-md" : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"}`}>
+                    className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${page === p ? "bg-primary text-white shadow-indigo-200 shadow-md" : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"}`}>
                     {p}
                   </button>
                 ))}
@@ -531,7 +531,7 @@ export default function DiscountsClient() {
                 <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 bg-slate-100 text-slate-600 text-sm font-bold py-3 rounded-xl hover:bg-slate-200 transition-colors">
                   Batal
                 </button>
-                <button type="submit" disabled={saving} className="flex-2 inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold py-3 rounded-xl shadow-sm shadow-indigo-200 transition-colors disabled:opacity-60">
+                <button type="submit" disabled={saving} className="flex-2 inline-flex items-center justify-center gap-2 bg-primary hover:bg-secondary text-white text-sm font-bold py-3 rounded-xl shadow-sm shadow-indigo-200 transition-colors disabled:opacity-60">
                   {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : editingId ? "Perbarui Promosi" : "Buat Promosi"}
                 </button>
               </div>

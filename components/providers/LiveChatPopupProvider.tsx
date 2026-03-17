@@ -158,7 +158,7 @@ export function LiveChatPopupProvider({ children }: { children: React.ReactNode 
             }}
             className="pointer-events-auto cursor-pointer flex items-start gap-4 p-4 rounded-2xl shadow-xl shadow-slate-900/10 border border-slate-100 bg-white w-[320px] animate-in slide-in-from-right fade-in duration-300 hover:scale-[1.02] transition-transform"
           >
-            <div className="w-12 h-12 rounded-full bg-indigo-600 shadow-md shadow-indigo-600/20 flex flex-shrink-0 items-center justify-center text-white font-black text-lg">
+            <div className="w-12 h-12 rounded-full bg-primary shadow-md shadow-primary/20 flex flex-shrink-0 items-center justify-center text-white font-black text-lg">
               {alert.avatarLetter}
             </div>
             <div className="flex-1 min-w-0 pt-0.5">

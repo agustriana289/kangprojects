@@ -120,7 +120,7 @@ export default function FAQClient() {
     else fetchData();
   };
 
-  const inputClass = "w-full bg-white border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 p-3 transition-all outline-none";
+  const inputClass = "w-full bg-white border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-secondary p-3 transition-all outline-none";
 
   const filtered = faqs.filter(f => {
     const matchesTarget = filterTarget === "all" || f.target === filterTarget;
@@ -153,7 +153,7 @@ export default function FAQClient() {
             type="button"
             onClick={handleSave}
             disabled={saving}
-            className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-6 py-2.5 rounded-xl shadow-sm shadow-indigo-200 transition-colors disabled:opacity-60"
+            className="inline-flex items-center gap-2 bg-primary hover:bg-secondary text-white text-sm font-bold px-6 py-2.5 rounded-xl shadow-sm shadow-indigo-200 transition-colors disabled:opacity-60"
           >
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
             {editingFaq ? "Perbarui FAQ" : "Simpan FAQ"}
@@ -173,7 +173,7 @@ export default function FAQClient() {
                   key={t}
                   type="button"
                   onClick={() => setForm(p => ({ ...p, target: t, service_id: null, shop_category: null }))}
-                  className={`flex-1 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${form.target === t ? "bg-indigo-600 text-white shadow-sm" : "bg-slate-100 text-slate-500 hover:bg-slate-200"}`}
+                  className={`flex-1 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${form.target === t ? "bg-primary text-white shadow-sm" : "bg-slate-100 text-slate-500 hover:bg-slate-200"}`}
                 >
                   {t}
                 </button>
@@ -274,7 +274,7 @@ export default function FAQClient() {
         </div>
         <button
           onClick={openNew}
-          className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-sm shadow-indigo-200 transition-colors w-fit"
+          className="inline-flex items-center gap-2 bg-primary hover:bg-secondary text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-sm shadow-indigo-200 transition-colors w-fit"
         >
           <Plus className="w-4 h-4" /> FAQ Baru
         </button>
@@ -288,7 +288,7 @@ export default function FAQClient() {
               value={search}
               onChange={e => { setSearch(e.target.value); setPage(1); }}
               placeholder="Cari berdasarkan pertanyaan atau jawaban..." 
-              className="w-full bg-slate-50 border-0 rounded-xl pl-10 pr-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500/20"
+              className="w-full bg-slate-50 border-0 rounded-xl pl-10 pr-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
           <div className="flex items-center gap-1.5 p-1 bg-slate-100 rounded-xl overflow-x-auto">
@@ -393,7 +393,7 @@ export default function FAQClient() {
                   <span key={`ellipsis-${i}`} className="px-2 text-slate-400 text-sm font-bold">…</span>
                 ) : (
                   <button key={p} onClick={() => setPage(p as number)}
-                    className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${page === p ? "bg-indigo-600 text-white shadow-indigo-200 shadow-md" : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"}`}>
+                    className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${page === p ? "bg-primary text-white shadow-indigo-200 shadow-md" : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"}`}>
                     {p}
                   </button>
                 ))}

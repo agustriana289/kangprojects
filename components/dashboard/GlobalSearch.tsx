@@ -130,7 +130,7 @@ export default function GlobalSearch({ isAdmin, userId }: { isAdmin: boolean, us
             setIsOpen(true);
           }}
           placeholder="Cari semuanya..."
-          className={`w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm font-bold rounded-xl pl-11 pr-12 py-2.5 transition-all outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 focus:bg-white shadow-sm placeholder:text-slate-400 placeholder:font-medium ${isOpen ? 'border-indigo-400 bg-white shadow-md ring-4 ring-indigo-500/5' : ''}`}
+          className={`w-full bg-slate-50 border border-slate-200 text-slate-900 text-sm font-bold rounded-xl pl-11 pr-12 py-2.5 transition-all outline-none focus:ring-4 focus:ring-primary/10 focus:border-secondary focus:bg-white shadow-sm placeholder:text-slate-400 placeholder:font-medium ${isOpen ? 'border-secondary bg-white shadow-md ring-4 ring-primary/5' : ''}`}
         />
         <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
           <kbd className="hidden sm:inline-flex h-5 select-none items-center gap-1 rounded-lg border border-slate-200 bg-white px-1.5 font-sans text-[10px] font-black text-slate-400 shadow-xs">

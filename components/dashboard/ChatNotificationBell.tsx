@@ -173,7 +173,7 @@ export default function ChatNotificationBell({ role = "user", userId }: { role?:
             {unreadCount > 0 && (
               <button
                 onClick={clearAll}
-                className="p-1.5 bg-indigo-50 text-primary rounded-lg hover:bg-indigo-600 hover:text-white transition-all"
+                className="p-1.5 bg-indigo-50 text-primary rounded-lg hover:bg-primary hover:text-white transition-all"
                 title="Tandai semua telah dibaca"
               >
                 <Check className="w-3.5 h-3.5" />
@@ -189,7 +189,7 @@ export default function ChatNotificationBell({ role = "user", userId }: { role?:
                   onClick={() => setIsOpen(false)}
                   className="flex gap-3 px-4 py-3.5 hover:bg-slate-50 transition-colors cursor-pointer group relative bg-white"
                 >
-                  <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-indigo-500 rounded-r" />
+                  <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-primary rounded-r" />
                   <div className={`w-9 h-9 rounded-xl shrink-0 flex items-center justify-center font-bold text-sm ${
                     chat.type === 'support' ? 'bg-orange-50 text-orange-600' :
                     chat.type === 'workspace' ? 'bg-emerald-50 text-emerald-600' :

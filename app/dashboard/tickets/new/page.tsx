@@ -70,7 +70,7 @@ export default function NewTicketPage() {
                   value={form.subject}
                   onChange={e => setForm({ ...form, subject: e.target.value })}
                   placeholder="Ringkasan singkat masalah..."
-                  className="bg-slate-50 border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 block w-full p-3 transition-all outline-none"
+                  className="bg-slate-50 border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary block w-full p-3 transition-all outline-none"
                 />
               </div>
               <div>
@@ -78,7 +78,7 @@ export default function NewTicketPage() {
                 <select
                   value={form.category}
                   onChange={e => setForm({ ...form, category: e.target.value })}
-                  className="bg-slate-50 border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 block w-full p-3 transition-all outline-none"
+                  className="bg-slate-50 border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary block w-full p-3 transition-all outline-none"
                 >
                   <option value="technical">Masalah Teknis</option>
                   <option value="billing">Penagihan & Pembayaran</option>
@@ -91,7 +91,7 @@ export default function NewTicketPage() {
                 <select
                   value={form.priority}
                   onChange={e => setForm({ ...form, priority: e.target.value })}
-                  className="bg-slate-50 border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 block w-full p-3 transition-all outline-none"
+                  className="bg-slate-50 border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary block w-full p-3 transition-all outline-none"
                 >
                   <option value="low">Rendah</option>
                   <option value="medium">Normal</option>
@@ -111,7 +111,7 @@ export default function NewTicketPage() {
               value={form.message}
               onChange={e => setForm({ ...form, message: e.target.value })}
               placeholder="Jelaskan masalah Anda secara rinci..."
-              className="bg-slate-50 border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 block w-full p-3 transition-all outline-none resize-none"
+              className="bg-slate-50 border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary block w-full p-3 transition-all outline-none resize-none"
             />
           </div>
 
@@ -124,7 +124,7 @@ export default function NewTicketPage() {
             <button
               type="submit"
               disabled={loading || !form.subject || !form.message}
-              className="bg-indigo-600 text-white text-sm font-bold px-6 py-3 rounded-xl hover:bg-indigo-700 active:scale-[0.99] transition-all flex items-center gap-2 disabled:opacity-50 shadow-sm"
+              className="bg-primary text-white text-sm font-bold px-6 py-3 rounded-xl hover:bg-secondary active:scale-[0.99] transition-all flex items-center gap-2 disabled:opacity-50 shadow-sm"
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
               {loading ? "Mengirim..." : "Kirim Tiket"}

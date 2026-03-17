@@ -192,7 +192,7 @@ export default async function ProductDetail({ params }: ProductProps) {
                          return (
                            <div key={idx} className={`relative flex flex-col sm:flex-row sm:items-center justify-between p-5 rounded-2xl border ${appliedDiscount ? 'border-indigo-200 bg-indigo-50/30' : 'border-slate-200 bg-white'} shadow-sm hover:shadow-md transition-shadow gap-4`}>
                               {appliedDiscount && (
-                                <div className="absolute -top-3 left-6 bg-indigo-600 text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full shadow-sm flex items-center gap-1">
+                                <div className="absolute -top-3 left-6 bg-primary text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full shadow-sm flex items-center gap-1">
                                   <Tag size={12} /> Diskon Diterapkan
                                 </div>
                               )}
@@ -221,7 +221,7 @@ export default async function ProductDetail({ params }: ProductProps) {
                                       <span className="block text-xl font-extrabold text-primary">Rp {Number(originalPrice).toLocaleString('id-ID')}</span>
                                     )}
                                  </div>
-                                 <Link href={`/checkout?type=product&slug=${prod.slug}&plan=${encodeURIComponent(pkg.name)}`} className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl shadow-sm transition-all focus:ring-2 focus:ring-indigo-500/50 whitespace-nowrap">
+                                 <Link href={`/checkout?type=product&slug=${prod.slug}&plan=${encodeURIComponent(pkg.name)}`} className="bg-primary hover:bg-secondary text-white font-bold py-2.5 px-6 rounded-xl shadow-sm transition-all focus:ring-2 focus:ring-primary/50 whitespace-nowrap">
                                      Beli Sekarang
                                  </Link>
                               </div>
@@ -230,7 +230,7 @@ export default async function ProductDetail({ params }: ProductProps) {
                       })}
                     </div>
                  ) : (
-                    <Link href={`/checkout?type=product&slug=${prod.slug}&plan=${encodeURIComponent(prod.packages?.[0]?.name || "Standard")}`} className="flex items-center justify-center w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-6 rounded-xl shadow-sm shadow-indigo-200 transition-all focus:ring-2 focus:ring-indigo-500/50 text-lg">
+                    <Link href={`/checkout?type=product&slug=${prod.slug}&plan=${encodeURIComponent(prod.packages?.[0]?.name || "Standard")}`} className="flex items-center justify-center w-full bg-primary hover:bg-secondary text-white font-bold py-4 px-6 rounded-xl shadow-sm shadow-indigo-200 transition-all focus:ring-2 focus:ring-primary/50 text-lg">
                         <ShoppingBag className="w-5 h-5 mr-3" /> Beli Sekarang — Rp {Number(prod.packages?.[0]?.price || 0).toLocaleString('id-ID')}
                     </Link>
                  )}

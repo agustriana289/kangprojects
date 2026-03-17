@@ -181,7 +181,7 @@ export default function PortfoliosClient() {
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
-  const inputClass = "w-full bg-slate-50 border-0 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-indigo-500/20 p-3 transition-all outline-none";
+  const inputClass = "w-full bg-slate-50 border-0 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-primary/20 p-3 transition-all outline-none";
 
   return (
     <div className="pt-6 px-4 pb-16">
@@ -191,7 +191,7 @@ export default function PortfoliosClient() {
           <p className="text-sm font-medium text-slate-500 mt-1">Tampilkan proyek yang telah selesai kepada publik.</p>
         </div>
         <button onClick={openAdd}
-          className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-sm shadow-indigo-200 transition-colors">
+          className="inline-flex items-center gap-2 bg-primary hover:bg-secondary text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-sm shadow-indigo-200 transition-colors">
           <Plus className="w-4 h-4" /> Tambah Portofolio
         </button>
       </div>
@@ -199,7 +199,7 @@ export default function PortfoliosClient() {
       <div className="relative mb-6">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
         <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} placeholder="Cari berdasarkan judul atau kategori..."
-          className="w-full bg-white shadow-sm ring-1 ring-slate-100 border-0 rounded-2xl pl-9 pr-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500/20" />
+          className="w-full bg-white shadow-sm ring-1 ring-slate-100 border-0 rounded-2xl pl-9 pr-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20" />
       </div>
 
       {loading ? (
@@ -233,7 +233,7 @@ export default function PortfoliosClient() {
                 <div className="flex items-center justify-between mb-1">
                   <p className="text-[10px] font-bold text-primary uppercase tracking-wider">{p.category || "Tanpa Kategori"}</p>
                   {p.store_orders?.order_number && (
-                    <span className="text-[9px] font-bold bg-indigo-50 text-indigo-500 px-1.5 py-0.5 rounded border border-indigo-100 uppercase tracking-tighter">
+                    <span className="text-[9px] font-bold bg-indigo-50 text-primary px-1.5 py-0.5 rounded border border-indigo-100 uppercase tracking-tighter">
                       ORD-{p.store_orders.order_number.toString().padStart(4, '0')}
                     </span>
                   )}
@@ -281,7 +281,7 @@ export default function PortfoliosClient() {
                   <span key={`ellipsis-${i}`} className="px-2 text-slate-400 text-sm font-bold">…</span>
                 ) : (
                   <button key={p} onClick={() => setPage(p as number)}
-                    className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${page === p ? "bg-indigo-600 text-white shadow-indigo-200 shadow-lg" : "bg-white ring-1 ring-slate-100 text-slate-600 hover:bg-slate-50"}`}>
+                    className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${page === p ? "bg-primary text-white shadow-indigo-200 shadow-lg" : "bg-white ring-1 ring-slate-100 text-slate-600 hover:bg-slate-50"}`}>
                     {p}
                   </button>
                 ))}
@@ -387,7 +387,7 @@ export default function PortfoliosClient() {
 
               <div className="flex gap-3 pt-2">
                 <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 py-2.5 rounded-xl text-sm font-bold text-slate-500 hover:bg-slate-50 transition-colors">Batal</button>
-                <button type="submit" disabled={saving} className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl text-sm font-bold transition-colors disabled:opacity-60 flex items-center justify-center gap-2">
+                <button type="submit" disabled={saving} className="flex-1 bg-primary hover:bg-secondary text-white py-2.5 rounded-xl text-sm font-bold transition-colors disabled:opacity-60 flex items-center justify-center gap-2">
                   {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : editingId ? "Perbarui Portofolio" : "Terbitkan ke Portofolio"}
                 </button>
               </div>

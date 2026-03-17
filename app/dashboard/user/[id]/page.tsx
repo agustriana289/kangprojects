@@ -101,7 +101,7 @@ export default async function UserProfilePage({ params }: { params: Promise<{ id
       
       
 
-      <div className="w-full bg-gradient-to-r from-indigo-600 to-indigo-500 rounded-3xl p-6 sm:p-10 mb-6 text-white shadow-lg shadow-indigo-200 relative overflow-hidden">
+      <div className="w-full bg-gradient-to-r from-primary to-primary rounded-3xl p-6 sm:p-10 mb-6 text-white shadow-lg shadow-indigo-200 relative overflow-hidden">
         
 
         <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-white opacity-10 blur-3xl"></div>

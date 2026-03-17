@@ -36,7 +36,7 @@ export default function Error({ error, reset }: ErrorProps) {
             <span>Terjadi kesalahan</span>
           </div>
 
-          <p className="text-8xl sm:text-9xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-600 leading-none mb-6">
+          <p className="text-8xl sm:text-9xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary leading-none mb-6">
             500
           </p>
 
@@ -51,7 +51,7 @@ export default function Error({ error, reset }: ErrorProps) {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
               onClick={reset}
-              className="group flex h-12 items-center justify-center gap-2 rounded-full bg-indigo-600 px-8 text-base font-semibold text-white transition-all hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-200 focus:ring-4 focus:ring-indigo-100"
+              className="group flex h-12 items-center justify-center gap-2 rounded-full bg-primary px-8 text-base font-semibold text-white transition-all hover:bg-secondary hover:shadow-lg hover:shadow-indigo-200 focus:ring-4 focus:ring-indigo-100"
             >
               <RefreshCw size={18} className="transition-transform group-hover:rotate-180 duration-500" />
               Coba Lagi

@@ -35,10 +35,10 @@ export default function WhyChooseUs({ settings }: { settings?: any }) {
           {items.map((item, idx) => (
             <FadeIn key={idx} delay={100 + idx * 80}>
               <div className="group relative rounded-3xl bg-slate-50 p-8 hover:bg-indigo-50 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 h-full border border-transparent hover:border-indigo-100">
-                <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-sm text-primary group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300">
+                <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-sm text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300">
                   <DynamicIcon name={item.icon || "CheckCircle2"} size={22} />
                 </div>
-                <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-indigo-700 transition-colors">
+                <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-secondary transition-colors">
                   {item.title}
                 </h3>
                 <p className="text-sm text-slate-600 leading-relaxed">

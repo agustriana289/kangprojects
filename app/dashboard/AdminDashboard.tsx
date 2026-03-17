@@ -237,7 +237,7 @@ export default async function AdminDashboard({
     <div className="pt-6 px-4">
       
 
-      <div className="w-full bg-linear-to-r from-indigo-600 to-indigo-500 rounded-3xl p-6 sm:p-8 mb-6 text-white shadow-lg shadow-indigo-200">
+      <div className="w-full bg-linear-to-r from-primary to-primary rounded-3xl p-6 sm:p-8 mb-6 text-white shadow-lg shadow-indigo-200">
         <div className="mb-8">
           <h1 className="text-2xl font-bold tracking-tight mb-2">
             Selamat pagi, {name || "Admin"}
@@ -335,7 +335,7 @@ export default async function AdminDashboard({
 
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <div className="w-2.5 h-2.5 bg-indigo-700 rounded-[2px]"></div>
+                  <div className="w-2.5 h-2.5 bg-secondary rounded-[2px]"></div>
                   <span className="text-sm font-medium text-slate-500">
                     Pengeluaran terlacak
                   </span>
@@ -363,7 +363,7 @@ export default async function AdminDashboard({
                     <div className="w-1.5 sm:w-2 overflow-hidden flex flex-col h-[90%] bg-transparent justify-end">
                       <div
                         style={{ height: `${percentage}%` }}
-                        className="w-full bg-indigo-600 transition-all duration-500 group-hover:bg-indigo-700 group-hover:scale-x-110 rounded-t-sm"
+                        className="w-full bg-primary transition-all duration-500 group-hover:bg-secondary group-hover:scale-x-110 rounded-t-sm"
                       ></div>
                     </div>
 

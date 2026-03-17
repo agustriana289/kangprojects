@@ -59,7 +59,7 @@ export default function AdminChatListClient() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Cari klien..."
-            className="w-full bg-white border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 pl-10 pr-4 py-2.5 transition-all outline-none shadow-sm"
+            className="w-full bg-white border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary pl-10 pr-4 py-2.5 transition-all outline-none shadow-sm"
           />
         </div>
       </div>
@@ -95,7 +95,7 @@ export default function AdminChatListClient() {
                   </div>
                 </div>
                 {chat.unread_count > 0 && (
-                  <span className="bg-indigo-600 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center shrink-0">
+                  <span className="bg-primary text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center shrink-0">
                     {chat.unread_count}
                   </span>
                 )}

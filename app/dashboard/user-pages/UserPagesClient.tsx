@@ -33,7 +33,7 @@ export default function UserPagesClient({ pages }: { pages: any[] }) {
               href={`/pages/${p.slug}`}
               className="group bg-white rounded-2xl ring-1 ring-slate-100 flex flex-col sm:flex-row items-center hover:shadow-md hover:ring-indigo-100 transition-all duration-300 relative overflow-hidden"
             >
-               <div className="absolute -right-6 -top-6 w-24 h-24 rounded-full blur-2xl opacity-10 bg-indigo-500" />
+               <div className="absolute -right-6 -top-6 w-24 h-24 rounded-full blur-2xl opacity-10 bg-primary" />
                
                <div className="flex items-center gap-4 p-6 shrink-0 relative z-10 sm:w-80">
                  <div className="w-12 h-12 rounded-xl bg-indigo-50 text-primary flex items-center justify-center shrink-0 border border-indigo-100">

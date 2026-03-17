@@ -455,7 +455,7 @@ export default function WorkspaceClient({ order, user, isAdmin, clientName, admi
                    {(!isAdmin && counterpartRole === "Administrator") ? (
                       <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full" />
                    ) : isAdmin && order.user_id ? (
-                      <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-indigo-500 border-2 border-white rounded-full" />
+                      <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-primary border-2 border-white rounded-full" />
                    ) : (
                       <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-slate-300 border-2 border-white rounded-full" />
                    )}
@@ -568,7 +568,7 @@ export default function WorkspaceClient({ order, user, isAdmin, clientName, admi
                         <div className={`max-w-[75%] space-y-1 ${isMe ? 'items-end' : 'items-start'} flex flex-col`}>
                           <div className={`px-4 py-2.5 text-sm font-medium leading-relaxed rounded-2xl ${
                             isMe 
-                              ? 'bg-indigo-600 text-white rounded-br-none' 
+                              ? 'bg-primary text-white rounded-br-none' 
                               : 'bg-slate-100 text-slate-700 rounded-bl-none'
                           }`}>
                             {msg.content}
@@ -668,12 +668,12 @@ export default function WorkspaceClient({ order, user, isAdmin, clientName, admi
                             value={testimonialComment}
                             onChange={e => setTestimonialComment(e.target.value)}
                             placeholder="Write your experience or feedback here..."
-                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium min-h-[100px] focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all resize-none outline-none"
+                            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium min-h-[100px] focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none outline-none"
                          />
                          <button 
                           type="submit"
                           disabled={submittingTestimonial}
-                          className="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-indigo-700 transition-all disabled:opacity-50 mt-4 flex items-center justify-center gap-2"
+                          className="w-full bg-primary text-white py-3 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-secondary transition-all disabled:opacity-50 mt-4 flex items-center justify-center gap-2"
                          >
                             {submittingTestimonial ? <Loader2 className="w-4 h-4 animate-spin" /> : <PartyPopper className="w-4 h-4" />}
                             Submit Testimonial & Complete
@@ -690,7 +690,7 @@ export default function WorkspaceClient({ order, user, isAdmin, clientName, admi
                        value={isChatLocked ? "" : newMessage}
                        onChange={e => setNewMessage(e.target.value)}
                        placeholder={isChatLocked ? "Workspace closed (Project Completed)" : "Type your message..."}
-                       className={`flex-1 bg-white border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 px-4 py-2.5 transition-all outline-none ${isChatLocked ? 'cursor-not-allowed bg-slate-50 italic' : ''}`}
+                       className={`flex-1 bg-white border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary px-4 py-2.5 transition-all outline-none ${isChatLocked ? 'cursor-not-allowed bg-slate-50 italic' : ''}`}
                     />
                     {!isChatLocked && (
                       <button 
@@ -704,7 +704,7 @@ export default function WorkspaceClient({ order, user, isAdmin, clientName, admi
                     <button 
                      type="submit" 
                      disabled={loading || !newMessage.trim() || isInitializing || isChatLocked}
-                     className={`w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center hover:bg-indigo-700 active:scale-95 transition-all disabled:opacity-50 shrink-0 ${isChatLocked ? "hidden" : ""}`}
+                     className={`w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center hover:bg-secondary active:scale-95 transition-all disabled:opacity-50 shrink-0 ${isChatLocked ? "hidden" : ""}`}
                     >
                        {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                     </button>
@@ -789,7 +789,7 @@ export default function WorkspaceClient({ order, user, isAdmin, clientName, admi
                        value={currentStatus}
                        disabled={updatingStatus}
                        onChange={e => handleUpdateStatus(e.target.value)}
-                       className="w-full appearance-none text-xs font-bold uppercase tracking-wider bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 outline-none cursor-pointer disabled:opacity-60"
+                       className="w-full appearance-none text-xs font-bold uppercase tracking-wider bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary/20 focus:border-secondary outline-none cursor-pointer disabled:opacity-60"
                      >
                        <option value="pending">Pending</option>
                        <option value="waiting_payment">Waiting Payment</option>
@@ -840,7 +840,7 @@ export default function WorkspaceClient({ order, user, isAdmin, clientName, admi
                         </div>
                       </div>
                       {paymentProofUrl && (
-                        <button type="button" onClick={handleSaveProof} disabled={savingProof} className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 disabled:opacity-60">
+                        <button type="button" onClick={handleSaveProof} disabled={savingProof} className="w-full py-2.5 bg-primary hover:bg-secondary text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 disabled:opacity-60">
                           {savingProof ? <Loader2 className="w-4 h-4 animate-spin" /> : <><CreditCard className="w-4 h-4" /> Submit Payment Proof</>}
                         </button>
                       )}
@@ -896,7 +896,7 @@ export default function WorkspaceClient({ order, user, isAdmin, clientName, admi
                       </div>
                     </div>
                     {deliveryFileUrl && (
-                      <button type="button" onClick={handleSaveDelivery} disabled={savingDelivery} className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 disabled:opacity-60">
+                      <button type="button" onClick={handleSaveDelivery} disabled={savingDelivery} className="w-full py-2.5 bg-primary hover:bg-secondary text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 disabled:opacity-60">
                         {savingDelivery ? <Loader2 className="w-4 h-4 animate-spin" /> : <><FileCheck className="w-4 h-4" /> Save & Notify Client</>}
                       </button>
                     )}
@@ -929,7 +929,7 @@ export default function WorkspaceClient({ order, user, isAdmin, clientName, admi
                     type="button" 
                     onClick={() => portfolioInputRef.current?.click()}
                     disabled={uploadingPortfolio}
-                    className="w-full relative overflow-hidden bg-gradient-to-br from-indigo-500 to-indigo-600 text-white rounded-xl p-3 flex items-center gap-3 shadow-md shadow-indigo-500/20 hover:shadow-indigo-500/40 transition-all hover:-translate-y-0.5 block text-left disabled:opacity-70"
+                    className="w-full relative overflow-hidden bg-gradient-to-br from-primary to-primary text-white rounded-xl p-3 flex items-center gap-3 shadow-md shadow-primary/20 hover:shadow-primary/40 transition-all hover:-translate-y-0.5 block text-left disabled:opacity-70"
                   >
                     <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
                       {uploadingPortfolio ? <Loader2 className="w-4 h-4 animate-spin" /> : <ImageIcon className="w-4 h-4" />}

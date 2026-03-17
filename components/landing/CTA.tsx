@@ -16,7 +16,7 @@ export default function CTA({ settings }: { settings?: any }) {
             <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-6">
               <a
                 href={settings?.cta_button1_url || "/shop"}
-                className="group flex items-center justify-center gap-2 rounded-full bg-indigo-500 px-8 py-4 text-base font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/30 hover:-translate-y-1 w-full sm:w-auto"
+                className="group flex items-center justify-center gap-2 rounded-full bg-primary px-8 py-4 text-base font-semibold text-white shadow-sm hover:bg-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-all duration-300 hover:shadow-lg hover:shadow-primary/30 hover:-translate-y-1 w-full sm:w-auto"
               >
                 {settings?.cta_button1_text || "Ayo mulai"}
                 <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />

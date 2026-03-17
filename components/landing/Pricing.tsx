@@ -107,7 +107,7 @@ export default function Pricing({ settings, featuredService, type = "service", a
               }`}
             >
               {tier.appliedDiscount && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-indigo-600 text-white text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full shadow-md flex items-center gap-1.5 whitespace-nowrap">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-white text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full shadow-md flex items-center gap-1.5 whitespace-nowrap">
                   <Tag size={12} /> {tier.appliedDiscount.name} Diterapkan
                 </div>
               )}
@@ -121,7 +121,7 @@ export default function Pricing({ settings, featuredService, type = "service", a
                   {tier.name}
                 </h3>
                 {tier.featured && (
-                  <p className="rounded-full bg-indigo-500/10 px-3 py-1 text-xs font-semibold leading-5 text-primary border border-indigo-500/20">
+                  <p className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold leading-5 text-primary border border-primary/20">
                     Paling populer
                   </p>
                 )}
@@ -166,7 +166,7 @@ export default function Pricing({ settings, featuredService, type = "service", a
                 aria-describedby={tier.id}
                 className={`mt-6 block rounded-full px-3 py-3 text-center text-sm font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 transition-all duration-300 ${
                   tier.featured
-                    ? "bg-indigo-500 text-white shadow-sm hover:bg-indigo-400 focus-visible:outline-indigo-500 hover:shadow-indigo-500/30 hover:shadow-lg"
+                    ? "bg-primary text-white shadow-sm hover:bg-secondary focus-visible:outline-primary hover:shadow-primary/30 hover:shadow-lg"
                     : "bg-white text-slate-900 ring-1 ring-inset ring-slate-200 hover:ring-slate-300 hover:bg-slate-50"
                 }`}
               >

@@ -85,7 +85,7 @@ export default function RichTextEditor({ value, onChange, placeholder = "Write y
   };
 
   return (
-    <div className="bg-white border border-slate-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-indigo-500/20 focus-within:border-indigo-400 transition-all">
+    <div className="bg-white border border-slate-200 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-secondary transition-all">
       <div className="flex flex-wrap items-center gap-0.5 px-3 py-2 border-b border-slate-100 bg-slate-50/80">
 
         <div className="flex items-center gap-0.5 pr-2 border-r border-slate-200 mr-1">

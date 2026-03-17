@@ -260,7 +260,7 @@ export default async function ServiceDetail({ params }: ServiceProps) {
           <FadeIn delay={100}>
             <div className="relative isolate overflow-hidden bg-slate-900 px-6 py-24 text-center shadow-2xl rounded-3xl sm:px-16">
               <h2 className="mx-auto max-w-2xl text-4xl font-bold tracking-tight text-white sm:text-5xl">
-                Siap memulai proyek <span className="text-indigo-400">{service.title}</span> Anda?
+                Siap memulai proyek <span className="text-secondary">{service.title}</span> Anda?
               </h2>
               <p className="mx-auto mt-6 max-w-xl text-lg leading-8 text-slate-300">
                 Konsultasikan dengan tim ahli kami. Kami siap membantu mewujudkan visi Anda dan memberikan konsep awal dalam waktu 24 jam.
@@ -270,14 +270,14 @@ export default async function ServiceDetail({ params }: ServiceProps) {
                   href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(`Hi, saya ingin berkonsultasi mengenai layanan ${service.title} di website kangjasa.com.`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group flex items-center justify-center gap-2 rounded-full bg-indigo-500 px-8 py-4 text-base font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/30 hover:-translate-y-1 w-full sm:w-auto"
+                  className="group flex items-center justify-center gap-2 rounded-full bg-primary px-8 py-4 text-base font-semibold text-white shadow-sm hover:bg-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-all duration-300 hover:shadow-lg hover:shadow-primary/30 hover:-translate-y-1 w-full sm:w-auto"
                 >
                   Konsultasi via WhatsApp
                   <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
                 </a>
                 <Link 
                   href="/#pricing" 
-                  className="flex items-center justify-center gap-2 text-base font-semibold leading-6 text-white transition-colors hover:text-indigo-400 w-full sm:w-auto py-2"
+                  className="flex items-center justify-center gap-2 text-base font-semibold leading-6 text-white transition-colors hover:text-secondary w-full sm:w-auto py-2"
                 >
                   Lihat Paket Harga
                 </Link>

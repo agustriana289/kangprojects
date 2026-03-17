@@ -137,7 +137,7 @@ export default function AnnouncementsClient() {
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   const inputClass =
-    "w-full bg-white border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 p-3 transition-all outline-none";
+    "w-full bg-white border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-secondary p-3 transition-all outline-none";
 
   return (
     <div className="pt-6 px-4 pb-10">
@@ -152,7 +152,7 @@ export default function AnnouncementsClient() {
             setForm(emptyForm);
             setIsModalOpen(true);
           }}
-          className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-sm shadow-indigo-200 transition-colors w-fit"
+          className="inline-flex items-center gap-2 bg-primary hover:bg-secondary text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-sm shadow-indigo-200 transition-colors w-fit"
         >
           <Plus className="w-4 h-4" />
           Pengumuman Baru
@@ -167,7 +167,7 @@ export default function AnnouncementsClient() {
               value={search}
               onChange={e => { setSearch(e.target.value); setPage(1); }}
               placeholder="Cari pengumuman..." 
-              className="w-full bg-slate-50 border-0 rounded-xl pl-9 pr-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500/20"
+              className="w-full bg-slate-50 border-0 rounded-xl pl-9 pr-4 py-2.5 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
         </div>
@@ -265,7 +265,7 @@ export default function AnnouncementsClient() {
                   <span key={`ellipsis-${i}`} className="px-2 text-slate-400 text-sm font-bold">…</span>
                 ) : (
                   <button key={p} onClick={() => setPage(p as number)}
-                    className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${page === p ? "bg-indigo-600 text-white shadow-indigo-200 shadow-md" : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"}`}>
+                    className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${page === p ? "bg-primary text-white shadow-indigo-200 shadow-md" : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"}`}>
                     {p}
                   </button>
                 ))}
@@ -332,7 +332,7 @@ export default function AnnouncementsClient() {
                     <button
                       type="button"
                       onClick={() => setForm({ ...form, is_active: !form.is_active })}
-                      className={`w-10 h-5 rounded-full relative transition-all ${form.is_active ? "bg-indigo-600" : "bg-slate-300"}`}
+                      className={`w-10 h-5 rounded-full relative transition-all ${form.is_active ? "bg-primary" : "bg-slate-300"}`}
                     >
                       <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow-sm transition-all ${form.is_active ? "right-0.5" : "left-0.5"}`} />
                     </button>
@@ -361,7 +361,7 @@ export default function AnnouncementsClient() {
                 </button>
                 <button
                   disabled={submitting}
-                  className="flex-2 inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold py-2.5 rounded-xl shadow-sm shadow-indigo-200 transition-colors disabled:opacity-60"
+                  className="flex-2 inline-flex items-center justify-center gap-2 bg-primary hover:bg-secondary text-white text-sm font-bold py-2.5 rounded-xl shadow-sm shadow-indigo-200 transition-colors disabled:opacity-60"
                 >
                   {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
                   {submitting ? "Menyimpan..." : editingId ? "Perbarui Pengumuman" : "Terbitkan Sekarang"}

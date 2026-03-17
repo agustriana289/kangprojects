@@ -69,7 +69,7 @@ export default function SubmitTestimonialClient({ order, clientName }: { order: 
         </div>
         <h2 className="text-2xl font-bold text-slate-900 mb-2">Thank You!</h2>
         <p className="text-slate-500 mb-6">Your testimonial means a lot to our growth.</p>
-        <Link href="/" className="inline-block bg-indigo-600 text-white font-bold py-3 px-6 rounded-xl shadow-md hover:bg-indigo-700 transition-colors">
+        <Link href="/" className="inline-block bg-primary text-white font-bold py-3 px-6 rounded-xl shadow-md hover:bg-secondary transition-colors">
           Back to Home
         </Link>
       </div>
@@ -78,7 +78,7 @@ export default function SubmitTestimonialClient({ order, clientName }: { order: 
 
   return (
     <form onSubmit={submitTestimonial} className="bg-white border border-slate-200 rounded-3xl p-8 lg:p-10 shadow-xl relative overflow-hidden">
-      <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
+      <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-primary via-purple-500 to-pink-500"></div>
       
       <div className="text-center mb-8 bg-slate-50 rounded-2xl p-4 border border-slate-100">
          <h4 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-1">Project Information</h4>
@@ -116,7 +116,7 @@ export default function SubmitTestimonialClient({ order, clientName }: { order: 
             value={comment}
             onChange={e => setComment(e.target.value)}
             placeholder="Write your experience or feedback here... (e.g., The design result is awesome!)"
-            className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 text-sm font-medium min-h-[140px] focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all resize-none outline-none leading-relaxed"
+            className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 text-sm font-medium min-h-[140px] focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none outline-none leading-relaxed"
             required
          />
       </div>
@@ -124,7 +124,7 @@ export default function SubmitTestimonialClient({ order, clientName }: { order: 
       <button 
         type="submit"
         disabled={submitting}
-        className="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold text-sm uppercase tracking-wider hover:bg-indigo-700 transition-all shadow-md shadow-indigo-200 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        className="w-full bg-primary text-white py-4 rounded-xl font-bold text-sm uppercase tracking-wider hover:bg-secondary transition-all shadow-md shadow-indigo-200 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
       >
         {submitting ? <Loader2 className="w-5 h-5 animate-spin" /> : <PartyPopper className="w-5 h-5" />}
         Submit Testimonial & Complete

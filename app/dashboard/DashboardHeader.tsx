@@ -150,7 +150,7 @@ export default function DashboardHeader({ user, profile, settings }: { user: Use
 
             <div className="relative ml-2 sm:ml-4">
               <div 
-                className={`flex h-9 w-9 items-center justify-center rounded-full bg-linear-to-tr from-indigo-600 to-indigo-500 text-sm font-bold text-white cursor-pointer hover:shadow-md transition-shadow ring-2 ring-white shadow-sm border border-indigo-200 ${openDropdown === 'profile' ? 'ring-indigo-100' : ''}`}
+                className={`flex h-9 w-9 items-center justify-center rounded-full bg-linear-to-tr from-primary to-primary text-sm font-bold text-white cursor-pointer hover:shadow-md transition-shadow ring-2 ring-white shadow-sm border border-indigo-200 ${openDropdown === 'profile' ? 'ring-indigo-100' : ''}`}
                 title={profile?.full_name || user?.email}
                 onClick={() => toggleDropdown("profile")}
               >

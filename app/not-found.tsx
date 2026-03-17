@@ -23,12 +23,12 @@ export default function NotFound() {
         </div>
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-32 lg:py-48 text-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-indigo-50/50 px-3 py-1 text-sm font-medium text-primary mb-8 backdrop-blur-sm">
+            <div className="inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-white/50 px-3 py-1 text-sm font-medium text-theme-2 mb-8 backdrop-blur-sm">
             <Search size={16} />
             <span>Halaman Tidak Ditemukan</span>
           </div>
 
-          <p className="text-8xl sm:text-9xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-600 leading-none mb-6">
+          <p className="text-8xl sm:text-9xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary leading-none mb-6">
             404
           </p>
 
@@ -43,7 +43,7 @@ export default function NotFound() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               href="/"
-              className="group flex h-12 items-center justify-center gap-2 rounded-full bg-indigo-600 px-8 text-base font-semibold text-white transition-all hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-200 focus:ring-4 focus:ring-indigo-100"
+              className="group flex h-12 items-center justify-center gap-2 rounded-full bg-primary px-8 text-base font-semibold text-white transition-all hover:bg-secondary hover:shadow-lg hover:shadow-indigo-200 focus:ring-4 focus:ring-indigo-100"
             >
               <ArrowLeft size={18} className="transition-transform group-hover:-translate-x-1" />
               Kembali ke Beranda

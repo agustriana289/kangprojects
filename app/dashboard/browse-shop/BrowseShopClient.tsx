@@ -30,7 +30,7 @@ export default function BrowseShopClient({ products }: { products: any[] }) {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Cari produk..." 
-            className="w-full bg-white border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 pl-9 pr-4 py-2.5 transition-all outline-none"
+            className="w-full bg-white border border-slate-200 text-slate-900 text-sm font-medium rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-secondary pl-9 pr-4 py-2.5 transition-all outline-none"
           />
         </div>
       </div>
@@ -45,7 +45,7 @@ export default function BrowseShopClient({ products }: { products: any[] }) {
               onClick={() => setActiveCategory(c)}
               className={`whitespace-nowrap px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all shrink-0 ${
                 activeCategory === c 
-                  ? "bg-indigo-600 text-white shadow-sm" 
+                  ? "bg-primary text-white shadow-sm" 
                   : "bg-slate-50 text-slate-500 hover:bg-slate-100"
               }`}
             >

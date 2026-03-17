@@ -116,7 +116,7 @@ export default async function Home() {
           aria-hidden="true"
         >
           <div
-            className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
+            className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-primary to-secondary opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
             style={{
               clipPath:
                 "polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)",
@@ -125,13 +125,13 @@ export default async function Home() {
         </div>
 
         <FadeIn delay={100} className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-indigo-50/50 px-3 py-1 text-sm font-medium text-primary mb-8 backdrop-blur-sm">
+          <div className="inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-white/50 px-3 py-1 text-sm font-medium text-theme-2 mb-8 backdrop-blur-sm">
             <DynamicIcon name="Sparkles" size={16} />
             <span>{settings?.hero_badge || "Desain Logo Cepat & Premium"}</span>
           </div>
           <h1 className="mx-auto max-w-4xl text-5xl font-extrabold tracking-tight text-slate-900 sm:text-7xl leading-[1.1]">
             {heroTitleStart}{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-600">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
               {heroTitleEnd}
             </span>
           </h1>
@@ -139,7 +139,7 @@ export default async function Home() {
             {settings?.hero_description || "Desain logo profesional yang berbicara kepada audiens Anda. Kami membangun identitas visual yang mudah diingat, dapat dikembangkan, dan cepat dikirimkan. Mulai babak baru Anda hari ini."}
           </p>
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link href={settings?.hero_button1_url || "/shop"} className="group w-full sm:w-auto flex h-12 items-center justify-center gap-2 rounded-full bg-indigo-600 px-8 text-base font-semibold text-white transition-all hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-200 focus:ring-4 focus:ring-indigo-100">
+            <Link href={settings?.hero_button1_url || "/shop"} className="group w-full sm:w-auto flex h-12 items-center justify-center gap-2 rounded-full bg-primary px-8 text-base font-semibold text-white transition-all hover:bg-secondary hover:shadow-lg hover:shadow-indigo-200 focus:ring-4 focus:ring-indigo-100">
               {settings?.hero_button1_text || "Pesan Logo Anda"}
               <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
             </Link>
@@ -201,17 +201,17 @@ export default async function Home() {
                         key={user.id}
                         src={user.avatar_url}
                         alt={user.full_name || user.email || "User"}
-                        className="h-10 w-10 rounded-full ring-2 ring-indigo-500 object-cover"
+                        className="h-10 w-10 rounded-full ring-2 ring-primary object-cover"
                         referrerPolicy="no-referrer"
                       />
                     ) : (
-                      <div key={user.id} className="h-10 w-10 flex items-center justify-center rounded-full ring-2 ring-indigo-500 bg-indigo-200 text-indigo-700 font-bold text-sm shrink-0">
+                      <div key={user.id} className="h-10 w-10 flex items-center justify-center rounded-full ring-2 ring-primary bg-indigo-200 text-secondary font-bold text-sm shrink-0">
                         {(user.full_name || user.email || "U").charAt(0).toUpperCase()}
                       </div>
                     )
                   ))}
                   {recentNonAdminUsers.length > 4 && (
-                    <div className="h-10 w-10 flex items-center justify-center rounded-full ring-2 ring-indigo-500 bg-white border border-slate-200 text-primary font-medium text-xs shrink-0">
+                    <div className="h-10 w-10 flex items-center justify-center rounded-full ring-2 ring-primary bg-white border border-slate-200 text-primary font-medium text-xs shrink-0">
                       +{recentNonAdminUsers.length - 4}
                     </div>
                   )}
