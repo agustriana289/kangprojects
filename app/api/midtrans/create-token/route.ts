@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/utils/supabase/server";
 
 export async function POST(req: NextRequest) {
   try {
@@ -10,18 +9,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "orderId dan amount wajib diisi." }, { status: 400 });
     }
 
-    const supabase = await createClient();
-    const { data: order, error: orderError } = await supabase
-      .from("store_orders")
-      .select("id, total_amount")
-      .eq("id", orderId)
-      .single();
-
-    if (orderError || !order) {
-      return NextResponse.json({ error: "Order tidak ditemukan." }, { status: 404 });
+    const serverKey = process.env.MIDTRANS_SERVER_KEY;
+    if (!serverKey) {
+      return NextResponse.json({ error: "Konfigurasi server tidak lengkap." }, { status: 500 });
     }
 
-    const serverKey = process.env.MIDTRANS_SERVER_KEY!;
     const isProduction = process.env.MIDTRANS_IS_PRODUCTION === "true";
     const baseUrl = isProduction
       ? "https://app.midtrans.com/snap/v1/transactions"
@@ -29,7 +21,7 @@ export async function POST(req: NextRequest) {
 
     const authHeader = "Basic " + Buffer.from(serverKey + ":").toString("base64");
 
-    const grossAmount = Math.round(Number(order.total_amount));
+    const grossAmount = Math.round(Number(amount));
     const shortOrderId = `KL-${orderId.replace(/-/g, "").substring(0, 20)}-${Date.now().toString().slice(-8)}`;
     const shortItemName = (itemName || "Service Order").substring(0, 50);
 
@@ -68,11 +60,13 @@ export async function POST(req: NextRequest) {
     const data = await response.json();
 
     if (!response.ok) {
-      return NextResponse.json({ error: data.error_messages || "Midtrans error" }, { status: 400 });
+      console.error("[Midtrans Error]", data);
+      return NextResponse.json({ error: data.error_messages?.join(", ") || "Midtrans error" }, { status: 400 });
     }
 
     return NextResponse.json({ token: data.token, redirect_url: data.redirect_url });
   } catch (err: unknown) {
+    console.error("[create-token Error]", err);
     return NextResponse.json({ error: err instanceof Error ? err.message : "Terjadi kesalahan." }, { status: 500 });
   }
 }

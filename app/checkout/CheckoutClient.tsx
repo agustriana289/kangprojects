@@ -113,8 +113,11 @@ export default function CheckoutClient({ user, item, type, selectedPlan, initial
 
   const handleCheckout = async () => {
     if (!user) {
+      if (checkoutMode === "account") {
+        return showToast("Silakan masuk dengan Google terlebih dahulu.", "error");
+      }
       if (!guestName.trim()) return showToast("Nama lengkap wajib diisi.", "error");
-      if (!guestPhone.trim() || !/^[0-9]{9,15}$/.test(guestPhone.trim())) return showToast("Nomor HP tidak valid.", "error");
+      if (!guestPhone.trim() || !/^[0-9]{9,15}$/.test(guestPhone.trim())) return showToast("Nomor WhatsApp tidak valid.", "error");
     }
 
     if (item.form_fields && item.form_fields.length > 0) {
@@ -208,6 +211,7 @@ export default function CheckoutClient({ user, item, type, selectedPlan, initial
       });
 
     } catch (error: unknown) {
+      console.error("[Checkout Error]", error);
       showToast(error instanceof Error ? error.message : "Terjadi kesalahan.", "error");
       setLoading(false);
     }
