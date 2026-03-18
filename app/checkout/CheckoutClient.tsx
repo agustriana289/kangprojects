@@ -6,7 +6,7 @@ import { createClient } from "@/utils/supabase/client";
 import { useToast } from "@/components/ToastProvider";
 import { CreditCard, ShieldCheck, CheckCircle2, Package, Mail, Phone, User, Ticket, Loader2, X, Tag, LogIn } from "lucide-react";
 import FadeIn from "@/components/landing/FadeIn";
-import { calculateDiscountedPrice } from "@/utils/discounts";
+import { calculateDiscountedPrice, Discount } from "@/utils/discounts";
 import Link from "next/link";
 
 declare global {
@@ -32,7 +32,7 @@ interface CheckoutClientProps {
   item: { id: string; title: string; image_url?: string; form_fields?: { label: string; type: string; required: boolean; options?: string[] }[]; packages?: { name: string; price: number; features?: string[] }[] };
   type: "service" | "product";
   selectedPlan: { name: string; price: number; features?: string[] };
-  initialDiscounts?: { id: string; name: string; type: string; value: number; min_purchase?: number; start_date?: string; end_date?: string; usage_limit?: number; used_count?: number; code?: string }[];
+  initialDiscounts?: Discount[];
 }
 
 export default function CheckoutClient({ user, item, type, selectedPlan, initialDiscounts = [] }: CheckoutClientProps) {
@@ -42,9 +42,9 @@ export default function CheckoutClient({ user, item, type, selectedPlan, initial
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<Record<string, string>>({});
 
-  const [discounts, setDiscounts] = useState(initialDiscounts);
+  const discounts = initialDiscounts;
   const [voucherCode, setVoucherCode] = useState("");
-  const [appliedVoucher, setAppliedVoucher] = useState<typeof initialDiscounts[0] | null>(null);
+  const [appliedVoucher, setAppliedVoucher] = useState<Discount | null>(null);
   const [verifyingVoucher, setVerifyingVoucher] = useState(false);
 
   const [guestName, setGuestName] = useState("");
