@@ -118,6 +118,7 @@ export default function AdminProjectsClient() {
   const getClientName = (o: any) => {
     if (o.client?.full_name) return o.client.full_name;
     if (o.client?.email) return o.client.email.split("@")[0];
+    if (o.guest_name) return o.guest_name;
     const fd = getFormData(o);
     return fd.customer_name || fd["Client Name"] || "Klien Tidak Dikenal";
   };
@@ -125,10 +126,12 @@ export default function AdminProjectsClient() {
   const getClientEmail = (o: any) => {
     if (o.client?.email) return o.client.email;
     const fd = getFormData(o);
+    if (o.guest_name) return `(Guest via WhatsApp)`;
     return fd.customer_email || null;
   };
 
   const getClientWhatsapp = (o: any) => {
+    if (o.guest_phone) return o.guest_phone;
     const fd = getFormData(o);
     return fd.whatsapp || null;
   };

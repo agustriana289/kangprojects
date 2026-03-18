@@ -65,6 +65,7 @@ export default function PortfoliosClient() {
   const getClientName = (o: any) => {
     if (o.client?.full_name) return o.client.full_name;
     if (o.client?.email) return o.client.email.split("@")[0];
+    if (o.guest_name) return o.guest_name;
     const fd = getFormData(o);
     return fd.customer_name || fd["Client Name"] || "Unknown Client";
   };

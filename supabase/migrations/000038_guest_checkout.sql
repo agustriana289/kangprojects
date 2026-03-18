@@ -10,3 +10,10 @@ CREATE POLICY "Guest can insert orders" ON public.store_orders
     OR
     (auth.uid() = user_id)
   );
+
+DROP POLICY IF EXISTS "Guest can view own orders" ON public.store_orders;
+CREATE POLICY "Guest can view own orders" ON public.store_orders
+  FOR SELECT TO public
+  USING (
+    (auth.uid() IS NULL AND user_id IS NULL AND guest_phone IS NOT NULL)
+  );

@@ -227,6 +227,7 @@ export default async function AdminDashboard({
     const u = userMap[o.user_id];
     if (u?.full_name) return u.full_name;
     if (u?.email) return u.email.split("@")[0];
+    if (o.guest_name) return o.guest_name;
     const fd = getFormData(o);
     return (
       fd.customer_name || fd["Client Name"] || fd["Nama"] || "Klien Offline"
