@@ -107,7 +107,7 @@ export default function CheckoutClient({ user, item, type, selectedPlan, initial
   };
 
   const { originalPrice, discountedPrice, appliedDiscount } = getFinalPricing();
-  const TAX_RATE = 0.02;
+  const TAX_RATE = user ? 0 : 0.02;
   const taxAmount = Math.round(discountedPrice * TAX_RATE);
   const totalWithTax = discountedPrice + taxAmount;
 
@@ -252,8 +252,10 @@ export default function CheckoutClient({ user, item, type, selectedPlan, initial
               </div>
             )}
             <div className="flex items-center justify-between text-sm text-slate-500 font-medium pb-4 border-b border-slate-200">
-              <span>Pajak (2%)</span>
-              <span className="text-slate-900 font-bold">Rp {taxAmount.toLocaleString('id-ID')}</span>
+              <span>{user ? "Pajak & Biaya" : "Pajak (2%)"}</span>
+              <span className="text-slate-900 font-bold">
+                {user ? "Gratis" : `Rp ${taxAmount.toLocaleString('id-ID')}`}
+              </span>
             </div>
             <div className="flex items-center justify-between text-lg pt-2">
               <span className="font-extrabold text-slate-900">Harga Total</span>
