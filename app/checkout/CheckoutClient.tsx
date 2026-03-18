@@ -107,6 +107,9 @@ export default function CheckoutClient({ user, item, type, selectedPlan, initial
   };
 
   const { originalPrice, discountedPrice, appliedDiscount } = getFinalPricing();
+  const TAX_RATE = 0.02;
+  const taxAmount = Math.round(discountedPrice * TAX_RATE);
+  const totalWithTax = discountedPrice + taxAmount;
 
   const handleCheckout = async () => {
     if (!user) {
@@ -131,7 +134,7 @@ export default function CheckoutClient({ user, item, type, selectedPlan, initial
         product_id: type === "product" ? item.id : null,
         selected_package: selectedPlan,
         form_data: formData,
-        total_amount: discountedPrice,
+        total_amount: totalWithTax,
         status: 'pending',
         payment_status: 'unpaid',
         discount_id: appliedDiscount?.id || null,
@@ -173,7 +176,7 @@ export default function CheckoutClient({ user, item, type, selectedPlan, initial
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           orderId: orderData.id,
-          amount: discountedPrice,
+          amount: totalWithTax,
           customerName,
           customerEmail,
           itemName: `${item.title} - ${selectedPlan.name}`,
@@ -249,16 +252,16 @@ export default function CheckoutClient({ user, item, type, selectedPlan, initial
               </div>
             )}
             <div className="flex items-center justify-between text-sm text-slate-500 font-medium pb-4 border-b border-slate-200">
-              <span>Pajak &amp; Biaya</span>
-              <span className="text-slate-900 font-bold">Gratis</span>
+              <span>Pajak (2%)</span>
+              <span className="text-slate-900 font-bold">Rp {taxAmount.toLocaleString('id-ID')}</span>
             </div>
             <div className="flex items-center justify-between text-lg pt-2">
               <span className="font-extrabold text-slate-900">Harga Total</span>
               <div className="text-right">
                 {appliedDiscount && (
-                  <span className="text-xs text-slate-400 line-through mr-2 font-medium">Rp {Number(originalPrice).toLocaleString('id-ID')}</span>
+                  <span className="text-xs text-slate-400 line-through mr-2 font-medium">Rp {(Number(originalPrice) + Math.round(Number(originalPrice) * TAX_RATE)).toLocaleString('id-ID')}</span>
                 )}
-                <span className="font-extrabold text-primary tracking-tight">Rp {Number(discountedPrice).toLocaleString('id-ID')}</span>
+                <span className="font-extrabold text-primary tracking-tight">Rp {totalWithTax.toLocaleString('id-ID')}</span>
               </div>
             </div>
           </div>
@@ -465,7 +468,7 @@ export default function CheckoutClient({ user, item, type, selectedPlan, initial
               ) : (
                 <>
                   <CreditCard size={18} />
-                  Checkout - Rp {Number(discountedPrice).toLocaleString('id-ID')}
+                  Checkout - Rp {totalWithTax.toLocaleString('id-ID')}
                 </>
               )}
             </button>
