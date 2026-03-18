@@ -26,9 +26,7 @@ export default async function CheckoutPage({ searchParams }: CheckoutPageProps) 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user) {
-    redirect(`/login?next=/checkout?type=${type}&slug=${slug}&plan=${encodeURIComponent(plan)}`);
-  }
+
 
   // Fetch the item based on type
   let item = null;
@@ -46,7 +44,7 @@ export default async function CheckoutPage({ searchParams }: CheckoutPageProps) 
 
   // Find the selected package to get the price
   const packages = item.packages || [];
-  const selectedPackage = packages.find((p: any) => p.name === plan);
+  const selectedPackage = packages.find((p: { name: string }) => p.name === plan);
 
   if (!selectedPackage) {
     redirect(`/${type === "product" ? "shop" : "services"}?error=invalid_plan`);
@@ -72,7 +70,7 @@ export default async function CheckoutPage({ searchParams }: CheckoutPageProps) 
           </div>
           
           <CheckoutClient 
-            user={user} 
+            user={user ?? null} 
             item={item} 
             type={type} 
             selectedPlan={selectedPackage} 
