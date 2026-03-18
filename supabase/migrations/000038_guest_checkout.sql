@@ -4,7 +4,8 @@ ALTER TABLE public.store_orders
 
 DROP POLICY IF EXISTS "Guest can insert orders" ON public.store_orders;
 CREATE POLICY "Guest can insert orders" ON public.store_orders
-  FOR INSERT WITH CHECK (
+  FOR INSERT TO public
+  WITH CHECK (
     (auth.uid() IS NULL AND user_id IS NULL AND guest_phone IS NOT NULL)
     OR
     (auth.uid() = user_id)
