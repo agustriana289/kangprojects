@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
+import { createPortal } from "react-dom";
 import { Plus, Search, Edit, Trash2, Image as ImageIcon, Loader2, X, Eye, EyeOff, Star, ChevronLeft, ChevronRight, ChevronDown } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { useToast } from "@/components/ToastProvider";
@@ -36,6 +37,7 @@ export default function PortfoliosClient() {
   const [activeCategoryId, setActiveCategoryId] = useState<string | null>(null);
   const [categoryDraft, setCategoryDraft] = useState("");
   const [savingCategory, setSavingCategory] = useState(false);
+  const [dropdownPos, setDropdownPos] = useState<{ top: number; left: number } | null>(null);
   const categoryDropdownRef = useRef<HTMLDivElement>(null);
 
   const getFormData = (o: any) => {
@@ -79,6 +81,7 @@ export default function PortfoliosClient() {
       if (categoryDropdownRef.current && !categoryDropdownRef.current.contains(e.target as Node)) {
         setActiveCategoryId(null);
         setCategoryDraft("");
+        setDropdownPos(null);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -94,6 +97,7 @@ export default function PortfoliosClient() {
     else { fetchPortfolios(); showToast("Kategori diperbarui", "success"); }
     setActiveCategoryId(null);
     setCategoryDraft("");
+    setDropdownPos(null);
     setSavingCategory(false);
   };
 
@@ -259,47 +263,20 @@ export default function PortfoliosClient() {
               </div>
               <div className="p-4 flex-1 flex flex-col">
                 <div className="flex items-center justify-between mb-1">
-                  <div className="relative" ref={activeCategoryId === p.id ? categoryDropdownRef : undefined}>
+                  <div>
                     <button
-                      onClick={() => { setActiveCategoryId(p.id); setCategoryDraft(p.category || ""); }}
+                      onClick={(e) => {
+                        const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+                        setActiveCategoryId(p.id);
+                        setCategoryDraft(p.category || "");
+                        setDropdownPos({ top: rect.bottom + 6, left: rect.left });
+                      }}
                       className="flex items-center gap-1 text-[10px] font-bold text-primary uppercase tracking-wider hover:text-secondary transition-colors group/cat"
                     >
                       {savingCategory && activeCategoryId === p.id
                         ? <Loader2 className="w-3 h-3 animate-spin" />
                         : <>{p.category || "Tanpa Kategori"}<ChevronDown className="w-2.5 h-2.5 opacity-40 group-hover/cat:opacity-100 transition-opacity" /></>}
                     </button>
-                    {activeCategoryId === p.id && (
-                      <div className="absolute left-0 top-full mt-1.5 z-30 bg-white rounded-xl shadow-xl ring-1 ring-slate-200 w-48 overflow-hidden">
-                        <div className="max-h-40 overflow-y-auto">
-                          {Array.from(new Set(portfolios.map(x => x.category).filter(Boolean))).sort().map((cat) => (
-                            <button
-                              key={cat as string}
-                              onClick={() => updateCategory(p.id, cat as string)}
-                              className={`w-full text-left px-3 py-2 text-xs font-semibold transition-colors ${
-                                p.category === cat ? "bg-indigo-50 text-primary" : "text-slate-700 hover:bg-slate-50"
-                              }`}
-                            >
-                              {cat as string}
-                            </button>
-                          ))}
-                        </div>
-                        <div className="border-t border-slate-100 p-2 flex gap-1">
-                          <input
-                            autoFocus
-                            type="text"
-                            value={categoryDraft}
-                            onChange={e => setCategoryDraft(e.target.value)}
-                            onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); updateCategory(p.id, categoryDraft); } e.stopPropagation(); }}
-                            placeholder="Kategori baru..."
-                            className="flex-1 text-xs font-medium bg-slate-50 rounded-lg px-2 py-1.5 outline-none focus:ring-2 focus:ring-primary/20 min-w-0"
-                          />
-                          <button
-                            onClick={() => updateCategory(p.id, categoryDraft)}
-                            className="px-2 py-1.5 bg-primary text-white text-xs font-bold rounded-lg hover:bg-secondary transition-colors shrink-0"
-                          >OK</button>
-                        </div>
-                      </div>
-                    )}
                   </div>
                   {p.store_orders?.order_number && (
                     <span className="text-[9px] font-bold bg-indigo-50 text-primary px-1.5 py-0.5 rounded border border-indigo-100 uppercase tracking-tighter">
@@ -463,6 +440,49 @@ export default function PortfoliosClient() {
             </form>
           </div>
         </div>
+      )}
+
+      {activeCategoryId && dropdownPos && createPortal(
+        <div
+          ref={categoryDropdownRef}
+          style={{ position: "fixed", top: dropdownPos.top, left: dropdownPos.left, zIndex: 9999 }}
+          className="bg-white rounded-xl shadow-xl ring-1 ring-slate-200 w-52 overflow-hidden"
+        >
+          <div className="max-h-40 overflow-y-auto">
+            {Array.from(new Set(portfolios.map((x: any) => x.category).filter(Boolean))).sort().map((cat) => (
+              <button
+                key={cat as string}
+                onClick={() => updateCategory(activeCategoryId, cat as string)}
+                className={`w-full text-left px-3 py-2 text-xs font-semibold transition-colors ${
+                  portfolios.find((x: any) => x.id === activeCategoryId)?.category === cat
+                    ? "bg-indigo-50 text-primary"
+                    : "text-slate-700 hover:bg-slate-50"
+                }`}
+              >
+                {cat as string}
+              </button>
+            ))}
+          </div>
+          <div className="border-t border-slate-100 p-2 flex gap-1">
+            <input
+              autoFocus
+              type="text"
+              value={categoryDraft}
+              onChange={e => setCategoryDraft(e.target.value)}
+              onKeyDown={e => {
+                if (e.key === "Enter") { e.preventDefault(); updateCategory(activeCategoryId, categoryDraft); }
+                e.stopPropagation();
+              }}
+              placeholder="Kategori baru..."
+              className="flex-1 text-xs font-medium bg-slate-50 rounded-lg px-2 py-1.5 outline-none focus:ring-2 focus:ring-primary/20 min-w-0"
+            />
+            <button
+              onClick={() => updateCategory(activeCategoryId, categoryDraft)}
+              className="px-2 py-1.5 bg-primary text-white text-xs font-bold rounded-lg hover:bg-secondary transition-colors shrink-0"
+            >OK</button>
+          </div>
+        </div>,
+        document.body
       )}
     </div>
   );
