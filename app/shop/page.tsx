@@ -2,26 +2,27 @@ import { createClient } from "@/utils/supabase/server";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import FadeIn from "@/components/landing/FadeIn";
+import SearchBar from "@/components/landing/SearchBar";
 import Link from "next/link";
 import { ArrowRight, ShoppingBag, Eye } from "lucide-react";
-
 import Pagination from "@/components/landing/Pagination";
 
-export const revalidate = 60; // Revalidate every minute
+export const revalidate = 60;
 
-
-async function getProducts(page: number, limit: number) {
+async function getProducts(page: number, limit: number, q: string) {
   const supabase = await createClient();
   const from = (page - 1) * limit;
   const to = from + limit - 1;
 
-  const { data, count } = await supabase
+  let query = supabase
     .from("store_products")
     .select("id, title, slug, description, category, images, packages", { count: "exact" })
     .eq("is_published", true)
-    .order("created_at", { ascending: false })
-    .range(from, to);
-    
+    .order("created_at", { ascending: false });
+
+  if (q) query = query.ilike("title", `%${q}%`);
+
+  const { data, count } = await query.range(from, to);
   return { data: data || [], total: count || 0 };
 }
 
@@ -35,10 +36,11 @@ export default async function ShopPage(props: { searchParams?: Promise<{ [key: s
   const searchParams = await props.searchParams;
   const pageStr = searchParams?.page;
   const page = typeof pageStr === "string" ? parseInt(pageStr, 10) : 1;
+  const q = typeof searchParams?.q === "string" ? searchParams.q : "";
   const limit = 9;
 
   const [{ data: products, total }, settings] = await Promise.all([
-    getProducts(page, limit),
+    getProducts(page, limit, q),
     getSettings(),
   ]);
   const totalPages = Math.ceil(total / limit);
@@ -49,7 +51,7 @@ export default async function ShopPage(props: { searchParams?: Promise<{ [key: s
 
       <div className="pt-8 pb-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <FadeIn delay={100} className="max-w-2xl mb-16">
+          <FadeIn delay={100} className="max-w-2xl mb-10">
             <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-sm font-medium text-primary mb-6">
               <ShoppingBag size={14} />
               <span>{settings?.shop_badge || "Produk Digital"}</span>
@@ -62,10 +64,16 @@ export default async function ShopPage(props: { searchParams?: Promise<{ [key: s
             </p>
           </FadeIn>
 
+          <FadeIn delay={150}>
+            <SearchBar placeholder="Cari produk..." />
+          </FadeIn>
+
           {products.length === 0 ? (
             <FadeIn delay={200} className="text-center py-32 rounded-3xl bg-slate-50 ring-1 ring-slate-100">
               <ShoppingBag className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-              <p className="text-slate-500 font-medium">Belum ada produk yang tersedia.</p>
+              <p className="text-slate-500 font-medium">
+                {q ? `Tidak ada produk yang cocok dengan "${q}".` : "Belum ada produk yang tersedia."}
+              </p>
               <p className="text-slate-400 text-sm mt-1">Kunjungi kembali nanti untuk produk baru yang menarik.</p>
             </FadeIn>
           ) : (
@@ -85,11 +93,8 @@ export default async function ShopPage(props: { searchParams?: Promise<{ [key: s
                           <ShoppingBag className="w-10 h-10" />
                         </div>
                       )}
-                      
 
                       <div className="absolute inset-0 bg-slate-900/10 group-hover:bg-transparent transition-colors duration-500" />
-                      
-                      
 
                       {prod.category && (
                         <div className="absolute top-4 left-4 flex flex-wrap gap-1">
@@ -99,12 +104,10 @@ export default async function ShopPage(props: { searchParams?: Promise<{ [key: s
                         </div>
                       )}
 
-                      
-
                       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                         <div className="flex items-center justify-center h-12 w-12 rounded-full bg-white text-primary shadow-lg scale-90 group-hover:scale-100 transition-transform duration-300">
-                           <Eye size={20} />
-                         </div>
+                        <div className="flex items-center justify-center h-12 w-12 rounded-full bg-white text-primary shadow-lg scale-90 group-hover:scale-100 transition-transform duration-300">
+                          <Eye size={20} />
+                        </div>
                       </div>
                     </Link>
 
@@ -128,7 +131,7 @@ export default async function ShopPage(props: { searchParams?: Promise<{ [key: s
                           </span>
                         </div>
                         <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-primary z-20 relative">
-                           Lihat Detail <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                          Lihat Detail <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
                         </div>
                       </div>
                     </div>

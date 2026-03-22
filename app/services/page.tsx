@@ -2,24 +2,27 @@ import { createClient } from "@/utils/supabase/server";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import FadeIn from "@/components/landing/FadeIn";
+import SearchBar from "@/components/landing/SearchBar";
 import Link from "next/link";
 import { ArrowRight, BriefcaseBusiness, CheckCircle2 } from "lucide-react";
 import Pagination from "@/components/landing/Pagination";
 
 export const revalidate = 60;
 
-async function getServices(page: number, limit: number) {
+async function getServices(page: number, limit: number, q: string) {
   const supabase = await createClient();
   const from = (page - 1) * limit;
   const to = from + limit - 1;
 
-  const { data, count } = await supabase
+  let query = supabase
     .from("store_services")
     .select("id, title, slug, description, category, thumbnail_url, packages", { count: "exact" })
     .eq("is_published", true)
-    .order("sort_order", { ascending: true })
-    .range(from, to);
-    
+    .order("sort_order", { ascending: true });
+
+  if (q) query = query.ilike("title", `%${q}%`);
+
+  const { data, count } = await query.range(from, to);
   return { data: data || [], total: count || 0 };
 }
 
@@ -27,10 +30,11 @@ export default async function ServicesPage(props: { searchParams?: Promise<{ [ke
   const searchParams = await props.searchParams;
   const pageStr = searchParams?.page;
   const page = typeof pageStr === "string" ? parseInt(pageStr, 10) : 1;
+  const q = typeof searchParams?.q === "string" ? searchParams.q : "";
   const limit = 9;
 
   const supabase = await createClient();
-  const { data: services, total } = await getServices(page, limit);
+  const { data: services, total } = await getServices(page, limit, q);
   const totalPages = Math.ceil(total / limit);
   const { data: settingsData } = await supabase.from("settings").select("all_services_badge, all_services_title, all_services_description").eq("id", 1).single();
   const settings = settingsData || {};
@@ -41,7 +45,7 @@ export default async function ServicesPage(props: { searchParams?: Promise<{ [ke
 
       <div className="pt-8 pb-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <FadeIn delay={100} className="max-w-2xl mb-16">
+          <FadeIn delay={100} className="max-w-2xl mb-10">
             <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-sm font-medium text-primary mb-6">
               <BriefcaseBusiness size={14} />
               <span>{(settings as any).all_services_badge || "Layanan Kami"}</span>
@@ -54,10 +58,16 @@ export default async function ServicesPage(props: { searchParams?: Promise<{ [ke
             </p>
           </FadeIn>
 
+          <FadeIn delay={150}>
+            <SearchBar placeholder="Cari layanan..." />
+          </FadeIn>
+
           {services.length === 0 ? (
             <FadeIn delay={200} className="text-center py-32 rounded-3xl bg-slate-50 ring-1 ring-slate-100">
               <BriefcaseBusiness className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-              <p className="text-slate-500 font-medium">Saat ini belum ada layanan yang dipublikasikan.</p>
+              <p className="text-slate-500 font-medium">
+                {q ? `Tidak ada layanan yang cocok dengan "${q}".` : "Saat ini belum ada layanan yang dipublikasikan."}
+              </p>
               <p className="text-slate-400 text-sm mt-1">Silakan periksa kembali nanti atau hubungi kami langsung.</p>
             </FadeIn>
           ) : (
@@ -87,13 +97,11 @@ export default async function ServicesPage(props: { searchParams?: Promise<{ [ke
                     </div>
 
                     <div className="flex flex-col flex-1 p-6">
-                      <Link
-                          href={`/services/${service.slug}`}
-                        >
-                          <h2 className="text-xl font-bold text-slate-900 leading-snug mb-3 group-hover:text-primary transition-colors line-clamp-2">
-                            {service.title}
-                          </h2>
-                        </Link>
+                      <Link href={`/services/${service.slug}`}>
+                        <h2 className="text-xl font-bold text-slate-900 leading-snug mb-3 group-hover:text-primary transition-colors line-clamp-2">
+                          {service.title}
+                        </h2>
+                      </Link>
                       {service.description && (
                         <p className="text-sm text-slate-500 leading-relaxed line-clamp-3 mb-6 flex-1">
                           {service.description}

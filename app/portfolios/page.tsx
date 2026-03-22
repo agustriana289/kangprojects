@@ -3,6 +3,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import FadeIn from "@/components/landing/FadeIn";
 import CategoryFilter from "@/components/landing/CategoryFilter";
+import SearchBar from "@/components/landing/SearchBar";
 import Pagination from "@/components/landing/Pagination";
 import { BriefcaseBusiness, Eye } from "lucide-react";
 
@@ -22,7 +23,7 @@ async function getCategories() {
   return unique.sort();
 }
 
-async function getPortfolios(page: number, limit: number, category: string) {
+async function getPortfolios(page: number, limit: number, category: string, q: string) {
   const supabase = await createClient();
   const from = (page - 1) * limit;
   const to = from + limit - 1;
@@ -33,9 +34,8 @@ async function getPortfolios(page: number, limit: number, category: string) {
     .eq("is_published", true)
     .order("created_at", { ascending: false });
 
-  if (category) {
-    query = query.eq("category", category);
-  }
+  if (category) query = query.eq("category", category);
+  if (q) query = query.ilike("title", `%${q}%`);
 
   const { data, count } = await query.range(from, to);
   return { data: data || [], total: count || 0 };
@@ -48,11 +48,12 @@ export default async function PortfoliosPage(props: {
   const pageStr = searchParams?.page;
   const page = typeof pageStr === "string" ? parseInt(pageStr, 10) : 1;
   const categoryParam = typeof searchParams?.category === "string" ? searchParams.category : "";
+  const q = typeof searchParams?.q === "string" ? searchParams.q : "";
   const limit = 9;
 
   const supabase = await createClient();
   const [{ data: portfolios, total }, categories] = await Promise.all([
-    getPortfolios(page, limit, categoryParam),
+    getPortfolios(page, limit, categoryParam, q),
     getCategories(),
   ]);
   const totalPages = Math.ceil(total / limit);
@@ -93,11 +94,17 @@ export default async function PortfoliosPage(props: {
             </FadeIn>
           )}
 
+          <FadeIn delay={180}>
+            <SearchBar placeholder="Cari portofolio..." />
+          </FadeIn>
+
           {portfolios.length === 0 ? (
             <FadeIn delay={200} className="text-center py-32 rounded-3xl bg-slate-50 ring-1 ring-slate-100">
               <BriefcaseBusiness className="w-12 h-12 text-slate-300 mx-auto mb-4" />
               <p className="text-slate-500 font-medium">
-                {categoryParam
+                {q
+                  ? `Tidak ada portofolio yang cocok dengan "${q}".`
+                  : categoryParam
                   ? `Belum ada portofolio dalam kategori "${categoryParam}".`
                   : "Belum ada portofolio yang dipublikasikan."}
               </p>
