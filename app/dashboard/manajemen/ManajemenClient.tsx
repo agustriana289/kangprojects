@@ -301,6 +301,7 @@ export default function ManajemenClient() {
 
   const [orders, setOrders] = useState<Record<string, unknown>[]>([]);
   const [servicesList, setServicesList] = useState<{ id: string; title: string; packages: { name: string }[] }[]>([]);
+  const [allCharges, setAllCharges] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState<ViewMode>("table");
   const [search, setSearch] = useState("");
@@ -353,8 +354,22 @@ export default function ManajemenClient() {
         supabase.from("store_services").select("id, title, packages").order("sort_order", { ascending: true }),
       ]);
       if (error) throw error;
-      setOrders((data || []).map(o => ({ ...o, client: profileMap[o.user_id as string] || null })));
+      const mapped = (data || []).map(o => ({ ...o, client: profileMap[o.user_id as string] || null }));
+      setOrders(mapped);
       setServicesList(svcs || []);
+
+      if (mapped.length > 0) {
+        const ids = mapped.map(o => o.id as string);
+        const { data: charges } = await supabase
+          .from("order_additional_charges")
+          .select("order_id, amount")
+          .in("order_id", ids);
+        const chargeMap: Record<string, number> = {};
+        (charges || []).forEach((c: { order_id: string; amount: number }) => {
+          chargeMap[c.order_id] = (chargeMap[c.order_id] || 0) + Number(c.amount || 0);
+        });
+        setAllCharges(chargeMap);
+      }
     } catch (err: unknown) {
       showToast((err as Error).message || "Gagal memuat data", "error");
     } finally {
@@ -393,6 +408,7 @@ export default function ManajemenClient() {
     else fetchOrders();
     setSaving(s => ({ ...s, [id]: false }));
   };
+
 
   const filtered = orders.filter(o => {
     if (!search) return true;
@@ -462,7 +478,7 @@ export default function ManajemenClient() {
   const isExpanded = (key: string) => expandedGroups[key] ?? true;
 
   const COLUMNS = [
-    { key: "no",      label: "N°",            icon: null,                                   width: "w-10" },
+    { key: "no",      label: "N°",             icon: null,                                   width: "w-10" },
     { key: "proyek",  label: "Nama Proyek",    icon: <FileText className="w-3 h-3" />,       width: "w-48" },
     { key: "klien",   label: "Nama Klien",     icon: <span>👤</span>,                        width: "w-40" },
     { key: "wa",      label: "WhatsApp Klien", icon: <Phone className="w-3 h-3" />,          width: "w-40" },
@@ -473,59 +489,60 @@ export default function ManajemenClient() {
   ];
 
   function TableRow({ o, idx }: { o: Record<string, unknown>; idx: number }) {
-    const isSaving = saving[o.id as string];
+    const id = o.id as string;
+    const isSaving = saving[id];
     const serviceId = (o.service_id as string) || "";
     const pkgName = getPackageName(o);
     return (
       <tr className="group border-b border-slate-100 hover:bg-slate-50/60 transition-colors">
         <td className="px-3 py-2 text-slate-400 text-xs select-none w-10 text-center">{idx}</td>
-        <td className="px-3 py-2">
-          <div className="flex items-center gap-1.5">
-            <FileText className="w-3 h-3 text-slate-300 shrink-0" />
-            <InlineText value={getProjectTitle(o)} placeholder="Nama proyek..."
+          <td className="px-3 py-2">
+            <div className="flex items-center gap-1.5">
+              <FileText className="w-3 h-3 text-slate-300 shrink-0" />
+              <InlineText value={getProjectTitle(o)} placeholder="Nama proyek..."
+                onChange={v => {
+                  const fd = getFormData(o);
+                  updateFormField(id, o, { form_data: { ...fd, project_title: v, "Project Title": v } });
+                }} />
+              {isSaving && <Loader2 className="w-3 h-3 animate-spin text-primary ml-1 shrink-0" />}
+            </div>
+          </td>
+          <td className="px-3 py-2">
+            <InlineText value={getClientName(o)}
               onChange={v => {
                 const fd = getFormData(o);
-                updateFormField(o.id as string, o, { form_data: { ...fd, project_title: v, "Project Title": v } });
+                const extra: Record<string, unknown> = { form_data: { ...fd, customer_name: v, "Client Name": v } };
+                if (o.guest_name !== undefined) extra.guest_name = v;
+                updateFormField(id, o, extra);
               }} />
-            {isSaving && <Loader2 className="w-3 h-3 animate-spin text-primary ml-1 shrink-0" />}
-          </div>
-        </td>
-        <td className="px-3 py-2">
-          <InlineText value={getClientName(o)}
-            onChange={v => {
-              const fd = getFormData(o);
-              const extra: Record<string, unknown> = { form_data: { ...fd, customer_name: v, "Client Name": v } };
-              if (o.guest_name !== undefined) extra.guest_name = v;
-              updateFormField(o.id as string, o, extra);
-            }} />
-        </td>
-        <td className="px-3 py-2">
-          <InlineText value={getClientWhatsApp(o)} placeholder="+62..."
-            onChange={v => {
-              const fd = getFormData(o);
-              const extra: Record<string, unknown> = { form_data: { ...fd, whatsapp: v } };
-              if (o.guest_phone !== undefined) extra.guest_phone = v;
-              updateFormField(o.id as string, o, extra);
-            }} />
-        </td>
-        <td className="px-3 py-2">
-          <InlineLayanan serviceId={serviceId} packageName={pkgName} services={servicesList}
-            onChangeService={newId => {
-              const newSvc = servicesList.find(s => s.id === newId);
-              updateServiceAndPackage(o.id as string, newId, newSvc?.packages?.[0]?.name || "", o);
-            }}
-            onChangePackage={newPkg => updateServiceAndPackage(o.id as string, serviceId, newPkg, o)} />
-        </td>
-        <td className="px-3 py-2">
-          <InlineNumber value={Number(o.total_amount || 0)} onChange={v => updateField(o.id as string, "total_amount", v)} />
-        </td>
-        <td className="px-3 py-2">
-          <InlineNumber value={Number(o.discount_amount || 0)} onChange={v => updateField(o.id as string, "discount_amount", v)} />
-        </td>
-        <td className="px-3 py-2">
-          <InlineStatus value={(o.status as string) || "pending"} onChange={v => updateField(o.id as string, "status", v)} />
-        </td>
-      </tr>
+          </td>
+          <td className="px-3 py-2">
+            <InlineText value={getClientWhatsApp(o)} placeholder="+62..."
+              onChange={v => {
+                const fd = getFormData(o);
+                const extra: Record<string, unknown> = { form_data: { ...fd, whatsapp: v } };
+                if (o.guest_phone !== undefined) extra.guest_phone = v;
+                updateFormField(id, o, extra);
+              }} />
+          </td>
+          <td className="px-3 py-2">
+            <InlineLayanan serviceId={serviceId} packageName={pkgName} services={servicesList}
+              onChangeService={newId => {
+                const newSvc = servicesList.find(s => s.id === newId);
+                updateServiceAndPackage(id, newId, newSvc?.packages?.[0]?.name || "", o);
+              }}
+              onChangePackage={newPkg => updateServiceAndPackage(id, serviceId, newPkg, o)} />
+          </td>
+          <td className="px-3 py-2">
+            <InlineNumber value={Number(o.total_amount || 0)} onChange={v => updateField(id, "total_amount", v)} />
+          </td>
+          <td className="px-3 py-2">
+            <InlineNumber value={Number(o.discount_amount || 0)} onChange={v => updateField(id, "discount_amount", v)} />
+          </td>
+      <td className="px-3 py-2">
+            <InlineStatus value={(o.status as string) || "pending"} onChange={v => updateField(id, "status", v)} />
+          </td>
+        </tr>
     );
   }
 
@@ -575,16 +592,34 @@ export default function ManajemenClient() {
                       </td>
                     </tr>
                     {expanded && group.rows.map((o, i) => <TableRow key={o.id as string} o={o} idx={i + 1} />)}
-                    {expanded && (
-                      <tr className="border-b border-slate-100 bg-slate-50/30">
-                        <td colSpan={4} />
-                        <td className="px-3 py-2 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">JML</td>
-                        <td className="px-3 py-2">
-                          <span className="text-sm font-bold" style={{ color: "#1d4ed8" }}>{IDR_FULL(groupTotal)}</span>
-                        </td>
-                        <td colSpan={3} />
-                      </tr>
-                    )}
+                    {expanded && (() => {
+                      const extraTotal = group.rows.reduce((s, o) => s + (allCharges[o.id as string] || 0), 0);
+                      const grandTotal = groupTotal + extraTotal;
+                      return (
+                        <tr className="border-b border-slate-100 bg-slate-50/30">
+                          <td colSpan={5} />
+                          <td className="px-3 py-2">
+                            <div className="space-y-0.5">
+                              <div className="flex items-center justify-between gap-4">
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Harga</span>
+                                <span className="text-sm font-bold text-slate-600">{IDR_FULL(groupTotal)}</span>
+                              </div>
+                              {extraTotal > 0 && (
+                                <div className="flex items-center justify-between gap-4">
+                                  <span className="text-[10px] font-bold uppercase tracking-wider text-amber-500">+ Biaya Tambahan</span>
+                                  <span className="text-sm font-bold text-amber-600">{IDR_FULL(extraTotal)}</span>
+                                </div>
+                              )}
+                              <div className="flex items-center justify-between gap-4 pt-1 border-t border-slate-200">
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-primary">JML</span>
+                                <span className="text-sm font-bold" style={{ color: "#1d4ed8" }}>{IDR_FULL(grandTotal)}</span>
+                              </div>
+                            </div>
+                          </td>
+                          <td colSpan={3} />
+                        </tr>
+                      );
+                    })()}
                   </React.Fragment>
                 );
               })}
