@@ -2,23 +2,21 @@
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
-  BarChart3, LayoutGrid, Tag, Filter, ArrowUpDown,
-  Zap, Search, SlidersHorizontal, Plus, ChevronDown,
-  ChevronRight, Loader2, Check, FileText,
-  Phone
+  BarChart3, LayoutGrid, Tag, Search, Plus, ChevronDown,
+  ChevronRight, Loader2, Check, FileText, Phone, Users, Briefcase
 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { useToast } from "@/components/ToastProvider";
 
-type ViewMode = "chart" | "table" | "status";
+type ViewMode = "table" | "status" | "layanan" | "klien" | "grafik";
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; dot: string }> = {
-  pending:         { label: "No Status",       color: "#9b9b9b", bg: "#f5f5f4", dot: "#9b9b9b" },
-  waiting_payment: { label: "Belum Dibayar",   color: "#b45309", bg: "#fffbeb", dot: "#f59e0b" },
-  cancelled:       { label: "Dibatalkan",      color: "#dc2626", bg: "#fef2f2", dot: "#ef4444" },
-  paid:            { label: "Dibayar",         color: "#1d4ed8", bg: "#eff6ff", dot: "#3b82f6" },
-  processing:      { label: "Dikerjakan",      color: "#7c3aed", bg: "#f5f3ff", dot: "#8b5cf6" },
-  completed:       { label: "Selesai",         color: "#047857", bg: "#ecfdf5", dot: "#10b981" },
+  pending:         { label: "No Status",     color: "#9b9b9b", bg: "#f5f5f4", dot: "#9b9b9b" },
+  waiting_payment: { label: "Belum Dibayar", color: "#b45309", bg: "#fffbeb", dot: "#f59e0b" },
+  cancelled:       { label: "Dibatalkan",    color: "#dc2626", bg: "#fef2f2", dot: "#ef4444" },
+  paid:            { label: "Dibayar",       color: "#1d4ed8", bg: "#eff6ff", dot: "#3b82f6" },
+  processing:      { label: "Dikerjakan",    color: "#7c3aed", bg: "#f5f3ff", dot: "#8b5cf6" },
+  completed:       { label: "Selesai",       color: "#047857", bg: "#ecfdf5", dot: "#10b981" },
 };
 
 const ALL_STATUSES = Object.keys(STATUS_CONFIG);
@@ -46,78 +44,34 @@ function StatusBadge({ status, onClick }: { status: string; onClick?: () => void
   );
 }
 
-function InlineCell({
+function InlineText({
   value,
   onChange,
-  type = "text",
-  options,
+  placeholder,
 }: {
-  value: string | number;
+  value: string;
   onChange: (v: string) => void;
-  type?: "text" | "number" | "select" | "status";
-  options?: string[];
+  placeholder?: string;
 }) {
   const [editing, setEditing] = useState(false);
-  const [draft, setDraft] = useState(String(value));
-  const ref = useRef<HTMLInputElement | HTMLSelectElement>(null);
-
-  useEffect(() => { setDraft(String(value)); }, [value]);
+  const [draft, setDraft] = useState(value);
+  useEffect(() => { setDraft(value); }, [value]);
 
   const commit = () => {
     setEditing(false);
-    if (draft !== String(value)) onChange(draft);
+    if (draft !== value) onChange(draft);
   };
-
-  if (type === "status" || type === "select") {
-    const opts = type === "status" ? ALL_STATUSES : (options || []);
-    return (
-      <div className="relative">
-        {type === "status" ? (
-          <StatusBadge status={draft} onClick={() => setEditing(e => !e)} />
-        ) : (
-          <button
-            onClick={() => setEditing(e => !e)}
-            className="text-sm text-slate-700 hover:bg-slate-100 px-2 py-1 rounded transition-colors text-left w-full"
-          >
-            {draft || <span className="text-slate-300 italic">—</span>}
-          </button>
-        )}
-        {editing && (
-          <div className="absolute z-50 top-full left-0 mt-1 bg-white shadow-xl border border-slate-200 rounded-xl overflow-hidden min-w-[160px]">
-            {opts.map(opt => {
-              const cfg = type === "status" ? STATUS_CONFIG[opt] : null;
-              return (
-                <button
-                  key={opt}
-                  onClick={() => { setDraft(opt); setEditing(false); onChange(opt); }}
-                  className="flex items-center gap-2 w-full px-3 py-2 hover:bg-slate-50 text-left transition-colors"
-                >
-                  {cfg && <span style={{ background: cfg.dot }} className="w-2 h-2 rounded-full shrink-0" />}
-                  <span
-                    style={cfg ? { color: cfg.color } : {}}
-                    className="text-sm font-medium"
-                  >
-                    {cfg ? cfg.label : opt}
-                  </span>
-                  {draft === opt && <Check className="w-3 h-3 ml-auto text-primary" />}
-                </button>
-              );
-            })}
-          </div>
-        )}
-      </div>
-    );
-  }
 
   return editing ? (
     <input
-      ref={ref as React.RefObject<HTMLInputElement>}
       autoFocus
-      type={type}
       value={draft}
       onChange={e => setDraft(e.target.value)}
       onBlur={commit}
-      onKeyDown={e => { if (e.key === "Enter") commit(); if (e.key === "Escape") { setDraft(String(value)); setEditing(false); } }}
+      onKeyDown={e => {
+        if (e.key === "Enter") commit();
+        if (e.key === "Escape") { setDraft(value); setEditing(false); }
+      }}
       className="w-full text-sm border-0 outline-none bg-blue-50 rounded px-2 py-0.5 ring-2 ring-primary/30 text-slate-900 font-medium"
     />
   ) : (
@@ -125,25 +79,180 @@ function InlineCell({
       onClick={() => setEditing(true)}
       className="text-sm text-slate-700 hover:bg-slate-50 px-2 py-0.5 rounded cursor-text min-h-[26px] transition-colors"
     >
-      {value !== "" && value !== null && value !== undefined
-        ? (type === "number" ? IDR_FULL(Number(value)) : String(value))
-        : <span className="text-slate-300 italic">—</span>}
+      {value || <span className="text-slate-300 italic">{placeholder || "—"}</span>}
     </div>
   );
 }
 
-function BarChartView({ orders, getLabel }: { orders: any[]; getLabel: (o: any) => string }) {
+function InlineNumber({
+  value,
+  onChange,
+}: {
+  value: number;
+  onChange: (v: number) => void;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(String(value));
+  useEffect(() => { setDraft(String(value)); }, [value]);
+
+  const commit = () => {
+    setEditing(false);
+    const num = Number(draft.replace(/\D/g, ""));
+    if (num !== value) onChange(num);
+  };
+
+  return editing ? (
+    <input
+      autoFocus
+      type="number"
+      value={draft}
+      onChange={e => setDraft(e.target.value)}
+      onBlur={commit}
+      onKeyDown={e => {
+        if (e.key === "Enter") commit();
+        if (e.key === "Escape") { setDraft(String(value)); setEditing(false); }
+      }}
+      className="w-full text-sm border-0 outline-none bg-blue-50 rounded px-2 py-0.5 ring-2 ring-primary/30 text-slate-900 font-medium"
+    />
+  ) : (
+    <div
+      onClick={() => setEditing(true)}
+      className="text-sm text-slate-700 hover:bg-slate-50 px-2 py-0.5 rounded cursor-text min-h-[26px] transition-colors"
+    >
+      {value > 0 ? IDR_FULL(value) : <span className="text-slate-300 italic">—</span>}
+    </div>
+  );
+}
+
+function InlineStatus({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  return (
+    <div className="relative" ref={ref}>
+      <StatusBadge status={value} onClick={() => setOpen(o => !o)} />
+      {open && (
+        <div className="absolute z-50 top-full left-0 mt-1 bg-white shadow-xl border border-slate-200 rounded-xl overflow-hidden min-w-[160px]">
+          {ALL_STATUSES.map(st => {
+            const cfg = STATUS_CONFIG[st];
+            return (
+              <button
+                key={st}
+                onClick={() => { onChange(st); setOpen(false); }}
+                className="flex items-center gap-2 w-full px-3 py-2 hover:bg-slate-50 text-left transition-colors"
+              >
+                <span style={{ background: cfg.dot }} className="w-2 h-2 rounded-full shrink-0" />
+                <span style={{ color: cfg.color }} className="text-sm font-medium">{cfg.label}</span>
+                {value === st && <Check className="w-3 h-3 ml-auto text-primary" />}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function InlineLayanan({
+  serviceId,
+  packageName,
+  services,
+  onChangeService,
+  onChangePackage,
+}: {
+  serviceId: string;
+  packageName: string;
+  services: { id: string; title: string; packages: { name: string }[] }[];
+  onChangeService: (serviceId: string) => void;
+  onChangePackage: (pkgName: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  const currentService = services.find(s => s.id === serviceId);
+  const packages: { name: string }[] = currentService?.packages || [];
+
+  const display = currentService
+    ? `${currentService.title}${packageName && packageName !== "—" ? ` - ${packageName}` : ""}`
+    : packageName && packageName !== "—" ? packageName : "—";
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  return (
+    <div className="relative" ref={ref}>
+      <div
+        onClick={() => setOpen(o => !o)}
+        className="text-sm text-slate-700 hover:bg-slate-50 px-2 py-0.5 rounded cursor-pointer min-h-[26px] transition-colors"
+      >
+        {display || <span className="text-slate-300 italic">—</span>}
+      </div>
+      {open && (
+        <div className="absolute z-50 top-full left-0 mt-1 bg-white shadow-xl border border-slate-200 rounded-xl overflow-hidden min-w-[240px]">
+          <div className="px-3 py-2 border-b border-slate-100">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Layanan</p>
+            <div className="space-y-0.5 max-h-40 overflow-y-auto">
+              {services.map(svc => (
+                <button
+                  key={svc.id}
+                  onClick={() => { onChangeService(svc.id); }}
+                  className="flex items-center gap-2 w-full px-2 py-1.5 hover:bg-slate-50 text-left rounded transition-colors"
+                >
+                  <span className="text-sm text-slate-700 flex-1">{svc.title}</span>
+                  {svc.id === serviceId && <Check className="w-3 h-3 text-primary shrink-0" />}
+                </button>
+              ))}
+            </div>
+          </div>
+          {packages.length > 0 && (
+            <div className="px-3 py-2">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Paket</p>
+              <div className="space-y-0.5">
+                {packages.map(pkg => (
+                  <button
+                    key={pkg.name}
+                    onClick={() => { onChangePackage(pkg.name); setOpen(false); }}
+                    className="flex items-center gap-2 w-full px-2 py-1.5 hover:bg-slate-50 text-left rounded transition-colors"
+                  >
+                    <span className="text-sm text-slate-700 flex-1">{pkg.name}</span>
+                    {pkg.name === packageName && <Check className="w-3 h-3 text-primary shrink-0" />}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function BarChartView({ orders }: { orders: Record<string, unknown>[] }) {
   type MonthBucket = { label: string; total: number; byStatus: Record<string, number> };
   const buckets: Record<string, MonthBucket> = {};
 
   orders.forEach(o => {
-    const d = new Date(o.created_at);
+    const d = new Date(o.created_at as string);
     const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-    const monthLabel = d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+    const monthLabel = d.toLocaleDateString("id-ID", { month: "short", year: "numeric" });
     if (!buckets[key]) buckets[key] = { label: monthLabel, total: 0, byStatus: {} };
     const amt = Number(o.total_amount || 0);
     buckets[key].total += amt;
-    buckets[key].byStatus[o.status] = (buckets[key].byStatus[o.status] || 0) + amt;
+    const st = o.status as string;
+    buckets[key].byStatus[st] = (buckets[key].byStatus[st] || 0) + amt;
   });
 
   const sorted = Object.entries(buckets).sort(([a], [b]) => a.localeCompare(b)).map(([, v]) => v);
@@ -166,7 +275,10 @@ function BarChartView({ orders, getLabel }: { orders: any[]; getLabel: (o: any) 
           return (
             <div key={i} className="flex flex-col items-center gap-2 flex-1 min-w-[60px]">
               <span className="text-[10px] font-bold text-slate-500 whitespace-nowrap">{IDR(bucket.total)}</span>
-              <div className="relative w-full flex flex-col-reverse rounded-t-md overflow-hidden" style={{ height: `${Math.max(barHeight, 4)}%`, minHeight: 4 }}>
+              <div
+                className="relative w-full flex flex-col-reverse rounded-t-md overflow-hidden"
+                style={{ height: `${Math.max(barHeight, 4)}%`, minHeight: 4 }}
+              >
                 {ALL_STATUSES.map(st => {
                   const amt = bucket.byStatus[st] || 0;
                   if (!amt) return null;
@@ -188,7 +300,6 @@ function BarChartView({ orders, getLabel }: { orders: any[]; getLabel: (o: any) 
           <div className="flex-1 flex items-center justify-center text-slate-300 text-sm">Belum ada data</div>
         )}
       </div>
-
       <div className="flex flex-wrap items-center gap-4 mt-6 justify-center">
         {ALL_STATUSES.map(st => (
           <div key={st} className="flex items-center gap-1.5">
@@ -205,61 +316,82 @@ export default function ManajemenClient() {
   const supabase = createClient();
   const { showToast } = useToast();
 
-  const [orders, setOrders] = useState<any[]>([]);
+  const [orders, setOrders] = useState<Record<string, unknown>[]>([]);
+  const [servicesList, setServicesList] = useState<{ id: string; title: string; packages: { name: string }[] }[]>([]);
   const [loading, setLoading] = useState(true);
-  const [view, setView] = useState<ViewMode>("chart");
+  const [view, setView] = useState<ViewMode>("table");
   const [search, setSearch] = useState("");
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
   const [saving, setSaving] = useState<Record<string, boolean>>({});
 
-  const getFormData = (o: any) => {
-    try { return typeof o.form_data === "string" ? JSON.parse(o.form_data) : (o.form_data || {}); }
+  const getFormData = (o: Record<string, unknown>) => {
+    try { return typeof o.form_data === "string" ? JSON.parse(o.form_data) : (o.form_data as Record<string, unknown> || {}); }
     catch { return {}; }
   };
 
-  const getInvoiceNumber = (o: any) => o.order_number || "—";
-
-  const getClientName = (o: any) => {
-    if (o.client?.full_name) return o.client.full_name;
-    if (o.client?.email) return o.client.email.split("@")[0];
-    if (o.guest_name) return o.guest_name;
+  const getProjectTitle = (o: Record<string, unknown>) => {
     const fd = getFormData(o);
-    return fd.customer_name || fd["Client Name"] || "—";
+    return (fd["project_title"] || fd["Project Title"] || fd["Nama Logo"] || "") as string;
   };
 
-  const getClientWhatsApp = (o: any) => {
-    if (o.guest_phone) return o.guest_phone;
+  const getClientName = (o: Record<string, unknown>) => {
+    const client = o.client as Record<string, unknown> | null;
+    if (client?.full_name) return client.full_name as string;
+    if (client?.email) return (client.email as string).split("@")[0];
+    if (o.guest_name) return o.guest_name as string;
     const fd = getFormData(o);
-    return fd.whatsapp || fd["whatsapp"] || "—";
+    return (fd.customer_name || fd["Client Name"] || "—") as string;
   };
 
-  const getService = (o: any) => o.store_services?.title || o.store_products?.title || o.custom_item_name || "—";
+  const getClientWhatsApp = (o: Record<string, unknown>) => {
+    if (o.guest_phone) return o.guest_phone as string;
+    const fd = getFormData(o);
+    return (fd.whatsapp || "—") as string;
+  };
 
-  const getPackage = (o: any) => {
+  const getServiceTitle = (o: Record<string, unknown>) => {
+    const svc = o.store_services as Record<string, unknown> | null;
+    const prd = o.store_products as Record<string, unknown> | null;
+    return (svc?.title || prd?.title || o.custom_item_name || "") as string;
+  };
+
+  const getPackageName = (o: Record<string, unknown>) => {
     try {
       const sp = typeof o.selected_package === "string"
         ? JSON.parse(o.selected_package)
-        : o.selected_package;
-      return sp?.name || o.custom_package_name || "—";
-    } catch { return o.custom_package_name || "—"; }
+        : o.selected_package as Record<string, unknown> | null;
+      return (sp?.name || o.custom_package_name || "") as string;
+    } catch { return (o.custom_package_name || "") as string; }
+  };
+
+  const getServiceDisplay = (o: Record<string, unknown>) => {
+    const svc = getServiceTitle(o);
+    const pkg = getPackageName(o);
+    if (svc && pkg) return `${svc} - ${pkg}`;
+    if (svc) return svc;
+    return "—";
   };
 
   const fetchOrders = useCallback(async () => {
     setLoading(true);
     try {
       const { data: profiles } = await supabase.from("users").select("id, full_name, email");
-      const profileMap: Record<string, any> = {};
-      (profiles || []).forEach((p: any) => { if (p.id) profileMap[p.id] = p; });
+      const profileMap: Record<string, Record<string, unknown>> = {};
+      (profiles || []).forEach((p: Record<string, unknown>) => { if (p.id) profileMap[p.id as string] = p; });
 
-      const { data, error } = await supabase
-        .from("store_orders")
-        .select("*, store_products(title, category), store_services(title, category)")
-        .order("created_at", { ascending: false });
+      const [{ data, error }, { data: svcs }] = await Promise.all([
+        supabase
+          .from("store_orders")
+          .select("*, store_products(title, category), store_services(title, category)")
+          .order("created_at", { ascending: false }),
+        supabase.from("store_services").select("id, title, packages").order("sort_order", { ascending: true }),
+      ]);
 
       if (error) throw error;
-      setOrders((data || []).map((o: any) => ({ ...o, client: profileMap[o.user_id] || null })));
-    } catch (err: any) {
-      showToast(err.message || "Gagal memuat data", "error");
+      setOrders((data || []).map(o => ({ ...o, client: profileMap[o.user_id as string] || null })));
+      setServicesList(svcs || []);
+    } catch (err: unknown) {
+      showToast((err as Error).message || "Gagal memuat data", "error");
     } finally {
       setLoading(false);
     }
@@ -269,35 +401,33 @@ export default function ManajemenClient() {
 
   const updateField = async (id: string, field: string, value: string | number) => {
     setSaving(s => ({ ...s, [id]: true }));
-    const payload: any = { [field]: value };
-    if (field === "total_amount") payload[field] = Number(value);
-    const { error } = await supabase.from("store_orders").update(payload).eq("id", id);
+    const { error } = await supabase.from("store_orders").update({ [field]: value }).eq("id", id);
     if (error) showToast("Gagal menyimpan", "error");
-    else {
-      setOrders(prev => prev.map(o => o.id === id ? { ...o, [field]: value } : o));
-    }
+    else setOrders(prev => prev.map(o => o.id === id ? { ...o, [field]: value } : o));
     setSaving(s => ({ ...s, [id]: false }));
   };
 
-  const updateClientName = async (id: string, name: string, o: any) => {
+  const updateFormField = async (id: string, key: string, value: string, o: Record<string, unknown>, extra?: Record<string, unknown>) => {
     setSaving(s => ({ ...s, [id]: true }));
     const fd = getFormData(o);
-    const updatedFd = { ...fd, customer_name: name, "Client Name": name };
-    const payload: any = { form_data: updatedFd };
-    if (o.guest_name !== undefined) payload.guest_name = name;
+    const updatedFd = { ...fd, [key]: value };
+    const payload: Record<string, unknown> = { form_data: updatedFd, ...extra };
     const { error } = await supabase.from("store_orders").update(payload).eq("id", id);
     if (error) showToast("Gagal menyimpan", "error");
     else fetchOrders();
     setSaving(s => ({ ...s, [id]: false }));
   };
 
-  const updateClientPhone = async (id: string, phone: string, o: any) => {
+  const updateServiceAndPackage = async (id: string, serviceId: string, pkgName: string, o: Record<string, unknown>) => {
     setSaving(s => ({ ...s, [id]: true }));
     const fd = getFormData(o);
-    const updatedFd = { ...fd, whatsapp: phone };
-    const payload: any = { form_data: updatedFd };
-    if (o.guest_phone !== undefined) payload.guest_phone = phone;
-    const { error } = await supabase.from("store_orders").update(payload).eq("id", id);
+    const updatedFd = { ...fd };
+    const pkgObj = { name: pkgName };
+    const { error } = await supabase.from("store_orders").update({
+      service_id: serviceId,
+      selected_package: pkgObj,
+      form_data: updatedFd,
+    }).eq("id", id);
     if (error) showToast("Gagal menyimpan", "error");
     else fetchOrders();
     setSaving(s => ({ ...s, [id]: false }));
@@ -307,17 +437,17 @@ export default function ManajemenClient() {
     if (!search) return true;
     const q = search.toLowerCase();
     return (
-      getInvoiceNumber(o).toLowerCase().includes(q) ||
+      getProjectTitle(o).toLowerCase().includes(q) ||
       getClientName(o).toLowerCase().includes(q) ||
-      getService(o).toLowerCase().includes(q) ||
-      getPackage(o).toLowerCase().includes(q)
+      getServiceTitle(o).toLowerCase().includes(q) ||
+      getPackageName(o).toLowerCase().includes(q)
     );
   });
 
-  const groupByMonth = (rows: any[]) => {
-    const groups: Record<string, { label: string; rows: any[]; key: string }> = {};
+  const groupByMonth = (rows: Record<string, unknown>[]) => {
+    const groups: Record<string, { label: string; rows: Record<string, unknown>[]; key: string }> = {};
     rows.forEach(o => {
-      const d = new Date(o.created_at);
+      const d = new Date(o.created_at as string);
       const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
       const label = d.toLocaleDateString("id-ID", { month: "long", year: "numeric" });
       if (!groups[key]) groups[key] = { label, rows: [], key };
@@ -326,98 +456,147 @@ export default function ManajemenClient() {
     return Object.entries(groups).sort(([a], [b]) => b.localeCompare(a)).map(([, v]) => v);
   };
 
-  const groupByStatus = (rows: any[]) => {
-    const groups: Record<string, { label: string; rows: any[]; key: string; cfg: any }> = {};
+  const groupByStatus = (rows: Record<string, unknown>[]) => {
+    const groups: Record<string, { label: string; rows: Record<string, unknown>[]; key: string; cfg: typeof STATUS_CONFIG[string] }> = {};
     ALL_STATUSES.forEach(st => {
       groups[st] = { label: STATUS_CONFIG[st].label, rows: [], key: st, cfg: STATUS_CONFIG[st] };
     });
     rows.forEach(o => {
-      const st = o.status || "pending";
+      const st = (o.status as string) || "pending";
       if (!groups[st]) groups[st] = { label: STATUS_CONFIG[st]?.label || st, rows: [], key: st, cfg: STATUS_CONFIG[st] };
       groups[st].rows.push(o);
     });
     return Object.values(groups).filter(g => g.rows.length > 0);
   };
 
-  const toggleGroup = (key: string) => {
-    setExpandedGroups(eg => ({ ...eg, [key]: !(eg[key] ?? true) }));
+  const groupByLayanan = (rows: Record<string, unknown>[]) => {
+    const groups: Record<string, { label: string; rows: Record<string, unknown>[]; key: string }> = {};
+    rows.forEach(o => {
+      const svc = getServiceTitle(o) || "Layanan Lainnya";
+      if (!groups[svc]) groups[svc] = { label: svc, rows: [], key: svc };
+      groups[svc].rows.push(o);
+    });
+    return Object.values(groups).sort((a, b) => a.label.localeCompare(b.label));
   };
 
+  const groupByKlien = (rows: Record<string, unknown>[]) => {
+    const groups: Record<string, { label: string; rows: Record<string, unknown>[]; key: string }> = {};
+    rows.forEach(o => {
+      const name = getClientName(o) || "Klien Tidak Dikenal";
+      if (!groups[name]) groups[name] = { label: name, rows: [], key: name };
+      groups[name].rows.push(o);
+    });
+    return Object.values(groups).sort((a, b) => a.label.localeCompare(b.label));
+  };
+
+  const toggleGroup = (key: string) => setExpandedGroups(eg => ({ ...eg, [key]: !(eg[key] ?? true) }));
   const isExpanded = (key: string) => expandedGroups[key] ?? true;
 
   const COLUMNS = [
-    { key: "no", label: "N°", width: "w-10" },
-    { key: "invoice", label: "Invoice Number", icon: <FileText className="w-3 h-3" />, width: "w-44" },
-    { key: "client_name", label: "Customer Name", icon: <span className="text-slate-400">👤</span>, width: "w-40" },
-    { key: "whatsapp", label: "Customer WhatsApp", icon: <Phone className="w-3 h-3" />, width: "w-44" },
-    { key: "service", label: "Service", icon: <span className="text-slate-400">🛍️</span>, width: "w-36" },
-    { key: "package", label: "Package", icon: <span className="text-slate-400">📦</span>, width: "w-28" },
-    { key: "total_amount", label: "Total Price", icon: <span className="text-slate-400">💰</span>, width: "w-36" },
-    { key: "discount", label: "Discount", icon: <span className="text-slate-400">🏷️</span>, width: "w-36" },
-    { key: "status", label: "Status", icon: <span className="text-slate-400">🕐</span>, width: "w-36" },
+    { key: "no",           label: "N°",              icon: null,                                        width: "w-10" },
+    { key: "proyek",       label: "Nama Proyek",      icon: <FileText className="w-3 h-3" />,           width: "w-48" },
+    { key: "klien",        label: "Nama Klien",       icon: <span>👤</span>,                            width: "w-40" },
+    { key: "whatsapp",     label: "WhatsApp Klien",   icon: <Phone className="w-3 h-3" />,              width: "w-40" },
+    { key: "layanan",      label: "Layanan",          icon: <span>🛍️</span>,                           width: "w-52" },
+    { key: "harga",        label: "Total Harga",      icon: <span>💰</span>,                            width: "w-36" },
+    { key: "diskon",       label: "Diskon",           icon: <span>🏷️</span>,                           width: "w-36" },
+    { key: "status",       label: "Status",           icon: <span>🕐</span>,                            width: "w-36" },
   ];
 
-  function TableRow({ o, idx }: { o: any; idx: number }) {
-    const isSaving = saving[o.id];
+  function TableRow({ o, idx }: { o: Record<string, unknown>; idx: number }) {
+    const isSaving = saving[o.id as string];
+    const serviceId = (o.service_id as string) || "";
+    const pkgName = getPackageName(o);
+
     return (
-      <tr className="group border-b border-slate-100 hover:bg-slate-50/60 transition-colors relative">
+      <tr className="group border-b border-slate-100 hover:bg-slate-50/60 transition-colors">
         <td className="px-3 py-2 text-slate-400 text-xs select-none w-10 text-center">{idx}</td>
         <td className="px-3 py-2">
           <div className="flex items-center gap-1.5">
             <FileText className="w-3 h-3 text-slate-300 shrink-0" />
-            <span className="text-xs font-mono text-slate-600">{getInvoiceNumber(o)}</span>
-            {isSaving && <Loader2 className="w-3 h-3 animate-spin text-primary ml-1" />}
+            <InlineText
+              value={getProjectTitle(o)}
+              placeholder="Nama proyek..."
+              onChange={v => updateFormField(o.id as string, "project_title", v, o, { form_data: { ...getFormData(o), project_title: v, "Project Title": v } })}
+            />
+            {isSaving && <Loader2 className="w-3 h-3 animate-spin text-primary ml-1 shrink-0" />}
           </div>
         </td>
         <td className="px-3 py-2">
-          <InlineCell
+          <InlineText
             value={getClientName(o)}
-            onChange={v => updateClientName(o.id, v, o)}
+            onChange={v => {
+              const fd = getFormData(o);
+              const extra: Record<string, unknown> = {};
+              if (o.guest_name !== undefined) extra.guest_name = v;
+              updateFormField(o.id as string, "customer_name", v, o, { form_data: { ...fd, customer_name: v, "Client Name": v }, ...extra });
+            }}
           />
         </td>
         <td className="px-3 py-2">
-          <InlineCell
+          <InlineText
             value={getClientWhatsApp(o)}
-            onChange={v => updateClientPhone(o.id, v, o)}
+            placeholder="+62..."
+            onChange={v => {
+              const fd = getFormData(o);
+              const extra: Record<string, unknown> = {};
+              if (o.guest_phone !== undefined) extra.guest_phone = v;
+              updateFormField(o.id as string, "whatsapp", v, o, { form_data: { ...fd, whatsapp: v }, ...extra });
+            }}
           />
         </td>
         <td className="px-3 py-2">
-          <span className="text-sm text-slate-600">{getService(o)}</span>
+          <InlineLayanan
+            serviceId={serviceId}
+            packageName={pkgName}
+            services={servicesList}
+            onChangeService={newSvcId => {
+              const newSvc = servicesList.find(s => s.id === newSvcId);
+              const firstPkg = newSvc?.packages?.[0]?.name || "";
+              updateServiceAndPackage(o.id as string, newSvcId, firstPkg, o);
+            }}
+            onChangePackage={newPkg => {
+              updateServiceAndPackage(o.id as string, serviceId, newPkg, o);
+            }}
+          />
         </td>
         <td className="px-3 py-2">
-          <span className="text-sm text-slate-600">{getPackage(o)}</span>
-        </td>
-        <td className="px-3 py-2">
-          <InlineCell
+          <InlineNumber
             value={Number(o.total_amount || 0)}
-            type="number"
-            onChange={v => updateField(o.id, "total_amount", v)}
+            onChange={v => updateField(o.id as string, "total_amount", v)}
           />
         </td>
         <td className="px-3 py-2">
-          <span className="text-sm text-slate-500">
-            {o.discount_amount ? IDR_FULL(Number(o.discount_amount)) : "—"}
-          </span>
+          <InlineNumber
+            value={Number(o.discount_amount || 0)}
+            onChange={v => updateField(o.id as string, "discount_amount", v)}
+          />
         </td>
         <td className="px-3 py-2">
-          <InlineCell
-            value={o.status || "pending"}
-            type="status"
-            onChange={v => updateField(o.id, "status", v)}
+          <InlineStatus
+            value={(o.status as string) || "pending"}
+            onChange={v => updateField(o.id as string, "status", v)}
           />
         </td>
       </tr>
     );
   }
 
-  function GroupedTable({ groups }: { groups: { label: string; rows: any[]; key: string; cfg?: any }[] }) {
+  function GroupedTable({
+    groups,
+  }: {
+    groups: { label: string; rows: Record<string, unknown>[]; key: string; cfg?: typeof STATUS_CONFIG[string] }[];
+  }) {
     return (
       <div className="flex-1 overflow-auto">
-        <table className="w-full text-left min-w-[900px]">
+        <table className="w-full text-left min-w-[960px]">
           <thead className="sticky top-0 z-10 bg-white border-b border-slate-200">
             <tr>
               {COLUMNS.map(col => (
-                <th key={col.key} className={`px-3 py-2.5 text-[11px] font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap ${col.width}`}>
+                <th
+                  key={col.key}
+                  className={`px-3 py-2.5 text-[11px] font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap ${col.width}`}
+                >
                   <span className="flex items-center gap-1">
                     {col.icon}
                     {col.label}
@@ -459,12 +638,12 @@ export default function ManajemenClient() {
                     </td>
                   </tr>
                   {expanded && group.rows.map((o, i) => (
-                    <TableRow key={o.id} o={o} idx={i + 1} />
+                    <TableRow key={o.id as string} o={o} idx={i + 1} />
                   ))}
                   {expanded && (
                     <tr className="border-b border-slate-100 bg-slate-50/30">
                       <td colSpan={4} />
-                      <td colSpan={2} className="px-3 py-2 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">SUM</td>
+                      <td className="px-3 py-2 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">JML</td>
                       <td className="px-3 py-2">
                         <span className="text-sm font-bold" style={{ color: "#1d4ed8" }}>{IDR_FULL(groupTotal)}</span>
                       </td>
@@ -481,15 +660,17 @@ export default function ManajemenClient() {
   }
 
   const viewTabs: { key: ViewMode; label: string; icon: React.ReactNode }[] = [
-    { key: "chart", label: "Chart", icon: <BarChart3 className="w-3.5 h-3.5" /> },
-    { key: "table", label: "Table", icon: <LayoutGrid className="w-3.5 h-3.5" /> },
-    { key: "status", label: "Status", icon: <Tag className="w-3.5 h-3.5" /> },
+    { key: "table",   label: "Tabel",   icon: <LayoutGrid className="w-3.5 h-3.5" /> },
+    { key: "status",  label: "Status",  icon: <Tag className="w-3.5 h-3.5" /> },
+    { key: "layanan", label: "Layanan", icon: <Briefcase className="w-3.5 h-3.5" /> },
+    { key: "klien",   label: "Klien",   icon: <Users className="w-3.5 h-3.5" /> },
+    { key: "grafik",  label: "Grafik",  icon: <BarChart3 className="w-3.5 h-3.5" /> },
   ];
 
   return (
     <div className="flex flex-col h-full min-h-screen bg-white">
       <div className="px-8 pt-8 pb-4 border-b border-slate-100">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900 mb-4">MyProjects</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900 mb-4">Proyek Saya</h1>
 
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-1">
@@ -510,15 +691,6 @@ export default function ManajemenClient() {
           </div>
 
           <div className="flex items-center gap-2">
-            <button className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-sm text-slate-500 hover:bg-slate-100 transition-colors">
-              <Filter className="w-3.5 h-3.5" />
-            </button>
-            <button className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-sm text-slate-500 hover:bg-slate-100 transition-colors">
-              <ArrowUpDown className="w-3.5 h-3.5" />
-            </button>
-            <button className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-sm text-slate-500 hover:bg-slate-100 transition-colors">
-              <Zap className="w-3.5 h-3.5" />
-            </button>
             <div className="relative">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
               <input
@@ -528,12 +700,9 @@ export default function ManajemenClient() {
                 className="pl-8 pr-3 py-1.5 text-sm bg-slate-50 border border-slate-200 rounded-md outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 w-48"
               />
             </div>
-            <button className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-sm text-slate-500 hover:bg-slate-100 transition-colors">
-              <SlidersHorizontal className="w-3.5 h-3.5" />
-            </button>
             <button className="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white px-3.5 py-1.5 rounded-md text-sm font-semibold transition-colors shadow-sm">
               <Plus className="w-3.5 h-3.5" />
-              New
+              Baru
               <ChevronDown className="w-3 h-3 ml-0.5" />
             </button>
           </div>
@@ -546,27 +715,16 @@ export default function ManajemenClient() {
         </div>
       ) : (
         <>
-          {view === "chart" && (
-            <BarChartView orders={filtered} getLabel={o => getClientName(o)} />
-          )}
-
-          {view === "table" && (
-            <GroupedTable groups={groupByMonth(filtered)} />
-          )}
-
-          {view === "status" && (
-            <GroupedTable
-              groups={groupByStatus(filtered).map(g => ({
-                ...g,
-                cfg: STATUS_CONFIG[g.key],
-              }))}
-            />
-          )}
+          {view === "table" && <GroupedTable groups={groupByMonth(filtered)} />}
+          {view === "status" && <GroupedTable groups={groupByStatus(filtered)} />}
+          {view === "layanan" && <GroupedTable groups={groupByLayanan(filtered)} />}
+          {view === "klien" && <GroupedTable groups={groupByKlien(filtered)} />}
+          {view === "grafik" && <BarChartView orders={filtered} />}
 
           <div className="border-t border-slate-100 px-4 py-2">
             <button className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-slate-600 transition-colors">
               <Plus className="w-3.5 h-3.5" />
-              New page
+              Halaman baru
             </button>
           </div>
         </>
