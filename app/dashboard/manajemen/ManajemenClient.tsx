@@ -599,22 +599,7 @@ export default function ManajemenClient() {
                         <tr className="border-b border-slate-100 bg-slate-50/30">
                           <td colSpan={5} />
                           <td className="px-3 py-2">
-                            <div className="space-y-0.5">
-                              <div className="flex items-center justify-between gap-4">
-                                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Harga</span>
-                                <span className="text-sm font-bold text-slate-600">{IDR_FULL(groupTotal)}</span>
-                              </div>
-                              {extraTotal > 0 && (
-                                <div className="flex items-center justify-between gap-4">
-                                  <span className="text-[10px] font-bold uppercase tracking-wider text-amber-500">+ Biaya Tambahan</span>
-                                  <span className="text-sm font-bold text-amber-600">{IDR_FULL(extraTotal)}</span>
-                                </div>
-                              )}
-                              <div className="flex items-center justify-between gap-4 pt-1 border-t border-slate-200">
-                                <span className="text-[10px] font-bold uppercase tracking-wider text-primary">JML</span>
-                                <span className="text-sm font-bold" style={{ color: "#1d4ed8" }}>{IDR_FULL(grandTotal)}</span>
-                              </div>
-                            </div>
+                            <span className="text-xs font-bold text-slate-700">{IDR_FULL(grandTotal)}</span>
                           </td>
                           <td colSpan={3} />
                         </tr>
