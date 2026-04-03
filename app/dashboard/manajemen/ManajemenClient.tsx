@@ -180,19 +180,29 @@ function BarChartView({ orders }: { orders: Record<string, unknown>[] }) {
     paid: "#60a5fa", processing: "#a78bfa", completed: "#34d399",
   };
   return (
-    <div className="flex-1 px-8 pt-8 pb-4 overflow-auto">
-      <div className="flex items-end gap-6 h-64 min-w-0">
+    <div className="flex-1 px-8 pt-8 pb-6 overflow-auto">
+      <div className="flex items-end gap-8 min-w-0" style={{ height: 320 }}>
         {sorted.map((bucket, i) => {
-          const barHeight = (bucket.total / maxVal) * 100;
+          const BAR_H = 280;
+          const barPx = Math.max(Math.round((bucket.total / maxVal) * BAR_H), 6);
           return (
-            <div key={i} className="flex flex-col items-center gap-2 flex-1 min-w-[60px]">
+            <div key={i} className="flex flex-col items-center gap-2 flex-1 min-w-[80px]">
               <span className="text-[10px] font-bold text-slate-500 whitespace-nowrap">{IDR(bucket.total)}</span>
-              <div className="relative w-full flex flex-col-reverse rounded-t-md overflow-hidden" style={{ height: `${Math.max(barHeight, 4)}%`, minHeight: 4 }}>
+              <div
+                className="w-full rounded-t-md overflow-hidden flex flex-col-reverse"
+                style={{ height: barPx }}
+              >
                 {ALL_STATUSES.map(st => {
                   const amt = bucket.byStatus[st] || 0;
                   if (!amt) return null;
-                  const pct = (amt / bucket.total) * 100;
-                  return <div key={st} title={`${STATUS_CONFIG[st]?.label}: ${IDR_FULL(amt)}`} style={{ height: `${pct}%`, background: statusColors[st] || "#d4d4d4", minHeight: 2 }} />;
+                  const segH = Math.max(Math.round((amt / bucket.total) * barPx), 2);
+                  return (
+                    <div
+                      key={st}
+                      title={`${STATUS_CONFIG[st]?.label}: ${IDR_FULL(amt)}`}
+                      style={{ height: segH, background: statusColors[st] || "#d4d4d4", flexShrink: 0 }}
+                    />
+                  );
                 })}
               </div>
               <span className="text-[11px] text-slate-500 font-medium whitespace-nowrap">{bucket.label}</span>
