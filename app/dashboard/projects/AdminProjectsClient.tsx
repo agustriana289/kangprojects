@@ -465,7 +465,28 @@ export default function AdminProjectsClient() {
   };
 
   const handleSaveEdit = async () => {
-    const { error } = await supabase.from("store_orders").update(editFormData).eq("id", selectedProject.id);
+    const fd = getFormData(selectedProject);
+    const updatedFd = {
+      ...fd,
+      customer_name: editFormData.customer_name,
+      "Client Name": editFormData.customer_name,
+      email: editFormData.customer_email,
+      whatsapp: editFormData.whatsapp,
+      project_title: editFormData.project_title,
+      "Project Title": editFormData.project_title,
+    };
+    const updatePayload: any = {
+      status: editFormData.status,
+      total_amount: editFormData.total_amount,
+      discount_amount: editFormData.discount_amount,
+      payment_method: editFormData.payment_method,
+      progress: editFormData.progress,
+      form_data: updatedFd,
+    };
+    if (selectedProject.guest_name !== undefined) updatePayload.guest_name = editFormData.customer_name;
+    if (selectedProject.guest_phone !== undefined) updatePayload.guest_phone = editFormData.whatsapp;
+
+    const { error } = await supabase.from("store_orders").update(updatePayload).eq("id", selectedProject.id);
     if (error) showToast("Gagal menyimpan", "error");
     else { showToast("Perubahan disimpan", "success"); fetchOrders(); setModalView("detail"); }
   };
@@ -477,6 +498,12 @@ export default function AdminProjectsClient() {
         status: o.status,
         total_amount: o.total_amount,
         discount_amount: o.discount_amount || 0,
+        payment_method: o.payment_method || "",
+        progress: o.progress ?? 0,
+        customer_name: getClientName(o),
+        customer_email: getClientEmail(o),
+        whatsapp: getClientWhatsApp(o),
+        project_title: getProjectTitle(o),
       });
     }
     const defaultDomain = domains.find(d => d.is_default)?.id || "";
@@ -797,20 +824,53 @@ export default function AdminProjectsClient() {
                 
                 {modalView === "edit" && (
                    <div className="space-y-4 animate-in fade-in zoom-in-95 duration-200">
-                      <div>
-                        <label className="text-xs font-bold text-slate-500 mb-1 block">Status</label>
-                        <select value={editFormData.status} onChange={e => setEditFormData({...editFormData, status: e.target.value})} className="w-full p-3 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium outline-none">
-                          <option value="pending">Menunggu</option>
-                          <option value="waiting_payment">Belum Dibayar</option>
-                          <option value="paid">Dibayar</option>
-                          <option value="processing">Dikerjakan</option>
-                          <option value="completed">Selesai</option>
-                          <option value="cancelled">Dibatalkan</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="text-xs font-bold text-slate-500 mb-1 block">Total Harga Base (Rp)</label>
-                        <input type="number" value={editFormData.total_amount} onChange={e => setEditFormData({...editFormData, total_amount: e.target.value})} className="w-full p-3 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium outline-none" />
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="md:col-span-2">
+                          <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1 block">Judul Proyek</label>
+                          <input type="text" value={editFormData.project_title} onChange={e => setEditFormData({...editFormData, project_title: e.target.value})} className="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500/20" />
+                        </div>
+                        <div>
+                          <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1 block">Nama Klien</label>
+                          <input type="text" value={editFormData.customer_name} onChange={e => setEditFormData({...editFormData, customer_name: e.target.value})} className="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500/20" />
+                        </div>
+                        <div>
+                          <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1 block">WhatsApp</label>
+                          <input type="text" value={editFormData.whatsapp} onChange={e => setEditFormData({...editFormData, whatsapp: e.target.value})} className="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500/20" />
+                        </div>
+                        <div className="md:col-span-2">
+                          <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1 block">Email Klien</label>
+                          <input type="email" value={editFormData.customer_email} onChange={e => setEditFormData({...editFormData, customer_email: e.target.value})} className="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500/20" />
+                        </div>
+                        <div>
+                          <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1 block">Status</label>
+                          <div className="relative">
+                            <select value={editFormData.status} onChange={e => setEditFormData({...editFormData, status: e.target.value})} className="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500/20 appearance-none">
+                              <option value="pending">Menunggu</option>
+                              <option value="waiting_payment">Belum Dibayar</option>
+                              <option value="paid">Dibayar</option>
+                              <option value="processing">Dikerjakan</option>
+                              <option value="completed">Selesai</option>
+                              <option value="cancelled">Dibatalkan</option>
+                            </select>
+                            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                          </div>
+                        </div>
+                        <div>
+                          <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1 block">Progress (%)</label>
+                          <input type="number" min="0" max="100" value={editFormData.progress} onChange={e => setEditFormData({...editFormData, progress: parseInt(e.target.value) || 0})} className="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500/20" />
+                        </div>
+                        <div>
+                          <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1 block">Total Harga Base (Rp)</label>
+                          <input type="number" value={editFormData.total_amount} onChange={e => setEditFormData({...editFormData, total_amount: e.target.value})} className="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500/20" />
+                        </div>
+                        <div>
+                          <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1 block">Diskon (Rp)</label>
+                          <input type="number" value={editFormData.discount_amount} onChange={e => setEditFormData({...editFormData, discount_amount: e.target.value})} className="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500/20" />
+                        </div>
+                        <div className="md:col-span-2">
+                          <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1 block">Metode Pembayaran</label>
+                          <input type="text" placeholder="Transfer Bank, E-Wallet, dll..." value={editFormData.payment_method} onChange={e => setEditFormData({...editFormData, payment_method: e.target.value})} className="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium outline-none focus:ring-2 focus:ring-indigo-500/20" />
+                        </div>
                       </div>
                       <div className="pt-4 flex items-center gap-3 border-t border-slate-100">
                          <button onClick={() => setModalView("detail")} className="flex-1 py-3 bg-white border border-slate-200 hover:bg-slate-50 rounded-xl text-slate-600 font-bold text-sm transition-colors">Batal</button>

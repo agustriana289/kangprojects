@@ -131,13 +131,13 @@ export default function EmailSettingsClient() {
       if (user?.full_name) name = user.full_name;
       if (user?.phone) phone = user.phone;
 
-      if (!email || !name || !phone) {
+      if (!email || !name || !phone || !project) {
         try {
           const fd = typeof o.form_data === "string" ? JSON.parse(o.form_data) : o.form_data || {};
-          if (!email && fd.email) email = fd.email;
+          if (!email) email = fd.email || fd.customer_email || "";
           if (!name) name = fd.customer_name || fd["Client Name"] || o.guest_name || "";
           if (!phone) phone = fd.whatsapp || o.guest_phone || "";
-          project = fd.project_title || fd["Project Title"] || fd["Nama Logo"] || "";
+          if (!project) project = fd.project_title || fd["Project Title"] || fd["Nama Logo"] || "";
         } catch {}
       }
 
@@ -331,14 +331,24 @@ export default function EmailSettingsClient() {
   };
 
   const selectSuggestion = (s: OrderSuggestion) => {
-    setSendTo(s.email);
-    setProjectSearch(`${s.project || s.service || "-"} (${s.email})`);
+    const missingFields: string[] = [];
+    if (!s.email) missingFields.push("Email");
+    if (!s.name) missingFields.push("Nama Klien");
+    if (!s.phone) missingFields.push("WhatsApp");
+    if (!s.project && !s.service) missingFields.push("Nama Proyek/Layanan");
+
+    if (missingFields.length > 0) {
+      showToast(`Pesanan ini kehilangan data: ${missingFields.join(", ")}. Pengiriman mungkin gagal atau template tidak terisi sempurna.`, "error");
+    }
+
+    setSendTo(s.email || "");
+    setProjectSearch(`${s.project || s.service || "-"} (${s.email || "Email Kosong"})`);
     setSendPlaceholders((prev) => ({
       ...prev,
-      ...(s.name ? { nama_klien: s.name, client_name: s.name, nama: s.name, name: s.name } : {}),
-      ...(s.project ? { nama_proyek: s.project, project_name: s.project, project: s.project } : {}),
-      ...(s.email ? { email_klien: s.email, email: s.email } : {}),
-      ...(s.phone ? { no_hp: s.phone, phone: s.phone, whatsapp: s.phone } : {}),
+      ...((s.name || s.email) ? { nama_klien: s.name || "", client_name: s.name || "", nama: s.name || "", name: s.name || "" } : {}),
+      ...((s.project || s.service) ? { nama_proyek: s.project || "", project_name: s.project || "", project: s.project || "" } : {}),
+      ...((s.email || s.name) ? { email_klien: s.email || "", email: s.email || "" } : {}),
+      ...((s.phone || s.name) ? { no_hp: s.phone || "", phone: s.phone || "", whatsapp: s.phone || "" } : {}),
       ...(s.invoice ? { invoice: s.invoice, no_pesanan: s.invoice, order_id: s.invoice } : {}),
       ...(s.service ? { nama_layanan: s.service, service_name: s.service, layanan: s.service } : {}),
       ...(s.package_name ? { paket: s.package_name, package: s.package_name } : {}),
