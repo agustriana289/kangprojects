@@ -159,6 +159,47 @@ function extractPlaceholders(html: string): string[] {
   return [...new Set(matches.map((m) => m.slice(2, -2)))];
 }
 
+function YearNavigator({ years, selectedYear, onSelect }: { years: number[]; selectedYear: number; onSelect: (y: number) => void }) {
+  const MAX_VISIBLE = 10;
+  const [offset, setOffset] = useState(() => {
+    const idx = years.indexOf(selectedYear);
+    return Math.max(0, idx - MAX_VISIBLE + 1);
+  });
+  const visible = years.slice(offset, offset + MAX_VISIBLE);
+  const canPrev = offset > 0;
+  const canNext = offset + MAX_VISIBLE < years.length;
+  return (
+    <div className="border-t border-slate-100 px-6 py-3 flex items-center gap-1.5">
+      {canPrev && (
+        <button onClick={() => setOffset(o => Math.max(0, o - 1))} className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 transition-colors">
+          <ChevronLeft className="w-3.5 h-3.5" />
+        </button>
+      )}
+      {visible.map(y => (
+        <button
+          key={y}
+          onClick={() => !isCurrentYear(y, selectedYear) && onSelect(y)}
+          disabled={y === selectedYear}
+          className={`px-3 py-1 rounded-lg text-sm font-semibold transition-all ${
+            y === selectedYear
+              ? "bg-primary text-white shadow-sm cursor-default"
+              : "text-slate-500 hover:bg-slate-100 hover:text-slate-900"
+          }`}
+        >
+          {y}
+        </button>
+      ))}
+      {canNext && (
+        <button onClick={() => setOffset(o => Math.min(years.length - MAX_VISIBLE, o + 1))} className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 transition-colors">
+          <ChevronRight className="w-3.5 h-3.5" />
+        </button>
+      )}
+    </div>
+  );
+}
+
+function isCurrentYear(y: number, selected: number) { return y === selected; }
+
 export default function AdminProjectsClient() {
   const supabase = createClient();
   const { showToast } = useToast();
