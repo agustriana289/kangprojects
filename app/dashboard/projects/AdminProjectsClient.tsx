@@ -207,6 +207,7 @@ export default function AdminProjectsClient() {
   const [orders, setOrders] = useState<Record<string, unknown>[]>([]);
   const [servicesList, setServicesList] = useState<{ id: string; title: string; packages: { name: string }[] }[]>([]);
   const [allCharges, setAllCharges] = useState<Record<string, number>>({});
+  const [allChargeItems, setAllChargeItems] = useState<Record<string, any[]>>({});
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState<ViewMode>("table");
   const [search, setSearch] = useState("");
@@ -231,6 +232,11 @@ export default function AdminProjectsClient() {
   const [isSlideOpen, setIsSlideOpen] = useState(false);
   const [domains, setDomains] = useState<any[]>([]);
   const [templates, setTemplates] = useState<any[]>([]);
+  
+  // Additional Charges State
+  const [newChargeDesc, setNewChargeDesc] = useState("");
+  const [newChargeAmount, setNewChargeAmount] = useState("");
+  const [isAddingCharge, setIsAddingCharge] = useState(false);
   
   // Email Form State
   const [sendFromId, setSendFromId] = useState("");
@@ -361,12 +367,16 @@ export default function AdminProjectsClient() {
 
       const ids = mapped.map(o => o.id as string);
       let chargeMap: Record<string, number> = {};
+      let chargeItemsMap: Record<string, any[]> = {};
       if (ids.length > 0) {
-        const { data: charges } = await supabase.from("order_additional_charges").select("order_id, amount").in("order_id", ids);
+        const { data: charges } = await supabase.from("order_additional_charges").select("*").in("order_id", ids);
         (charges || []).forEach((c: any) => {
           chargeMap[c.order_id] = (chargeMap[c.order_id] || 0) + Number(c.amount || 0);
+          if (!chargeItemsMap[c.order_id]) chargeItemsMap[c.order_id] = [];
+          chargeItemsMap[c.order_id].push(c);
         });
         setAllCharges(chargeMap);
+        setAllChargeItems(chargeItemsMap);
       }
       
       calculateStats(mapped, chargeMap);
@@ -413,6 +423,29 @@ export default function AdminProjectsClient() {
     const { error } = await supabase.from("store_orders").delete().eq("id", id);
     if (error) showToast("Gagal menghapus", "error");
     else { showToast("Selesai dihapus", "success"); setIsSlideOpen(false); fetchOrders(); }
+  };
+
+  const handleAddCharge = async () => {
+    if (!newChargeDesc || !newChargeAmount || !selectedProject) return;
+    setIsAddingCharge(true);
+    const { error } = await supabase.from("order_additional_charges").insert({
+      order_id: selectedProject.id,
+      description: newChargeDesc,
+      amount: newChargeAmount
+    });
+    if (error) showToast("Gagal menambah biaya tambahan", "error");
+    else {
+      setNewChargeDesc("");
+      setNewChargeAmount("");
+      showToast("Biaya tambahan tersimpan", "success");
+      fetchOrders();
+    }
+    setIsAddingCharge(false);
+  };
+
+  const handleDeleteCharge = async (id: string) => {
+    const { error } = await supabase.from("order_additional_charges").delete().eq("id", id);
+    if (!error) { showToast("Biaya dihapus", "success"); fetchOrders(); }
   };
 
   const generateTestimonial = async (id: string) => {
@@ -745,6 +778,30 @@ export default function AdminProjectsClient() {
                          </div>
                       </div>
 
+                      <div className="pt-3 border-t border-slate-100">
+                        <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Biaya Tambahan</p>
+                        <div className="space-y-2">
+                           {(allChargeItems[selectedProject.id] || []).map((c: any) => (
+                             <div key={c.id} className="flex items-center justify-between bg-slate-50 border border-slate-100 rounded-xl p-3">
+                               <div>
+                                 <p className="text-xs font-bold text-slate-700">{c.description}</p>
+                                 <p className="text-[11px] font-medium text-slate-500">{IDR_FULL(c.amount)}</p>
+                               </div>
+                               <button onClick={() => handleDeleteCharge(c.id)} className="p-1.5 text-rose-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors">
+                                 <Trash2 className="w-3.5 h-3.5" />
+                               </button>
+                             </div>
+                           ))}
+                           <div className="flex items-center gap-2 mt-2">
+                              <input type="text" placeholder="Keterangan..." value={newChargeDesc} onChange={e => setNewChargeDesc(e.target.value)} className="flex-1 px-3 py-2 text-xs border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-primary/20" />
+                              <input type="number" placeholder="Nominal" value={newChargeAmount} onChange={e => setNewChargeAmount(e.target.value)} className="w-28 px-3 py-2 text-xs border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-primary/20" />
+                              <button onClick={handleAddCharge} disabled={isAddingCharge} className="p-2 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-xl transition-colors disabled:opacity-50" title="Tambah">
+                                {isAddingCharge ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+                              </button>
+                           </div>
+                        </div>
+                      </div>
+
                       <div className="space-y-2 pt-2 border-t border-slate-100">
                          <button onClick={() => setModalView("email")} className="w-full flex items-center justify-between p-3 rounded-xl bg-[#a698ff]/10 text-[#715cff] hover:bg-[#a698ff]/20 transition-colors border border-[#a698ff]/20">
                            <span className="flex items-center gap-2 text-sm font-bold"><Mail className="w-4 h-4" /> Kirim Email</span>
@@ -759,7 +816,7 @@ export default function AdminProjectsClient() {
                            <Copy className="w-3.5 h-3.5 opacity-50" />
                          </button>
                          <div className="grid grid-cols-2 gap-2 mt-2">
-                           <button onClick={() => setModalView("edit")} className="w-full flex justify-center items-center gap-2 p-2.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 text-xs font-bold transition-colors">
+                           <button onClick={() => openSlide(selectedProject, "edit")} className="w-full flex justify-center items-center gap-2 p-2.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 text-xs font-bold transition-colors">
                               <Edit3 className="w-3.5 h-3.5" /> Edit
                            </button>
                            <button onClick={() => deleteProject(selectedProject.id)} className="w-full flex justify-center items-center gap-2 p-2.5 rounded-xl bg-white border border-rose-100 hover:bg-rose-50 text-rose-500 text-xs font-bold transition-colors">

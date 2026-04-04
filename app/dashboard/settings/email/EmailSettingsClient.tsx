@@ -7,7 +7,7 @@ import { useToast } from "@/components/ToastProvider";
 import {
   Save, Loader2, Plus, Trash2, Eye, EyeOff,
   Mail, Globe, FileText, Send, X, Paperclip, ChevronDown,
-  Star, Edit3
+  Star, Edit3, Users
 } from "lucide-react";
 
 function extractPlaceholders(html: string): string[] {
@@ -49,7 +49,7 @@ const INPUT_CLASS =
 const LABEL_CLASS = "block mb-2 text-xs font-bold uppercase tracking-wider text-slate-700";
 const SECTION_CLASS = "bg-white border border-slate-200 rounded-2xl p-6 shadow-sm";
 
-type ActiveSection = "credentials" | "domains" | "templates" | "send";
+type ActiveSection = "credentials" | "domains" | "templates" | "subscribers" | "send";
 
 export default function EmailSettingsClient() {
   const supabase = createClient();
@@ -90,16 +90,23 @@ export default function EmailSettingsClient() {
   const [dropdownLeft, setDropdownLeft] = useState(0);
   const [dropdownWidth, setDropdownWidth] = useState(0);
 
+  const [subscribers, setSubscribers] = useState<{ id: string; email: string; name: string }[]>([]);
+  const [newSubscriberEmail, setNewSubscriberEmail] = useState("");
+  const [newSubscriberName, setNewSubscriberName] = useState("");
+  const [subscribersSaving, setSubscribersSaving] = useState(false);
+
   const fetchAll = async () => {
     setLoading(true);
-    const [{ data: settings }, { data: doms }, { data: tmpls }] = await Promise.all([
+    const [{ data: settings }, { data: doms }, { data: tmpls }, { data: subs }] = await Promise.all([
       supabase.from("email_settings").select("gmail_address").eq("id", 1).single(),
       supabase.from("email_domains").select("*").order("created_at"),
       supabase.from("email_templates").select("*").order("created_at"),
+      (async () => { try { const { data } = await supabase.from("email_subscribers").select("*").order("created_at", { ascending: false }); return { data: data || [] }; } catch { return { data: [] }; } })()
     ]);
     if (settings?.gmail_address) setGmailAddress(settings.gmail_address);
     setDomains(doms || []);
     setTemplates(tmpls || []);
+    setSubscribers(subs || []);
 
     const { data: orders } = await supabase
       .from("store_orders")
@@ -232,9 +239,34 @@ export default function EmailSettingsClient() {
   };
 
   const handleDeleteDomain = async (id: string) => {
+    if (!confirm("Hapus domain ini? Pastikan Anda tidak memerlukannya lagi.")) return;
     const { error } = await supabase.from("email_domains").delete().eq("id", id);
     if (error) showToast(error.message, "error");
     else { setDomains((prev) => prev.filter((d) => d.id !== id)); showToast("Domain dihapus.", "success"); }
+  };
+
+  const handleAddSubscriber = async () => {
+    if (!newSubscriberEmail) return showToast("Email wajib diisi", "error");
+    setSubscribersSaving(true);
+    const { error, data } = await supabase.from("email_subscribers").insert({ email: newSubscriberEmail, name: newSubscriberName }).select("*").single();
+    if (error) showToast(error.message, "error");
+    else {
+      showToast("Subscriber ditambahkan", "success");
+      setSubscribers(prev => [data, ...prev]);
+      setNewSubscriberEmail("");
+      setNewSubscriberName("");
+    }
+    setSubscribersSaving(false);
+  };
+
+  const handleDeleteSubscriber = async (id: string) => {
+    if (!confirm("Hapus subscriber ini?")) return;
+    const { error } = await supabase.from("email_subscribers").delete().eq("id", id);
+    if (error) showToast(error.message, "error");
+    else {
+      showToast("Subscriber dihapus", "success");
+      setSubscribers(prev => prev.filter(s => s.id !== id));
+    }
   };
 
   const handleSaveTemplate = async () => {
@@ -361,6 +393,7 @@ export default function EmailSettingsClient() {
     { key: "credentials", label: "Kredensial Gmail", icon: <Mail className="w-4 h-4" /> },
     { key: "domains", label: "Custom Domain", icon: <Globe className="w-4 h-4" /> },
     { key: "templates", label: "Template Email", icon: <FileText className="w-4 h-4" /> },
+    { key: "subscribers", label: "Daftar Subscriber", icon: <Users className="w-4 h-4" /> },
     { key: "send", label: "Kirim Email", icon: <Send className="w-4 h-4" /> },
   ];
 
@@ -716,6 +749,86 @@ export default function EmailSettingsClient() {
           </div>
         )}
 
+        {activeSection === "subscribers" && (
+          <div className="max-w-3xl space-y-6">
+            <div>
+              <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-1">Daftar Subscriber Email</h2>
+              <p className="text-sm font-medium text-slate-500 mb-6 border-b border-slate-100 pb-4">
+                Kumpulan daftar subscriber yang nantinya akan digunakan secara serentak (otomatis) saat Anda memilih mode Kirim Email: Broadcast Promosi.
+              </p>
+            </div>
+            
+            <div className={SECTION_CLASS}>
+              <h3 className="text-sm font-bold text-slate-900 mb-4">Tambah Subscriber Baru</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                <div>
+                  <label className={LABEL_CLASS}>Nama (Opsional)</label>
+                  <input
+                    type="text"
+                    value={newSubscriberName}
+                    onChange={(e) => setNewSubscriberName(e.target.value)}
+                    placeholder="Nama klien/pelanggan..."
+                    className={INPUT_CLASS}
+                  />
+                </div>
+                <div>
+                  <label className={LABEL_CLASS}>Email Address</label>
+                  <input
+                    type="email"
+                    value={newSubscriberEmail}
+                    onChange={(e) => setNewSubscriberEmail(e.target.value)}
+                    placeholder="email@contoh.com"
+                    className={INPUT_CLASS}
+                  />
+                </div>
+              </div>
+              <button
+                onClick={handleAddSubscriber}
+                disabled={subscribersSaving || !newSubscriberEmail}
+                className="inline-flex items-center gap-2 bg-primary text-white font-bold text-sm px-5 py-2.5 rounded-xl hover:bg-primary/90 transition-colors disabled:opacity-60"
+              >
+                {subscribersSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+                Tambahkan Subsciber
+              </button>
+            </div>
+
+            <div className={`border border-slate-200 rounded-2xl overflow-hidden bg-white mt-6 ${subscribers.length === 0 ? "hidden" : ""}`}>
+              <table className="w-full text-left text-sm whitespace-nowrap">
+                <thead className="bg-slate-50 text-slate-500 uppercase text-[10px] font-bold tracking-wider">
+                  <tr>
+                    <th className="px-6 py-4 rounded-tl-2xl">Nama</th>
+                    <th className="px-6 py-4">Email</th>
+                    <th className="px-6 py-4 text-right rounded-tr-2xl">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {subscribers.map((s) => (
+                    <tr key={s.id} className="hover:bg-slate-50/50 transition-colors">
+                      <td className="px-6 py-4 font-semibold text-slate-900">{s.name || "-"}</td>
+                      <td className="px-6 py-4 font-medium text-slate-600">{s.email}</td>
+                      <td className="px-6 py-4 text-right">
+                        <button
+                          onClick={() => handleDeleteSubscriber(s.id)}
+                          className="p-2 text-rose-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            {subscribers.length === 0 && (
+              <div className="bg-slate-50 border border-slate-200 border-dashed rounded-2xl flex flex-col items-center justify-center py-16 text-slate-400">
+                <Users className="w-10 h-10 text-slate-300 mb-3" />
+                <p className="font-bold text-sm text-slate-500">Belum ada satupun daftar subscriber</p>
+                <p className="text-xs mt-1">Tambahkan dari form di atas.</p>
+              </div>
+            )}
+          </div>
+        )}
+
         {activeSection === "send" && (
           <div className="max-w-2xl space-y-6">
             <div>
@@ -735,7 +848,12 @@ export default function EmailSettingsClient() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setIsBroadcast(true)}
+                  onClick={() => {
+                    setIsBroadcast(true);
+                    if (subscribers.length > 0 && !sendTo) {
+                      setSendTo(subscribers.map(s => s.email).join(", "));
+                    }
+                  }}
                   className={`px-4 py-2 text-sm font-bold rounded-lg transition-colors ${isBroadcast ? 'bg-white shadow relative text-primary' : 'text-slate-500 hover:text-slate-700'}`}
                 >
                   Broadcast Promosi
