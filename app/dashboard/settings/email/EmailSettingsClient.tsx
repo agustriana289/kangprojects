@@ -79,6 +79,7 @@ export default function EmailSettingsClient() {
   const [sendPlaceholders, setSendPlaceholders] = useState<Record<string, string>>({});
   const [sendAttachment, setSendAttachment] = useState<File | null>(null);
   const [sending, setSending] = useState(false);
+  const [projectSearch, setProjectSearch] = useState("");
   const [suggestions, setSuggestions] = useState<OrderSuggestion[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [filterSuggestions, setFilterSuggestions] = useState<OrderSuggestion[]>([]);
@@ -110,8 +111,8 @@ export default function EmailSettingsClient() {
       let name = "";
       let project = "";
       let phone = "";
-      let invoice = o.order_number || "";
-      let total = o.total_amount ? String(o.total_amount) : "";
+      const invoice = o.order_number || "";
+      const total = o.total_amount ? String(o.total_amount) : "";
       
       let package_name = "";
       if (typeof o.selected_package === "string") {
@@ -297,21 +298,23 @@ export default function EmailSettingsClient() {
     setSending(false);
   };
 
-  const handleToInput = (val: string) => {
-    setSendTo(val);
-    if (val.length >= 1) {
-      const q = val.toLowerCase();
-      setFilterSuggestions(suggestions.filter(
-        (s) => s.email.toLowerCase().includes(q) || s.name.toLowerCase().includes(q) || s.project.toLowerCase().includes(q)
-      ).slice(0, 8));
+  const handleProjectSearch = (val: string) => {
+    setProjectSearch(val);
+    if (!val) {
+      setFilterSuggestions(suggestions.slice(0, 8));
       setShowSuggestions(true);
-    } else {
-      setShowSuggestions(false);
+      return;
     }
+    const q = val.toLowerCase();
+    setFilterSuggestions(suggestions.filter(
+      (s) => s.email.toLowerCase().includes(q) || s.name.toLowerCase().includes(q) || s.project.toLowerCase().includes(q) || s.invoice.toLowerCase().includes(q)
+    ).slice(0, 8));
+    setShowSuggestions(true);
   };
 
   const selectSuggestion = (s: OrderSuggestion) => {
     setSendTo(s.email);
+    setProjectSearch(`${s.project || s.service || "-"} (${s.email})`);
     setSendPlaceholders((prev) => ({
       ...prev,
       ...(s.name ? { nama_klien: s.name, client_name: s.name, nama: s.name, name: s.name } : {}),
@@ -337,7 +340,6 @@ export default function EmailSettingsClient() {
     ? extractPlaceholders(editingTemplate.body_html + " " + editingTemplate.subject)
     : [];
 
-  const sendTemplatePlaceholders = Object.keys(sendPlaceholders);
 
   if (loading) {
     return (
@@ -570,9 +572,32 @@ export default function EmailSettingsClient() {
                     className={INPUT_CLASS + " font-mono text-xs resize-none h-60"}
                   />
                 </div>
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+                  <p className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Daftar Variabel (Placeholder) yg Didukung</p>
+                  <p className="text-[11px] text-slate-500 mb-2 leading-relaxed">
+                    Gunakan penulisan variabel berikut di dalam <b>Subjek</b> atau <b>Isi HTML</b>. Jika sebuah Proyek dipilih pada saat Pengiriman, nilai-nilai ini akan ditarik secara otomatis dari pesanan (*Auto Fill).
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {["{{nama_klien}}", "{{email_klien}}", "{{no_hp}}", "{{nama_proyek}}", "{{invoice}}", "{{nama_layanan}}", "{{paket}}", "{{total_harga}}"].map(v => (
+                       <button 
+                         type="button" 
+                         onClick={() => {
+                           navigator.clipboard.writeText(v);
+                           showToast(v + " disalin!", "success");
+                         }} 
+                         key={v} 
+                         className="bg-white border border-slate-200 text-primary font-mono text-[10px] px-2 py-1 rounded cursor-pointer hover:bg-primary/5 shadow-sm transition-colors" 
+                         title="Klik untuk Salin"
+                       >
+                         {v}
+                       </button>
+                    ))}
+                  </div>
+                </div>
+
                 {currentTemplateKeys.length > 0 && (
                   <div className="bg-primary/5 border border-primary/20 rounded-xl p-3">
-                    <p className="text-xs font-bold text-primary mb-2 uppercase tracking-wider">Placeholder Terdeteksi</p>
+                    <p className="text-xs font-bold text-primary mb-2 uppercase tracking-wider">Placeholder Spesifik Custom Terdeteksi</p>
                     <div className="flex flex-wrap gap-1.5">
                       {currentTemplateKeys.map((k) => (
                         <span key={k} className="inline-flex items-center text-xs font-mono bg-white border border-primary/20 text-primary px-2 py-0.5 rounded">
@@ -697,9 +722,10 @@ export default function EmailSettingsClient() {
                   <input
                     id="search_project"
                     type="text"
-                    onChange={(e) => handleToInput(e.target.value)}
-                    onFocus={() => setShowSuggestions(true)}
-                    placeholder="Ketik email, nama klien, atau nama proyek untuk auto-fill data..."
+                    value={projectSearch}
+                    onChange={(e) => handleProjectSearch(e.target.value)}
+                    onFocus={() => handleProjectSearch(projectSearch)}
+                    placeholder="Pilih dari daftar atau ketik nama klien, proyek..."
                     className="bg-white border border-primary/20 text-slate-900 text-sm rounded-xl focus:ring-2 focus:ring-primary/40 focus:border-primary block w-full p-3 transition-all outline-none shadow-sm"
                     autoComplete="off"
                   />
@@ -785,27 +811,6 @@ export default function EmailSettingsClient() {
                   <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
                 </div>
               </div>
-
-              {sendTemplatePlaceholders.length > 0 && (
-                <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
-                  <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Isi Placeholder</p>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {sendTemplatePlaceholders.map((key) => (
-                      <div key={key}>
-                        <label className="block mb-1.5 text-xs font-bold text-slate-600 font-mono">{`{{${key}}}`}</label>
-                        <input
-                          id={`placeholder_${key}`}
-                          type="text"
-                          value={sendPlaceholders[key] || ""}
-                          onChange={(e) => setSendPlaceholders((p) => ({ ...p, [key]: e.target.value }))}
-                          placeholder={`Nilai untuk ${key}...`}
-                          className="bg-white border border-slate-200 text-slate-900 text-sm rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary block w-full p-2.5 transition-all outline-none"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
 
               <div>
                 <label className={LABEL_CLASS}>Lampiran (ZIP / RAR saja)</label>
