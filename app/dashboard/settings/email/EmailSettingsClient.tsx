@@ -100,8 +100,8 @@ export default function EmailSettingsClient() {
       .select("id, order_number, form_data, guest_name, guest_phone, user_id, total_amount, selected_package, store_services(title), store_products(title)");
     const { data: users } = await supabase.from("users").select("id, full_name, email, phone");
 
-    const userMap: Record<string, { full_name: string; email: string }> = {};
-    (users || []).forEach((u) => { if (u.id) userMap[u.id] = u; });
+    const userMap: Record<string, { full_name: string; email: string; phone?: string | null }> = {};
+    (users || []).forEach((u) => { if (u.id) userMap[u.id] = u as any; });
 
     const seen = new Set<string>();
     const suggs: OrderSuggestion[] = [];
