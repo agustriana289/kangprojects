@@ -217,7 +217,7 @@ export default function AdminProjectsClient() {
   const [saving, setSaving] = useState<Record<string, boolean>>({});
   const [page, setPage] = useState(1);
   const [showAddModal, setShowAddModal] = useState(false);
-  const [addForm, setAddForm] = useState({ project_title: "", customer_name: "", whatsapp: "", customer_email: "", total_amount: "", status: "pending" as string });
+  const [addForm, setAddForm] = useState({ project_title: "", customer_name: "", whatsapp: "", customer_email: "", total_amount: "", status: "pending" as string, service_id: "", package_name: "" });
   const [addSaving, setAddSaving] = useState(false);
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true); }, []);
@@ -514,18 +514,20 @@ export default function AdminProjectsClient() {
       whatsapp: addForm.whatsapp,
       email: addForm.customer_email,
     };
-    const { error } = await supabase.from("store_orders").insert({
+    const insertPayload: Record<string, unknown> = {
       status: addForm.status,
       total_amount: addForm.total_amount ? Number(addForm.total_amount) : 0,
       form_data: fd,
       order_number: `CUSTOM-${Date.now()}`,
-      selected_package: {},
-    });
+      selected_package: addForm.package_name ? { name: addForm.package_name } : {},
+    };
+    if (addForm.service_id) insertPayload.service_id = addForm.service_id;
+    const { error } = await supabase.from("store_orders").insert(insertPayload);
     if (error) showToast("Gagal menambah proyek: " + error.message, "error");
     else {
       showToast("Proyek berhasil ditambahkan", "success");
       setShowAddModal(false);
-      setAddForm({ project_title: "", customer_name: "", whatsapp: "", customer_email: "", total_amount: "", status: "pending" });
+      setAddForm({ project_title: "", customer_name: "", whatsapp: "", customer_email: "", total_amount: "", status: "pending", service_id: "", package_name: "" });
       fetchOrders();
     }
     setAddSaving(false);
@@ -1025,6 +1027,28 @@ export default function AdminProjectsClient() {
               <div>
                 <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1 block">Judul Proyek *</label>
                 <input type="text" value={addForm.project_title} onChange={e => setAddForm({...addForm, project_title: e.target.value})} placeholder="Nama proyek..." className="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20" />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1 block">Layanan *</label>
+                  <div className="relative">
+                    <select value={addForm.service_id} onChange={e => setAddForm({...addForm, service_id: e.target.value, package_name: ""})} className="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20 appearance-none">
+                      <option value="">— Pilih Layanan —</option>
+                      {servicesList.map(s => <option key={s.id} value={s.id}>{s.title}</option>)}
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                  </div>
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1 block">Paket *</label>
+                  <div className="relative">
+                    <select value={addForm.package_name} onChange={e => setAddForm({...addForm, package_name: e.target.value})} className="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20 appearance-none" disabled={!addForm.service_id}>
+                      <option value="">— Pilih Paket —</option>
+                      {(servicesList.find(s => s.id === addForm.service_id)?.packages || []).map((p: { name: string }) => <option key={p.name} value={p.name}>{p.name}</option>)}
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                  </div>
+                </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
