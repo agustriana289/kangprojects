@@ -142,7 +142,6 @@ export default function Pricing({ settings, featuredService, type = "service", a
                         {tier.priceMonthly}
                       </span>
                       <span className={`text-sm font-semibold leading-6 ${tier.featured ? "text-slate-400" : "text-slate-500"}`}>
-                        /proyek
                       </span>
                     </p>
                   </div>
@@ -156,7 +155,6 @@ export default function Pricing({ settings, featuredService, type = "service", a
                     <span
                       className={`text-sm font-semibold leading-6 ${tier.featured ? "text-slate-400" : "text-slate-500"}`}
                     >
-                      /proyek
                     </span>
                   </p>
                 )}

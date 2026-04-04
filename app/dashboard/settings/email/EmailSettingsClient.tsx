@@ -844,7 +844,7 @@ export default function EmailSettingsClient() {
                   onClick={() => setIsBroadcast(false)}
                   className={`px-4 py-2 text-sm font-bold rounded-lg transition-colors ${!isBroadcast ? 'bg-white shadow relative text-primary' : 'text-slate-500 hover:text-slate-700'}`}
                 >
-                  Individu / Proyek
+                  Individu
                 </button>
                 <button
                   type="button"
