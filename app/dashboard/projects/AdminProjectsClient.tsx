@@ -562,19 +562,25 @@ export default function AdminProjectsClient() {
     if (selectedProject.guest_phone !== undefined) updatePayload.guest_phone = editFormData.whatsapp;
 
     const { error } = await supabase.from("store_orders").update(updatePayload).eq("id", selectedProject.id);
-    if (error) showToast("Gagal menyimpan: " + error.message, "error");
-    else { showToast("Perubahan disimpan", "success"); fetchOrders(); setModalView("detail"); }
+    if (error) { showToast("Gagal menyimpan: " + error.message, "error"); return; }
+    const updatedProject = { ...selectedProject, ...updatePayload };
+    setSelectedProject(updatedProject);
+    setOrders(prev => prev.map(o => o.id === selectedProject.id ? updatedProject : o));
+    showToast("Perubahan disimpan", "success");
+    setModalView("detail");
+    fetchOrders();
   };
 
   const openSlide = (o: any, v: "detail" | "email" | "edit" = "detail") => {
     setSelectedProject(o);
     if (v === "edit") {
+      const fd = getFormData(o);
       setEditFormData({
         status: o.status,
         total_amount: o.total_amount,
-        discount_amount: o.discount_amount || 0,
+        discount_amount: fd.discount_amount ?? o.discount_amount ?? 0,
         payment_method: o.payment_method || "",
-        progress: o.progress ?? 0,
+        progress: fd.progress ?? o.progress ?? 0,
         customer_name: getClientName(o),
         customer_email: getClientEmail(o),
         whatsapp: getClientWhatsApp(o),
