@@ -56,7 +56,7 @@ export default function Sidebar({ isAdmin }: { isAdmin: boolean }) {
         <div className="relative flex-1 flex flex-col min-h-0 border-r border-slate-200 bg-white pt-0">
           <div className="flex-1 flex flex-col pt-6 pb-4 overflow-hidden px-4">
             <div className="flex-1 bg-white space-y-4">
-              <ul className="space-y-1.5 pb-2">
+              <ul className="space-y-1 pb-2">
                 {menus.map((item) => {
                   const isActive = item.href !== "#" && (
                     item.href === "/dashboard" 

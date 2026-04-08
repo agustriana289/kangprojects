@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   BarChart3, LayoutGrid, Tag, Search, ChevronDown, Trash2, Eye, ExternalLink, Mail, Edit3,
-  ChevronRight, ChevronLeft, Loader2, Check, FileText, Phone, Users, Briefcase, Plus, PartyPopper, MessageSquare, Copy, Star, X, Send, Calendar, Wallet, TrendingUp, Paperclip
+  ChevronRight, ChevronLeft, Loader2, Check, FileText, Phone, Users, Briefcase, Plus, PartyPopper, MessageSquare, Copy, Star, X, Send, Calendar, Wallet, TrendingUp, Paperclip, Upload
 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { useToast } from "@/components/ToastProvider";
@@ -219,6 +219,7 @@ export default function AdminProjectsClient() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [addForm, setAddForm] = useState({ project_title: "", customer_name: "", whatsapp: "", customer_email: "", total_amount: "", status: "pending" as string, service_id: "", package_name: "" });
   const [addSaving, setAddSaving] = useState(false);
+  const [syncingTickTick, setSyncingTickTick] = useState(false);
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true); }, []);
 
@@ -521,6 +522,21 @@ export default function AdminProjectsClient() {
     }
   };
 
+  const handleSyncAllToTickTick = async () => {
+    setSyncingTickTick(true);
+    try {
+      const res = await fetch("/api/ticktick/sync-orders", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Gagal sinkronisasi");
+      showToast(data.message || "Sinkronisasi selesai", "success");
+      fetchOrders();
+    } catch (err: any) {
+      showToast(err.message || "Gagal sinkronisasi ke TickTick", "error");
+    } finally {
+      setSyncingTickTick(false);
+    }
+  };
+
   const handleAddCustomProject = async () => {
     if (!addForm.project_title) return showToast("Judul proyek wajib diisi", "error");
     setAddSaving(true);
@@ -780,6 +796,15 @@ export default function AdminProjectsClient() {
                className="inline-flex items-center gap-2 px-3 py-2 bg-primary text-white text-sm font-bold rounded-xl hover:bg-primary/90 transition-colors shadow-sm whitespace-nowrap"
             >
                <Plus className="w-4 h-4" /> Tambah Proyek
+            </button>
+            <button
+               onClick={handleSyncAllToTickTick}
+               disabled={syncingTickTick}
+               className="inline-flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 text-slate-700 text-sm font-bold rounded-xl hover:bg-slate-50 transition-colors shadow-sm whitespace-nowrap disabled:opacity-60 disabled:cursor-not-allowed"
+               title="Export semua pesanan aktif ke TickTick (tidak duplikat)"
+            >
+               {syncingTickTick ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+               Sync ke TickTick
             </button>
          </div>
       </div>

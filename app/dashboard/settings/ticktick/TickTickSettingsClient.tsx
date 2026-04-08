@@ -125,7 +125,7 @@ export default function TickTickSettingsClient() {
   const isExpired = expiresDate ? expiresDate < new Date() : false;
 
   return (
-    <div className="max-w-2xl space-y-6">
+    <div className="space-y-6">
       <div>
         <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-1">Integrasi TickTick</h2>
         <p className="text-sm font-medium text-slate-500 border-b border-slate-100 pb-4">
