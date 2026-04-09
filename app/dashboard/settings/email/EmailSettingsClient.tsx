@@ -7,7 +7,7 @@ import { useToast } from "@/components/ToastProvider";
 import {
   Save, Loader2, Plus, Trash2, Eye, EyeOff,
   Mail, Globe, FileText, Send, X, Paperclip, ChevronDown,
-  Star, Edit3, Users
+  Star, Edit3, Users, Check
 } from "lucide-react";
 
 function extractPlaceholders(html: string): string[] {
@@ -49,13 +49,13 @@ const INPUT_CLASS =
 const LABEL_CLASS = "block mb-2 text-xs font-bold uppercase tracking-wider text-slate-700";
 const SECTION_CLASS = "bg-white border border-slate-200 rounded-2xl p-6 shadow-sm";
 
-type ActiveSection = "credentials" | "domains" | "templates" | "subscribers" | "send";
+type ActiveSection = "send" | "broadcast" | "templates" | "subscribers" | "settings";
 
 export default function EmailSettingsClient() {
   const supabase = createClient();
   const { showToast } = useToast();
 
-  const [activeSection, setActiveSection] = useState<ActiveSection>("credentials");
+  const [activeSection, setActiveSection] = useState<ActiveSection>("send");
   const [loading, setLoading] = useState(true);
 
   const [gmailAddress, setGmailAddress] = useState("");
@@ -79,6 +79,8 @@ export default function EmailSettingsClient() {
   const [sendTemplateId, setSendTemplateId] = useState("");
   const [sendPlaceholders, setSendPlaceholders] = useState<Record<string, string>>({});
   const [sendAttachment, setSendAttachment] = useState<File | null>(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [emailNotification, setEmailNotification] = useState<{ type: "success" | "error"; message: string } | null>(null);
   const [sending, setSending] = useState(false);
   const [projectSearch, setProjectSearch] = useState("");
   const [suggestions, setSuggestions] = useState<OrderSuggestion[]>([]);
@@ -308,20 +310,26 @@ export default function EmailSettingsClient() {
   };
 
   const handleSendEmail = async () => {
+    const isBroadcast = activeSection === "broadcast";
+    
     if (isBroadcast && subscribers.length === 0) {
-      showToast("Tidak ada subscriber. Tambahkan subscriber terlebih dahulu.", "error");
+      setEmailNotification({ type: "error", message: "Tidak ada subscriber. Tambahkan subscriber terlebih dahulu." });
       return;
     }
     if (!isBroadcast && !sendTo) {
-      showToast("Penerima email harus diisi.", "error");
+      setEmailNotification({ type: "error", message: "Penerima email harus diisi." });
       return;
     }
     if (!sendTemplateId) {
-      showToast("Template harus dipilih.", "error");
+      setEmailNotification({ type: "error", message: "Template harus dipilih." });
       return;
     }
+
     const toValue = isBroadcast ? subscribers.map(s => s.email).join(", ") : sendTo;
     setSending(true);
+    setEmailNotification(null);
+    setUploadProgress(0);
+
     const formData = new FormData();
     formData.append("to", toValue);
     formData.append("isBroadcast", isBroadcast ? "true" : "false");
@@ -330,18 +338,67 @@ export default function EmailSettingsClient() {
     formData.append("placeholders", JSON.stringify(sendPlaceholders));
     if (sendAttachment) formData.append("attachment", sendAttachment);
 
-    const res = await fetch("/api/email/send", { method: "POST", body: formData });
-    const json = await res.json();
-    if (!res.ok) showToast(json.error || "Gagal mengirim email.", "error");
-    else {
-      showToast("Email berhasil dikirim!", "success");
-      setSendTo("");
-      setSendFromId("");
-      setSendTemplateId("");
-      setSendPlaceholders({});
-      setSendAttachment(null);
+    try {
+      // Use XMLHttpRequest untuk track upload progress
+      await new Promise<void>((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+
+        // Track upload progress
+        xhr.upload.addEventListener("progress", (e) => {
+          if (e.lengthComputable) {
+            const percentComplete = Math.round((e.loaded / e.total) * 100);
+            setUploadProgress(percentComplete);
+          }
+        });
+
+        xhr.addEventListener("loadstart", () => {
+          setUploadProgress(1);
+        });
+
+        xhr.addEventListener("load", () => {
+          if (xhr.status === 200) {
+            setUploadProgress(100);
+            setEmailNotification({ 
+              type: "success", 
+              message: isBroadcast ? "Broadcast berhasil dikirim ke semua subscriber!" : "Email berhasil dikirim!" 
+            });
+            setTimeout(() => {
+              setSendTo("");
+              setSendFromId("");
+              setSendTemplateId("");
+              setSendPlaceholders({});
+              setSendAttachment(null);
+              setUploadProgress(0);
+              setEmailNotification(null);
+              setSending(false);
+            }, 2000);
+            resolve();
+          } else {
+            try {
+              const response = JSON.parse(xhr.responseText);
+              reject(new Error(response.error || `Error ${xhr.status}`));
+            } catch {
+              reject(new Error(`Gagal mengirim email (${xhr.status})`));
+            }
+          }
+        });
+
+        xhr.addEventListener("error", () => {
+          reject(new Error("Koneksi gagal. Periksa ukuran file (max 4MB)"));
+        });
+
+        xhr.addEventListener("abort", () => {
+          reject(new Error("Upload dibatalkan"));
+        });
+
+        xhr.open("POST", "/api/email/send", true);
+        xhr.send(formData);
+      });
+    } catch (err: any) {
+      setEmailNotification({ type: "error", message: err.message || "Gagal mengirim email" });
+      setSending(false);
+      setUploadProgress(0);
     }
-    setSending(false);
   };
 
   const handleProjectSearch = (val: string) => {
@@ -399,11 +456,11 @@ export default function EmailSettingsClient() {
   };
 
   const SECTION_TABS: { key: ActiveSection; label: string; icon: React.ReactNode }[] = [
-    { key: "credentials", label: "Kredensial Gmail", icon: <Mail className="w-4 h-4" /> },
-    { key: "domains", label: "Custom Domain", icon: <Globe className="w-4 h-4" /> },
-    { key: "templates", label: "Template Email", icon: <FileText className="w-4 h-4" /> },
-    { key: "subscribers", label: "Daftar Subscriber", icon: <Users className="w-4 h-4" /> },
-    { key: "send", label: "Kirim Email", icon: <Send className="w-4 h-4" /> },
+    { key: "send", label: "Kirim Email", icon: <Mail className="w-4 h-4" /> },
+    { key: "broadcast", label: "Kirim Broadcast", icon: <Send className="w-4 h-4" /> },
+    { key: "templates", label: "Template", icon: <FileText className="w-4 h-4" /> },
+    { key: "subscribers", label: "Subscriber", icon: <Users className="w-4 h-4" /> },
+    { key: "settings", label: "Pengaturan", icon: <Globe className="w-4 h-4" /> },
   ];
 
   const currentTemplateKeys = editingTemplate
@@ -447,147 +504,160 @@ export default function EmailSettingsClient() {
       <div className="flex-1 p-4 sm:p-6 lg:p-8 xl:p-10 overflow-auto">
 
         {activeSection === "credentials" && (
-          <div className="max-w-xl space-y-6">
-            <div>
-              <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-1">Kredensial Gmail</h2>
-              <p className="text-sm font-medium text-slate-500 mb-6 border-b border-slate-100 pb-4">
-                Konfigurasi akun Gmail dan App Password untuk pengiriman email. App Password dienkripsi sebelum disimpan ke database.
-              </p>
-            </div>
-            <div className={SECTION_CLASS}>
-              <div className="mb-4">
-                <label className={LABEL_CLASS}>Alamat Gmail</label>
-                <input
-                  id="gmail_address"
-                  type="email"
-                  value={gmailAddress}
-                  onChange={(e) => setGmailAddress(e.target.value)}
-                  placeholder="your@gmail.com"
-                  className={INPUT_CLASS}
-                />
-              </div>
-              <div className="mb-4">
-                <label className={LABEL_CLASS}>App Password Gmail</label>
-                <div className="relative">
-                  <input
-                    id="gmail_app_password"
-                    type={showPassword ? "text" : "password"}
-                    value={gmailPassword}
-                    onChange={(e) => setGmailPassword(e.target.value)}
-                    placeholder="Kosongkan jika tidak ingin mengubah"
-                    className={INPUT_CLASS + " pr-10"}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword((p) => !p)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 transition-colors"
-                  >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
-                <p className="text-xs text-slate-400 mt-1.5 font-medium">
-                  Buat App Password di: Google Account → Security → 2-Step Verification → App Passwords
-                </p>
-              </div>
-              <button
-                id="save_credentials_btn"
-                onClick={handleSaveCredentials}
-                disabled={credentialSaving}
-                className="inline-flex items-center gap-2 bg-primary text-white font-bold text-sm px-5 py-2.5 rounded-xl hover:bg-primary/90 transition-colors disabled:opacity-60"
-              >
-                {credentialSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                Simpan Kredensial
-              </button>
-            </div>
-          </div>
+          <div>Migrate to settings</div>
         )}
 
         {activeSection === "domains" && (
-          <div className="max-w-2xl space-y-6">
-            <div>
-              <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-1">Custom Sender Domain</h2>
-              <p className="text-sm font-medium text-slate-500 mb-6 border-b border-slate-100 pb-4">
-                Daftar domain &quot;Send As&quot; yang sudah terdaftar di Gmail Settings → Send mail as. Email akan dikirim atas nama domain ini.
-              </p>
-            </div>
-            <div className={SECTION_CLASS}>
-              <h3 className="text-sm font-bold text-slate-900 mb-4">Tambah Domain Baru</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
-                <div>
-                  <label className={LABEL_CLASS}>Alamat Email Domain</label>
-                  <input
-                    id="new_domain_email"
-                    type="email"
-                    value={newDomain}
-                    onChange={(e) => setNewDomain(e.target.value)}
-                    placeholder="noreply@yourdomain.com"
-                    className={INPUT_CLASS}
-                  />
-                </div>
-                <div>
-                  <label className={LABEL_CLASS}>Nama Pengirim</label>
-                  <input
-                    id="new_domain_name"
-                    type="text"
-                    value={newDomainName}
-                    onChange={(e) => setNewDomainName(e.target.value)}
-                    placeholder="KangJasa Official"
-                    className={INPUT_CLASS}
-                  />
-                </div>
+          <div>Migrate to settings</div>
+        )}
+
+        {activeSection === "settings" && (
+          <div className="max-w-4xl space-y-8">
+            {/* Kredensial Gmail Section */}
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-1">Kredensial Gmail</h2>
+                <p className="text-sm font-medium text-slate-500 mb-6 border-b border-slate-100 pb-4">
+                  Konfigurasi akun Gmail dan App Password untuk pengiriman email. App Password dienkripsi sebelum disimpan ke database.
+                </p>
               </div>
-              <button
-                id="add_domain_btn"
-                onClick={handleAddDomain}
-                disabled={domainSaving}
-                className="inline-flex items-center gap-2 bg-primary text-white font-bold text-sm px-4 py-2.5 rounded-xl hover:bg-primary/90 transition-colors disabled:opacity-60"
-              >
-                {domainSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
-                Tambah Domain
-              </button>
+              <div className={SECTION_CLASS}>
+                <div className="mb-4">
+                  <label className={LABEL_CLASS}>Alamat Gmail</label>
+                  <input
+                    id="gmail_address"
+                    type="email"
+                    value={gmailAddress}
+                    onChange={(e) => setGmailAddress(e.target.value)}
+                    placeholder="your@gmail.com"
+                    className={INPUT_CLASS}
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className={LABEL_CLASS}>App Password Gmail</label>
+                  <div className="relative">
+                    <input
+                      id="gmail_app_password"
+                      type={showPassword ? "text" : "password"}
+                      value={gmailPassword}
+                      onChange={(e) => setGmailPassword(e.target.value)}
+                      placeholder="Kosongkan jika tidak ingin mengubah"
+                      className={INPUT_CLASS + " pr-10"}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((p) => !p)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 transition-colors"
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                  <p className="text-xs text-slate-400 mt-1.5 font-medium">
+                    Buat App Password di: Google Account → Security → 2-Step Verification → App Passwords
+                  </p>
+                </div>
+                <button
+                  id="save_credentials_btn"
+                  onClick={handleSaveCredentials}
+                  disabled={credentialSaving}
+                  className="inline-flex items-center gap-2 bg-primary text-white font-bold text-sm px-5 py-2.5 rounded-xl hover:bg-primary/90 transition-colors disabled:opacity-60"
+                >
+                  {credentialSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                  Simpan Kredensial
+                </button>
+              </div>
             </div>
 
-            <div className={SECTION_CLASS}>
-              <h3 className="text-sm font-bold text-slate-900 mb-4">Daftar Domain ({domains.length})</h3>
-              {domains.length === 0 ? (
-                <div className="text-center py-8 text-slate-400 text-xs font-bold uppercase tracking-wider bg-slate-50 rounded-xl border border-slate-200 border-dashed">
-                  Belum ada domain yang dikonfigurasi.
+            {/* Divider */}
+            <div className="border-t border-slate-200" />
+
+            {/* Custom Domain Section */}
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-1">Custom Sender Domain</h2>
+                <p className="text-sm font-medium text-slate-500 mb-6 border-b border-slate-100 pb-4">
+                  Daftar domain &quot;Send As&quot; yang sudah terdaftar di Gmail Settings → Send mail as. Email akan dikirim atas nama domain ini.
+                </p>
+              </div>
+              <div className={SECTION_CLASS}>
+                <h3 className="text-sm font-bold text-slate-900 mb-4">Tambah Domain Baru</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                  <div>
+                    <label className={LABEL_CLASS}>Alamat Email Domain</label>
+                    <input
+                      id="new_domain_email"
+                      type="email"
+                      value={newDomain}
+                      onChange={(e) => setNewDomain(e.target.value)}
+                      placeholder="noreply@yourdomain.com"
+                      className={INPUT_CLASS}
+                    />
+                  </div>
+                  <div>
+                    <label className={LABEL_CLASS}>Nama Pengirim</label>
+                    <input
+                      id="new_domain_name"
+                      type="text"
+                      value={newDomainName}
+                      onChange={(e) => setNewDomainName(e.target.value)}
+                      placeholder="KangJasa Official"
+                      className={INPUT_CLASS}
+                    />
+                  </div>
                 </div>
-              ) : (
-                <div className="space-y-2">
-                  {domains.map((d) => (
-                    <div
-                      key={d.id}
-                      className="flex items-center gap-3 bg-slate-50 p-3 rounded-xl border border-slate-100 group hover:bg-white hover:border-slate-200 hover:shadow-sm transition-all"
-                    >
-                      <Globe className="w-4 h-4 text-slate-400 shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-slate-900 truncate">{d.display_name || d.domain}</p>
-                        <p className="text-xs text-slate-400 truncate">{d.domain}</p>
-                      </div>
-                      {d.is_default && (
-                        <span className="inline-flex items-center gap-1 text-xs font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
-                          <Star className="w-3 h-3" /> Default
-                        </span>
-                      )}
-                      {!d.is_default && (
-                        <button
-                          onClick={() => handleSetDefault(d.id)}
-                          className="text-xs font-bold text-slate-500 hover:text-primary hover:bg-primary/10 px-2 py-1 rounded-lg transition-colors"
-                        >
-                          Set Default
-                        </button>
-                      )}
-                      <button
-                        onClick={() => handleDeleteDomain(d.id)}
-                        className="p-1.5 text-rose-400 hover:bg-rose-50 hover:text-rose-600 rounded-lg transition-colors"
+                <button
+                  id="add_domain_btn"
+                  onClick={handleAddDomain}
+                  disabled={domainSaving}
+                  className="inline-flex items-center gap-2 bg-primary text-white font-bold text-sm px-4 py-2.5 rounded-xl hover:bg-primary/90 transition-colors disabled:opacity-60"
+                >
+                  {domainSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+                  Tambah Domain
+                </button>
+              </div>
+
+              <div className={SECTION_CLASS}>
+                <h3 className="text-sm font-bold text-slate-900 mb-4">Daftar Domain ({domains.length})</h3>
+                {domains.length === 0 ? (
+                  <div className="text-center py-8 text-slate-400 text-xs font-bold uppercase tracking-wider bg-slate-50 rounded-xl border border-slate-200 border-dashed">
+                    Belum ada domain yang dikonfigurasi.
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {domains.map((d) => (
+                      <div
+                        key={d.id}
+                        className="flex items-center gap-3 bg-slate-50 p-3 rounded-xl border border-slate-100 group hover:bg-white hover:border-slate-200 hover:shadow-sm transition-all"
                       >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
+                        <Globe className="w-4 h-4 text-slate-400 shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold text-slate-900 truncate">{d.display_name || d.domain}</p>
+                          <p className="text-xs text-slate-400 truncate">{d.domain}</p>
+                        </div>
+                        {d.is_default && (
+                          <span className="inline-flex items-center gap-1 text-xs font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                            <Star className="w-3 h-3" /> Default
+                          </span>
+                        )}
+                        {!d.is_default && (
+                          <button
+                            onClick={() => handleSetDefault(d.id)}
+                            className="text-xs font-bold text-slate-500 hover:text-primary hover:bg-primary/10 px-2 py-1 rounded-lg transition-colors"
+                          >
+                            Set Default
+                          </button>
+                        )}
+                        <button
+                          onClick={() => handleDeleteDomain(d.id)}
+                          className="p-1.5 text-rose-400 hover:bg-rose-50 hover:text-rose-600 rounded-lg transition-colors"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}
@@ -841,118 +911,87 @@ export default function EmailSettingsClient() {
         {activeSection === "send" && (
           <div className="max-w-2xl space-y-6">
             <div>
-              <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-1">Kirim Email</h2>
+              <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-1">Kirim Email Individu</h2>
               <p className="text-sm font-medium text-slate-500 mb-6 border-b border-slate-100 pb-4">
-                Kirim email ke klien menggunakan template yang sudah dikonfigurasi. Lampiran ZIP/RAR diteruskan langsung tanpa disimpan ke server.
+                Kirim email ke satu klien menggunakan template yang sudah dikonfigurasi dengan attachment file.
               </p>
             </div>
             <div className={SECTION_CLASS + " space-y-5"}>
-              <div className="flex items-center gap-4 bg-slate-50 p-1.5 rounded-xl border border-slate-200 self-start">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsBroadcast(false);
-                    setSendTo("");
-                  }}
-                  className={`px-4 py-2 text-sm font-bold rounded-lg transition-colors ${!isBroadcast ? 'bg-white shadow relative text-primary' : 'text-slate-500 hover:text-slate-700'}`}
-                >
-                  Individu
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsBroadcast(true);
-                    setSendTo(subscribers.map(s => s.email).join(", "));
-                  }}
-                  className={`px-4 py-2 text-sm font-bold rounded-lg transition-colors ${isBroadcast ? 'bg-white shadow relative text-primary' : 'text-slate-500 hover:text-slate-700'}`}
-                >
-                  Broadcast Promosi
-                </button>
+              {emailNotification && (
+                <div className={`p-3 rounded-xl border flex items-start gap-2 ${
+                  emailNotification.type === "success" 
+                    ? "bg-green-50 border-green-200" 
+                    : "bg-red-50 border-red-200"
+                }`}>
+                  {emailNotification.type === "success" ? (
+                    <Check className="w-4 h-4 shrink-0 mt-0.5 text-green-600" />
+                  ) : (
+                    <X className="w-4 h-4 shrink-0 mt-0.5 text-red-600" />
+                  )}
+                  <p className={`text-xs font-medium ${emailNotification.type === "success" ? "text-green-700" : "text-red-700"}`}>
+                    {emailNotification.message}
+                  </p>
+                </div>
+              )}
+
+              <div className="bg-primary/5 p-4 rounded-xl border border-primary/20" ref={suggestRef}>
+                <label className="block mb-2 text-xs font-bold uppercase tracking-wider text-primary">
+                  Pilih Proyek / Pesanan (Opsional - Auto Fill)
+                </label>
+                <input
+                  ref={suggestInputRef}
+                  id="search_project"
+                  type="text"
+                  value={projectSearch}
+                  onChange={(e) => handleProjectSearch(e.target.value)}
+                  onFocus={openDropdown}
+                  placeholder="Klik untuk menampilkan semua proyek, atau ketik untuk filter..."
+                  className="bg-white border border-primary/20 text-slate-900 text-sm rounded-xl focus:ring-2 focus:ring-primary/40 focus:border-primary block w-full p-3 transition-all outline-none shadow-sm"
+                  autoComplete="off"
+                />
+                {showSuggestions && filterSuggestions.length > 0 && createPortal(
+                  <div
+                    style={{ position: "fixed", top: dropdownTop, left: dropdownLeft, width: dropdownWidth, zIndex: 9999, maxHeight: "280px" }}
+                    className="bg-white border border-slate-200 rounded-xl shadow-2xl overflow-y-auto"
+                  >
+                    {filterSuggestions.map((s) => (
+                      <button
+                        key={s.order_id}
+                        onMouseDown={(e) => { e.preventDefault(); selectSuggestion(s); }}
+                        className="flex items-center gap-3 w-full px-4 py-3 hover:bg-primary/5 text-left transition-colors border-b border-slate-50 last:border-0"
+                      >
+                        <FileText className="w-4 h-4 text-slate-300 shrink-0" />
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-bold text-slate-900 truncate">
+                            {s.project || s.service || "—"}
+                            {s.invoice && <span className="text-slate-400 font-normal ml-1 text-xs">#{s.invoice}</span>}
+                          </p>
+                          <p className="text-xs text-slate-500 truncate mt-0.5">
+                            {s.name || "(Tanpa nama)"} {s.email && <span className="text-slate-400">&middot; {s.email}</span>}
+                          </p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>,
+                  document.body
+                )}
+                <p className="text-[11px] font-medium text-slate-500 mt-2 leading-relaxed">
+                  Jika proyek dipilih, sistem akan otomatis mengisi field pengiriman dan mereplikasi semua nilai placeholder template.
+                </p>
               </div>
 
-              {isBroadcast && (
-                <div className="bg-primary/5 border border-primary/20 p-4 rounded-xl">
-                  <p className="text-xs font-bold uppercase tracking-wider text-primary mb-2">Penerima Broadcast ({subscribers.length} Subscriber)</p>
-                  {subscribers.length === 0 ? (
-                    <p className="text-sm text-slate-500 font-medium">Belum ada subscriber. Tambahkan subscriber terlebih dahulu di tab <span className="font-bold text-primary">Daftar Subscriber</span>.</p>
-                  ) : (
-                    <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto">
-                      {subscribers.map(s => (
-                        <span key={s.id} className="inline-flex items-center gap-1 text-xs bg-white border border-primary/20 text-primary font-semibold px-2 py-1 rounded-lg">
-                          <Users className="w-3 h-3" />
-                          {s.name ? `${s.name} (${s.email})` : s.email}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                  <p className="text-[11px] font-medium text-slate-500 mt-2 leading-relaxed">
-                    Email akan dikirim via BCC ke semua subscriber di atas agar privasi terjaga.
-                  </p>
-                </div>
-              )}
-
-              {!isBroadcast && (
-                <div className="bg-primary/5 p-4 rounded-xl border border-primary/20" ref={suggestRef}>
-                  <label className="block mb-2 text-xs font-bold uppercase tracking-wider text-primary">
-                    Pilih Proyek / Pesanan (Opsional - Auto Fill)
-                  </label>
-                  <input
-                    ref={suggestInputRef}
-                    id="search_project"
-                    type="text"
-                    value={projectSearch}
-                    onChange={(e) => handleProjectSearch(e.target.value)}
-                    onFocus={openDropdown}
-                    placeholder="Klik untuk menampilkan semua proyek, atau ketik untuk filter..."
-                    className="bg-white border border-primary/20 text-slate-900 text-sm rounded-xl focus:ring-2 focus:ring-primary/40 focus:border-primary block w-full p-3 transition-all outline-none shadow-sm"
-                    autoComplete="off"
-                  />
-                  {showSuggestions && filterSuggestions.length > 0 && createPortal(
-                    <div
-                      style={{ position: "fixed", top: dropdownTop, left: dropdownLeft, width: dropdownWidth, zIndex: 9999, maxHeight: "280px" }}
-                      className="bg-white border border-slate-200 rounded-xl shadow-2xl overflow-y-auto"
-                    >
-                      {filterSuggestions.map((s) => (
-                        <button
-                          key={s.order_id}
-                          onMouseDown={(e) => { e.preventDefault(); selectSuggestion(s); }}
-                          className="flex items-center gap-3 w-full px-4 py-3 hover:bg-primary/5 text-left transition-colors border-b border-slate-50 last:border-0"
-                        >
-                          <FileText className="w-4 h-4 text-slate-300 shrink-0" />
-                          <div className="min-w-0 flex-1">
-                            <p className="text-sm font-bold text-slate-900 truncate">
-                              {s.project || s.service || "—"}
-                              {s.invoice && <span className="text-slate-400 font-normal ml-1 text-xs">#{s.invoice}</span>}
-                            </p>
-                            <p className="text-xs text-slate-500 truncate mt-0.5">
-                              {s.name || "(Tanpa nama)"} {s.email && <span className="text-slate-400">&middot; {s.email}</span>}
-                            </p>
-                          </div>
-                        </button>
-                      ))}
-                    </div>,
-                    document.body
-                  )}
-                  <p className="text-[11px] font-medium text-slate-500 mt-2 leading-relaxed">
-                    Jika proyek dipilih, sistem akan otomatis mengisi field pengiriman dan mereplikasi semua nilai placeholder template (seperti {'{{nama_klien}}'}, {'{{total_harga}}'}) yang tersedia.
-                  </p>
-                </div>
-              )}
-
-              {!isBroadcast && (
-                <div>
-                  <label className={LABEL_CLASS}>Penerima (To)</label>
-                  <input
-                    id="send_to"
-                    type="text"
-                    value={sendTo}
-                    onChange={(e) => setSendTo(e.target.value)}
-                    placeholder="email@klien.com"
-                    className={INPUT_CLASS}
-                    autoComplete="off"
-                  />
-                </div>
-              )}
+              <div>
+                <label className={LABEL_CLASS}>Penerima Email</label>
+                <input
+                  id="send_to"
+                  type="email"
+                  value={sendTo}
+                  onChange={(e) => setSendTo(e.target.value)}
+                  placeholder="email@klien.com"
+                  className={INPUT_CLASS}
+                  autoComplete="off"
+                />
+              </div>
 
               <div>
                 <label className={LABEL_CLASS}>Kirim Dari</label>
@@ -993,29 +1032,47 @@ export default function EmailSettingsClient() {
               </div>
 
               <div>
-                <label className={LABEL_CLASS}>Lampiran (ZIP / RAR saja)</label>
+                <label className={LABEL_CLASS}>Lampiran (ZIP/RAR saja, max 4MB)</label>
                 <div className="flex items-center gap-3">
                   <label
                     htmlFor="email_attachment"
-                    className="inline-flex items-center gap-2 cursor-pointer bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-sm font-bold px-4 py-2.5 rounded-xl transition-colors shadow-sm"
+                    className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600 text-sm font-bold transition-all"
                   >
-                    <Paperclip className="w-4 h-4" />
-                    {sendAttachment ? sendAttachment.name : "Pilih File"}
+                    <Paperclip className="w-4 h-4" /> Pilih File
+                    <input 
+                      type="file" 
+                      id="email_attachment" 
+                      accept=".zip,.rar" 
+                      className="hidden" 
+                      onChange={(e) => {
+                        const file = e.target.files?.[0] || null;
+                        const maxSize = 4 * 1024 * 1024; // 4MB
+                        if (file && file.size > maxSize) {
+                          const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+                          setEmailNotification({ 
+                            type: "error", 
+                            message: `File terlalu besar (${sizeMB}MB). Maksimal 4MB. Silakan kompres file Anda.` 
+                          });
+                          e.target.value = "";
+                          setSendAttachment(null);
+                        } else if (file) {
+                          setSendAttachment(file);
+                          setUploadProgress(0);
+                          setEmailNotification(null);
+                        }
+                      }}
+                    />
                   </label>
-                  <input
-                    type="file"
-                    id="email_attachment"
-                    accept=".zip,.rar"
-                    className="hidden"
-                    onChange={(e) => setSendAttachment(e.target.files?.[0] || null)}
-                  />
                   {sendAttachment && (
-                    <button
-                      onClick={() => setSendAttachment(null)}
-                      className="p-1.5 text-rose-400 hover:bg-rose-50 hover:text-rose-600 rounded-lg transition-colors"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-xs font-medium text-slate-600 truncate">{sendAttachment.name}</span>
+                        <span className="text-[9px] font-bold text-slate-400">{uploadProgress}%</span>
+                      </div>
+                      <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+                        <div className="h-full bg-gradient-to-r from-indigo-400 to-indigo-600 rounded-full transition-all duration-300" style={{ width: `${uploadProgress}%` }} />
+                      </div>
+                    </div>
                   )}
                 </div>
               </div>
@@ -1024,11 +1081,155 @@ export default function EmailSettingsClient() {
                 <button
                   id="send_email_btn"
                   onClick={handleSendEmail}
-                  disabled={sending || !sendTemplateId || (isBroadcast ? subscribers.length === 0 : !sendTo)}
+                  disabled={sending || !sendTemplateId || !sendTo}
                   className="inline-flex items-center gap-2 bg-primary text-white font-bold text-sm px-6 py-3 rounded-xl hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                   {sending ? "Mengirim..." : "Kirim Email"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeSection === "broadcast" && (
+          <div className="max-w-2xl space-y-6">
+            <div>
+              <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-1">Kirim Broadcast</h2>
+              <p className="text-sm font-medium text-slate-500 mb-6 border-b border-slate-100 pb-4">
+                Kirim email promosi ke semua subscriber daftar Anda menggunakan BCC untuk menjaga privasi.
+              </p>
+            </div>
+            <div className={SECTION_CLASS + " space-y-5"}>
+              {emailNotification && (
+                <div className={`p-3 rounded-xl border flex items-start gap-2 ${
+                  emailNotification.type === "success" 
+                    ? "bg-green-50 border-green-200" 
+                    : "bg-red-50 border-red-200"
+                }`}>
+                  {emailNotification.type === "success" ? (
+                    <Check className="w-4 h-4 shrink-0 mt-0.5 text-green-600" />
+                  ) : (
+                    <X className="w-4 h-4 shrink-0 mt-0.5 text-red-600" />
+                  )}
+                  <p className={`text-xs font-medium ${emailNotification.type === "success" ? "text-green-700" : "text-red-700"}`}>
+                    {emailNotification.message}
+                  </p>
+                </div>
+              )}
+
+              <div className="bg-primary/5 border border-primary/20 p-4 rounded-xl">
+                <p className="text-xs font-bold uppercase tracking-wider text-primary mb-2">Penerima Broadcast ({subscribers.length} Subscriber)</p>
+                {subscribers.length === 0 ? (
+                  <p className="text-sm text-slate-500 font-medium">Belum ada subscriber. Tambahkan subscriber terlebih dahulu di tab <span className="font-bold text-primary">Subscriber</span>.</p>
+                ) : (
+                  <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto">
+                    {subscribers.map(s => (
+                      <span key={s.id} className="inline-flex items-center gap-1 text-xs bg-white border border-primary/20 text-primary font-semibold px-2 py-1 rounded-lg">
+                        <Users className="w-3 h-3" />
+                        {s.name ? `${s.name} (${s.email})` : s.email}
+                      </span>
+                    ))}
+                  </div>
+                )}
+                <p className="text-[11px] font-medium text-slate-500 mt-2 leading-relaxed">
+                  Email akan dikirim via BCC ke semua subscriber di atas agar privasi terjaga.
+                </p>
+              </div>
+
+              <div>
+                <label className={LABEL_CLASS}>Kirim Dari</label>
+                <div className="relative">
+                  <select
+                    id="send_from_broadcast"
+                    value={sendFromId}
+                    onChange={(e) => setSendFromId(e.target.value)}
+                    className={INPUT_CLASS + " appearance-none pr-8 cursor-pointer"}
+                  >
+                    <option value="">— Gunakan domain default —</option>
+                    {domains.map((d) => (
+                      <option key={d.id} value={d.id}>
+                        {d.display_name || d.domain}{` <${d.domain}>`}{d.is_default ? " (Default)" : ""}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                </div>
+              </div>
+
+              <div>
+                <label className={LABEL_CLASS}>Template</label>
+                <div className="relative">
+                  <select
+                    id="send_template_broadcast"
+                    value={sendTemplateId}
+                    onChange={(e) => setSendTemplateId(e.target.value)}
+                    className={INPUT_CLASS + " appearance-none pr-8 cursor-pointer"}
+                  >
+                    <option value="">— Pilih template —</option>
+                    {templates.map((t) => (
+                      <option key={t.id} value={t.id}>{t.name}</option>
+                    ))}
+                  </select>
+                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                </div>
+              </div>
+
+              <div>
+                <label className={LABEL_CLASS}>Lampiran (ZIP/RAR saja, max 4MB)</label>
+                <div className="flex items-center gap-3">
+                  <label
+                    htmlFor="email_attachment_broadcast"
+                    className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600 text-sm font-bold transition-all"
+                  >
+                    <Paperclip className="w-4 h-4" /> Pilih File
+                    <input 
+                      type="file" 
+                      id="email_attachment_broadcast" 
+                      accept=".zip,.rar" 
+                      className="hidden" 
+                      onChange={(e) => {
+                        const file = e.target.files?.[0] || null;
+                        const maxSize = 4 * 1024 * 1024; // 4MB
+                        if (file && file.size > maxSize) {
+                          const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+                          setEmailNotification({ 
+                            type: "error", 
+                            message: `File terlalu besar (${sizeMB}MB). Maksimal 4MB. Silakan kompres file Anda.` 
+                          });
+                          e.target.value = "";
+                          setSendAttachment(null);
+                        } else if (file) {
+                          setSendAttachment(file);
+                          setUploadProgress(0);
+                          setEmailNotification(null);
+                        }
+                      }}
+                    />
+                  </label>
+                  {sendAttachment && (
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-xs font-medium text-slate-600 truncate">{sendAttachment.name}</span>
+                        <span className="text-[9px] font-bold text-slate-400">{uploadProgress}%</span>
+                      </div>
+                      <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+                        <div className="h-full bg-gradient-to-r from-indigo-400 to-indigo-600 rounded-full transition-all duration-300" style={{ width: `${uploadProgress}%` }} />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="pt-2 border-t border-slate-100">
+                <button
+                  id="send_broadcast_btn"
+                  onClick={handleSendEmail}
+                  disabled={sending || !sendTemplateId || subscribers.length === 0}
+                  className="inline-flex items-center gap-2 bg-primary text-white font-bold text-sm px-6 py-3 rounded-xl hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                  {sending ? "Mengirim..." : "Kirim Ke Semua Subscriber"}
                 </button>
               </div>
             </div>
