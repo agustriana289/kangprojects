@@ -481,7 +481,7 @@ export default function AdminProjectsClient() {
         throw new Error(data.error || "Gagal generate link");
       }
       navigator.clipboard.writeText(`${window.location.origin}/testimonials/submit/${id}`);
-      showToast("Link testimoni disalin! Berlaku 7 hari.", "success");
+      showToast("Link Testimoni disalin! Berlaku 7 hari.", "success");
     } catch (err: any) {
       showToast(err.message || "Gagal generate link", "error");
     }
