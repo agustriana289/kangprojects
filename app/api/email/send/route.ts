@@ -3,6 +3,14 @@ import nodemailer from "nodemailer";
 import { createClient } from "@/utils/supabase/server";
 import { createDecipheriv } from "crypto";
 
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '10mb',
+    },
+  },
+};
+
 const CIPHER_KEY = (process.env.EMAIL_CIPHER_KEY || "").padEnd(32, "0").slice(0, 32);
 const CIPHER_IV = (process.env.EMAIL_CIPHER_IV || "").padEnd(16, "0").slice(0, 16);
 
@@ -39,6 +47,10 @@ export async function POST(req: NextRequest) {
 
       const attachment = formData.get("attachment") as File | null;
       if (attachment && attachment.size > 0) {
+        const maxSize = 10 * 1024 * 1024; // 10MB
+        if (attachment.size > maxSize) {
+          return NextResponse.json({ error: `File terlalu besar. Maksimal 10MB, file Anda ${(attachment.size / (1024 * 1024)).toFixed(2)}MB` }, { status: 413 });
+        }
         const arrayBuffer = await attachment.arrayBuffer();
         attachmentBuffer = Buffer.from(arrayBuffer);
         attachmentName = attachment.name;

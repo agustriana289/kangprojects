@@ -1012,11 +1012,22 @@ export default function AdminProjectsClient() {
                       </div>
 
                       <div className="space-y-1.5 pt-2">
-                         <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 ml-1">Lampiran (ZIP/RAR saja)</label>
+                         <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 ml-1">Lampiran (ZIP/RAR saja, max 10MB)</label>
                          <div className="flex items-center gap-3">
                             <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-600 text-sm font-bold transition-all">
                                <Paperclip className="w-4 h-4" /> Pilih File
-                               <input type="file" className="hidden" accept=".zip,.rar" onChange={e => { setSendAttachment(e.target.files?.[0] || null); setUploadProgress(100); }} />
+                               <input type="file" className="hidden" accept=".zip,.rar" onChange={(e) => {
+                                 const file = e.target.files?.[0] || null;
+                                 const maxSize = 10 * 1024 * 1024; // 10MB
+                                 if (file && file.size > maxSize) {
+                                   setEmailNotification({ type: "error", message: `File terlalu besar (${(file.size / (1024 * 1024)).toFixed(2)}MB). Maksimal 10MB.` });
+                                   e.target.value = "";
+                                 } else {
+                                   setSendAttachment(file);
+                                   setUploadProgress(100);
+                                   setEmailNotification(null);
+                                 }
+                               }} />
                             </label>
                             {sendAttachment && (
                               <div className="flex-1">
