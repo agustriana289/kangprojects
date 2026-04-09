@@ -474,7 +474,7 @@ export default function EmailSettingsClient() {
         <Loader2 className="w-10 h-10 animate-spin text-primary mb-4" />
       </div>
     );
-  }
+  } 
 
   return (
     <div className="flex-1 bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl overflow-hidden flex flex-col xl:flex-row">
