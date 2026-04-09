@@ -1039,9 +1039,9 @@ export default function AdminProjectsClient() {
                             : "bg-red-50 border-red-200"
                         }`}>
                           {emailNotification.type === "success" ? (
-                            <Check className={`w-4 h-4 shrink-0 mt-0.5 ${emailNotification.type === "success" ? "text-green-600" : "text-red-600"}`} />
+                            <Check className="w-4 h-4 shrink-0 mt-0.5 text-green-600" />
                           ) : (
-                            <X className={`w-4 h-4 shrink-0 mt-0.5 ${emailNotification.type === "success" ? "text-green-600" : "text-red-600"}`} />
+                            <X className="w-4 h-4 shrink-0 mt-0.5 text-red-600" />
                           )}
                           <p className={`text-xs font-medium ${emailNotification.type === "success" ? "text-green-700" : "text-red-700"}`}>
                             {emailNotification.message}
