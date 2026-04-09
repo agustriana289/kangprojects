@@ -41,9 +41,9 @@ export async function POST(req: NextRequest) {
 
       const attachment = formData.get("attachment") as File | null;
       if (attachment && attachment.size > 0) {
-        const maxSize = 10 * 1024 * 1024; // 10MB
+        const maxSize = 4 * 1024 * 1024; // 4MB
         if (attachment.size > maxSize) {
-          return NextResponse.json({ error: `File terlalu besar. Maksimal 10MB, file Anda ${(attachment.size / (1024 * 1024)).toFixed(2)}MB` }, { status: 413 });
+          return NextResponse.json({ error: `File terlalu besar. Maksimal 4MB, file Anda ${(attachment.size / (1024 * 1024)).toFixed(2)}MB` }, { status: 413 });
         }
         const arrayBuffer = await attachment.arrayBuffer();
         attachmentBuffer = Buffer.from(arrayBuffer);

@@ -1,8 +1,12 @@
 {
   "functions": {
     "app/api/email/send/route.ts": {
-      "memory": 1024,
+      "memory": 3008,
       "maxDuration": 60
     }
+  },
+  "env": {
+    "NODE_OPTIONS": "--max-old-space-size=3008"
   }
 }
+
