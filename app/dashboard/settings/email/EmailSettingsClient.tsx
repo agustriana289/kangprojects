@@ -935,7 +935,7 @@ export default function EmailSettingsClient() {
         )}
 
         {activeSection === "send" && (
-          <div className="max-w-2xl space-y-6">
+          <div className="space-y-6">
             <div>
               <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-1">Kirim Email Individu</h2>
               <p className="text-sm font-medium text-slate-500 mb-6 border-b border-slate-100 pb-4">
@@ -1119,7 +1119,7 @@ export default function EmailSettingsClient() {
         )}
 
         {activeSection === "broadcast" && (
-          <div className="max-w-2xl space-y-6">
+          <div className="space-y-6">
             <div>
               <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-1">Kirim Broadcast</h2>
               <p className="text-sm font-medium text-slate-500 mb-6 border-b border-slate-100 pb-4">
