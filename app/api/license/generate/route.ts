@@ -12,8 +12,6 @@ const MR = 50;
 const MB = 55;
 const TW = PW - ML - MR;
 
-const BLUE = rgb(0.055, 0.259, 0.675);
-const BLUE_BORDER = rgb(0.2, 0.42, 0.78);
 const TEXT = rgb(0.12, 0.12, 0.12);
 const WHITE = rgb(1, 1, 1);
 const GRAY = rgb(0.45, 0.45, 0.45);
@@ -59,6 +57,15 @@ const LEGAL: Section[] = [
   { type: "bullet", text: "Apabila terdapat sengketa yang timbul dari lisensi ini, para pihak sepakat untuk menyelesaikannya secara musyawarah mufakat terlebih dahulu. Jika tidak tercapai kesepakatan, maka penyelesaian dilakukan melalui jalur hukum yang berlaku di wilayah hukum Republik Indonesia." },
   { type: "bullet", text: "Ketentuan dalam lisensi ini bersifat mengikat dan tidak dapat diubah secara sepihak tanpa persetujuan tertulis dari kedua belah pihak." },
 ];
+
+function hexToRgb(hex: string) {
+  const h = (hex || "#0E42AB").replace("#", "");
+  return rgb(
+    parseInt(h.substring(0, 2), 16) / 255,
+    parseInt(h.substring(2, 4), 16) / 255,
+    parseInt(h.substring(4, 6), 16) / 255
+  );
+}
 
 function wrapText(text: string, font: PDFFont, size: number, maxW: number): string[] {
   const words = text.split(" ").filter(Boolean);
@@ -172,12 +179,14 @@ export async function GET(req: NextRequest) {
 
   const { data: siteSettings } = await supabaseAdmin
     .from("settings")
-    .select("website_name, logo_url")
+    .select("website_name, logo_url, color_primary")
     .eq("id", 1)
     .single();
 
   const siteName = siteSettings?.website_name || "Kanglogo.com";
   const logoUrl = siteSettings?.logo_url || null;
+  const PRIMARY = hexToRgb(siteSettings?.color_primary || "#0E42AB");
+  const PRIMARY_BORDER = hexToRgb(siteSettings?.color_primary || "#0E42AB");
 
   let logoImage = null;
   if (logoUrl) {
@@ -201,11 +210,11 @@ export async function GET(req: NextRequest) {
     ctx.page.drawImage(logoImage, { x: imgX, y: ctx.y - dims.height, width: dims.width, height: dims.height });
     ctx.y -= dims.height + 10;
   } else {
-    ctx.page.drawText(siteName, { x: (PW - fb.widthOfTextAtSize(siteName, 18)) / 2, y: ctx.y - 18, size: 18, font: fb, color: BLUE });
+    ctx.page.drawText(siteName, { x: (PW - fb.widthOfTextAtSize(siteName, 18)) / 2, y: ctx.y - 18, size: 18, font: fb, color: PRIMARY });
     ctx.y -= 30;
   }
 
-  ctx.page.drawRectangle({ x: ML, y: ctx.y - 2, width: TW, height: 2.5, color: BLUE });
+  ctx.page.drawRectangle({ x: ML, y: ctx.y - 2, width: TW, height: 2.5, color: PRIMARY });
   ctx.y -= 16;
 
   const titleText = "SERTIFIKAT LISENSI PENGGUNAAN LOGO";
@@ -227,15 +236,15 @@ export async function GET(req: NextRequest) {
   const rowH = 22;
   const tableH = tableFields.length * rowH;
 
-  ctx.page.drawRectangle({ x: ML, y: ctx.y - tableH, width: TW, height: tableH, color: WHITE });
-  ctx.page.drawRectangle({ x: ML - 0.5, y: ctx.y - tableH - 0.5, width: TW + 1, height: tableH + 1, color: BLUE_BORDER });
+  ctx.page.drawRectangle({ x: ML, y: ctx.y - tableH, width: TW, height: tableH, color: PRIMARY });
+  ctx.page.drawRectangle({ x: ML - 0.5, y: ctx.y - tableH - 0.5, width: TW + 1, height: tableH + 1, color: PRIMARY_BORDER });
 
   tableFields.forEach(([label, value], i) => {
     const rowY = ctx.y - i * rowH;
     if (i > 0) {
-      ctx.page.drawLine({ start: { x: ML, y: rowY }, end: { x: ML + TW, y: rowY }, thickness: 0.5, color: BLUE_BORDER });
+      ctx.page.drawLine({ start: { x: ML, y: rowY }, end: { x: ML + TW, y: rowY }, thickness: 0.5, color: PRIMARY_BORDER });
     }
-    ctx.page.drawLine({ start: { x: colValue, y: rowY }, end: { x: colValue, y: rowY - rowH }, thickness: 0.5, color: BLUE_BORDER });
+    ctx.page.drawLine({ start: { x: colValue, y: rowY }, end: { x: colValue, y: rowY - rowH }, thickness: 0.5, color: PRIMARY_BORDER });
     const textY = rowY - rowH + 8;
     ctx.page.drawText(label, { x: colLabel + 6, y: textY, size: 9, font: fb, color: WHITE });
     const wrapped = wrapText(value, fn, 9, colW - 12);
@@ -248,7 +257,7 @@ export async function GET(req: NextRequest) {
     if (sec.type === "heading") {
       ensureSpace(ctx, 28);
       ctx.y -= 6;
-      drawWrapped(ctx, sec.text, { size: 9.5, bold: true, color: BLUE, lh: 14 });
+      drawWrapped(ctx, sec.text, { size: 9.5, bold: true, color: PRIMARY, lh: 14 });
       ctx.y -= 3;
     } else if (sec.type === "bullet") {
       ensureSpace(ctx, 14);
@@ -260,34 +269,39 @@ export async function GET(req: NextRequest) {
   }
 
   ctx.y -= 14;
-  ensureSpace(ctx, 110);
 
   const agreementText = "Dengan ditandatanganinya dokumen ini, para pihak menyatakan telah membaca, memahami, dan menyetujui seluruh ketentuan yang tercantum dalam Sertifikat Lisensi Penggunaan Logo ini.";
-  ctx.page.drawText("PERSETUJUAN DAN PENANDATANGANAN", { x: ML, y: ctx.y, size: 9.5, font: fb, color: BLUE });
+  ctx.page.drawText("PERSETUJUAN DAN PENANDATANGANAN", { x: ML, y: ctx.y, size: 9.5, font: fb, color: PRIMARY });
   ctx.y -= 14;
   drawWrapped(ctx, agreementText, { size: 9, color: TEXT });
-  ctx.y -= 20;
 
-  ensureSpace(ctx, 90);
-  const sigY = ctx.y;
+  const SIG_AREA_H = 85;
   const col1X = ML;
   const col2X = ML + TW / 2;
+
+  let sigY: number;
+  if (ctx.y > MB + SIG_AREA_H) {
+    sigY = MB + SIG_AREA_H;
+  } else {
+    addPage(ctx);
+    sigY = MB + SIG_AREA_H;
+  }
 
   ctx.page.drawText("Pihak Desainer", { x: col1X, y: sigY, size: 9, font: fb, color: TEXT });
   ctx.page.drawText("Pihak Klien", { x: col2X, y: sigY, size: 9, font: fb, color: TEXT });
 
-  const lineY = sigY - 40;
+  const lineY = sigY - 38;
   ctx.page.drawLine({ start: { x: col1X, y: lineY }, end: { x: col1X + 140, y: lineY }, thickness: 0.8, color: GRAY });
   ctx.page.drawLine({ start: { x: col2X, y: lineY }, end: { x: col2X + 140, y: lineY }, thickness: 0.8, color: GRAY });
 
   ctx.page.drawText("Agus Triana", { x: col1X, y: lineY - 12, size: 9, font: fb, color: TEXT });
   ctx.page.drawText(clientName, { x: col2X, y: lineY - 12, size: 9, font: fb, color: TEXT });
 
-  ctx.page.drawText("Pihak Desainer Kanglogo.com", { x: col1X, y: lineY - 24, size: 8, font: fn, color: GRAY });
+  ctx.page.drawText(`Pihak Desainer ${siteName}`, { x: col1X, y: lineY - 24, size: 8, font: fn, color: GRAY });
   ctx.page.drawText("Perwakilan Klien/Pelanggan", { x: col2X, y: lineY - 24, size: 8, font: fn, color: GRAY });
 
-  const footerText = "Dokumen ini diterbitkan secara resmi oleh kanglogo.com  •  Dokumen sah tanpa memerlukan materai apabila telah ditandatangani kedua pihak";
-  ctx.page.drawRectangle({ x: 0, y: 0, width: PW, height: MB - 10, color: BLUE });
+  const footerText = `Dokumen ini diterbitkan secara resmi oleh ${siteName}  •  Dokumen sah tanpa memerlukan materai apabila telah ditandatangani kedua pihak`;
+  ctx.page.drawRectangle({ x: 0, y: 0, width: PW, height: MB - 10, color: PRIMARY });
   const ftW = fn.widthOfTextAtSize(footerText, 7.5);
   ctx.page.drawText(footerText, { x: (PW - ftW) / 2, y: 20, size: 7.5, font: fn, color: WHITE });
 
