@@ -237,9 +237,9 @@ export async function GET(req: NextRequest) {
     }
     ctx.page.drawLine({ start: { x: colValue, y: rowY }, end: { x: colValue, y: rowY - rowH }, thickness: 0.5, color: BLUE_BORDER });
     const textY = rowY - rowH + 8;
-    ctx.page.drawText(label, { x: colLabel + 6, y: textY, size: 9, font: fb, color: BLUE });
+    ctx.page.drawText(label, { x: colLabel + 6, y: textY, size: 9, font: fb, color: WHITE });
     const wrapped = wrapText(value, fn, 9, colW - 12);
-    ctx.page.drawText(wrapped[0] || "", { x: colValue + 6, y: textY, size: 9, font: fn, color: TEXT });
+    ctx.page.drawText(wrapped[0] || "", { x: colValue + 6, y: textY, size: 9, font: fn, color: WHITE });
   });
 
   ctx.y -= tableH + 18;
