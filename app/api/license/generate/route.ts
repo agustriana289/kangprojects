@@ -13,7 +13,6 @@ const MB = 55;
 const TW = PW - ML - MR;
 
 const BLUE = rgb(0.055, 0.259, 0.675);
-const BLUE_LIGHT = rgb(0.906, 0.922, 0.969);
 const BLUE_BORDER = rgb(0.2, 0.42, 0.78);
 const TEXT = rgb(0.12, 0.12, 0.12);
 const WHITE = rgb(1, 1, 1);
@@ -171,14 +170,48 @@ export async function GET(req: NextRequest) {
   const fn = await doc.embedFont(StandardFonts.Helvetica);
   const fb = await doc.embedFont(StandardFonts.HelveticaBold);
 
-  const ctx: Ctx = { doc, page: doc.addPage([PW, PH]), y: PH - 45, fn, fb };
+  const { data: siteSettings } = await supabaseAdmin
+    .from("settings")
+    .select("website_name, logo_url")
+    .eq("id", 1)
+    .single();
 
-  const titleH = 52;
-  ctx.page.drawRectangle({ x: 0, y: PH - titleH, width: PW, height: titleH, color: BLUE });
+  const siteName = siteSettings?.website_name || "Kanglogo.com";
+  const logoUrl = siteSettings?.logo_url || null;
+
+  let logoImage = null;
+  if (logoUrl) {
+    try {
+      const res = await fetch(logoUrl);
+      const buf = await res.arrayBuffer();
+      const mime = res.headers.get("content-type") || "";
+      if (mime.includes("png")) {
+        logoImage = await doc.embedPng(buf);
+      } else if (mime.includes("jpeg") || mime.includes("jpg")) {
+        logoImage = await doc.embedJpg(buf);
+      }
+    } catch {}
+  }
+
+  const ctx: Ctx = { doc, page: doc.addPage([PW, PH]), y: PH - 30, fn, fb };
+
+  if (logoImage) {
+    const dims = logoImage.scaleToFit(160, 50);
+    const imgX = (PW - dims.width) / 2;
+    ctx.page.drawImage(logoImage, { x: imgX, y: ctx.y - dims.height, width: dims.width, height: dims.height });
+    ctx.y -= dims.height + 10;
+  } else {
+    ctx.page.drawText(siteName, { x: (PW - fb.widthOfTextAtSize(siteName, 18)) / 2, y: ctx.y - 18, size: 18, font: fb, color: BLUE });
+    ctx.y -= 30;
+  }
+
+  ctx.page.drawRectangle({ x: ML, y: ctx.y - 2, width: TW, height: 2.5, color: BLUE });
+  ctx.y -= 16;
+
   const titleText = "SERTIFIKAT LISENSI PENGGUNAAN LOGO";
-  const titleW = fb.widthOfTextAtSize(titleText, 14);
-  ctx.page.drawText(titleText, { x: (PW - titleW) / 2, y: PH - 33, size: 14, font: fb, color: WHITE });
-  ctx.y = PH - titleH - 20;
+  const titleW = fb.widthOfTextAtSize(titleText, 13);
+  ctx.page.drawText(titleText, { x: (PW - titleW) / 2, y: ctx.y - 13, size: 13, font: fb, color: TEXT });
+  ctx.y -= 28;
 
   const tableFields: [string, string][] = [
     ["Nama Klien", clientName],
@@ -192,16 +225,18 @@ export async function GET(req: NextRequest) {
   const colValue = ML + TW / 2;
   const colW = TW / 2;
   const rowH = 22;
-  const tableH = tableFields.length * rowH + 1;
+  const tableH = tableFields.length * rowH;
 
-  ctx.page.drawRectangle({ x: ML - 1, y: ctx.y - tableH, width: TW + 2, height: tableH + 1, color: BLUE_BORDER });
+  ctx.page.drawRectangle({ x: ML, y: ctx.y - tableH, width: TW, height: tableH, color: WHITE });
+  ctx.page.drawRectangle({ x: ML - 0.5, y: ctx.y - tableH - 0.5, width: TW + 1, height: tableH + 1, color: BLUE_BORDER });
 
   tableFields.forEach(([label, value], i) => {
     const rowY = ctx.y - i * rowH;
-    const bg = i % 2 === 0 ? BLUE_LIGHT : WHITE;
-    ctx.page.drawRectangle({ x: ML, y: rowY - rowH, width: TW, height: rowH, color: bg });
-    ctx.page.drawLine({ start: { x: colValue, y: rowY }, end: { x: colValue, y: rowY - rowH }, thickness: 0.8, color: BLUE_BORDER });
-    const textY = rowY - rowH + 7;
+    if (i > 0) {
+      ctx.page.drawLine({ start: { x: ML, y: rowY }, end: { x: ML + TW, y: rowY }, thickness: 0.5, color: BLUE_BORDER });
+    }
+    ctx.page.drawLine({ start: { x: colValue, y: rowY }, end: { x: colValue, y: rowY - rowH }, thickness: 0.5, color: BLUE_BORDER });
+    const textY = rowY - rowH + 8;
     ctx.page.drawText(label, { x: colLabel + 6, y: textY, size: 9, font: fb, color: BLUE });
     const wrapped = wrapText(value, fn, 9, colW - 12);
     ctx.page.drawText(wrapped[0] || "", { x: colValue + 6, y: textY, size: 9, font: fn, color: TEXT });
