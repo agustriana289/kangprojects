@@ -260,7 +260,7 @@ export async function GET(req: NextRequest) {
   const safe = projectTitle.replace(/[^a-zA-Z0-9\-_]/g, "_").substring(0, 40);
   const filename = `Lisensi_${safe}_${nomorLisensi.replace(/\//g, "-")}.pdf`;
 
-  return new NextResponse(pdfBytes, {
+  return new NextResponse(Buffer.from(pdfBytes), {
     status: 200,
     headers: {
       "Content-Type": "application/pdf",
