@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   BarChart3, LayoutGrid, Tag, Search, ChevronDown, Trash2, Eye, ExternalLink, Mail, Edit3,
-  ChevronRight, ChevronLeft, Loader2, Check, FileText, Phone, Users, Briefcase, Plus, PartyPopper, MessageSquare, Copy, Star, X, Send, Calendar, Wallet, TrendingUp, Paperclip, Upload
+  ChevronRight, ChevronLeft, Loader2, Check, FileText, Phone, Users, Briefcase, Plus, PartyPopper, MessageSquare, Copy, Star, X, Send, Calendar, Wallet, TrendingUp, Paperclip, Upload, Download
 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { useToast } from "@/components/ToastProvider";
@@ -1012,6 +1012,17 @@ export default function AdminProjectsClient() {
                            <span className="flex items-center gap-2 text-sm font-bold"><Mail className="w-4 h-4" /> Kirim File Akhir</span>
                            <ChevronRight className="w-4 h-4 opacity-50" />
                          </button>
+                         )}
+                         {selectedProject.status === "completed" && (
+                         <a
+                           href={`/api/license/generate?orderId=${selectedProject.id}`}
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           className="w-full flex items-center justify-between p-3 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition-colors border border-emerald-200"
+                         >
+                           <span className="flex items-center gap-2 text-sm font-bold"><Download className="w-4 h-4" /> Download Lisensi PDF</span>
+                           <ChevronRight className="w-4 h-4 opacity-50" />
+                         </a>
                          )}
                          <Link href={`/workspace/${selectedProject.id}`} className="w-full flex items-center justify-between p-3 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 transition-colors border border-slate-200">
                            <span className="flex items-center gap-2 text-sm font-bold"><MessageSquare className="w-4 h-4 text-slate-400" /> Buka Ruang Kerja</span>
