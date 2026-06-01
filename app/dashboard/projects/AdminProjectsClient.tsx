@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   BarChart3, LayoutGrid, Tag, Search, ChevronDown, Trash2, Eye, ExternalLink, Mail, Edit3,
-  ChevronRight, ChevronLeft, Loader2, Check, FileText, Phone, Users, Briefcase, Plus, PartyPopper, MessageSquare, Copy, Star, X, Send, Calendar, Wallet, TrendingUp, Paperclip, Upload, Download
+  ChevronRight, ChevronLeft, Loader2, Check, FileText, Phone, Users, Briefcase, Plus, PartyPopper, MessageSquare, Copy, Star, X, Send, Calendar, Wallet, TrendingUp, Paperclip, Upload, Download, BookMarked
 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { useToast } from "@/components/ToastProvider";
@@ -220,6 +220,11 @@ export default function AdminProjectsClient() {
   const [addForm, setAddForm] = useState({ project_title: "", customer_name: "", whatsapp: "", customer_email: "", total_amount: "", status: "pending" as string, service_id: "", package_name: "" });
   const [addSaving, setAddSaving] = useState(false);
   const [syncingTickTick, setSyncingTickTick] = useState(false);
+  const [syncingNotion, setSyncingNotion] = useState(false);
+  const [notionSyncMonth, setNotionSyncMonth] = useState(() => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+  });
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true); }, []);
 
@@ -611,6 +616,24 @@ export default function AdminProjectsClient() {
     }
   };
 
+  const handleSyncToNotion = async () => {
+    setSyncingNotion(true);
+    try {
+      const url = notionSyncMonth
+        ? `/api/notion/sync-projects?month=${notionSyncMonth}`
+        : "/api/notion/sync-projects";
+      const res = await fetch(url, { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Gagal sinkronisasi ke Notion");
+      showToast(data.message || "Sync Notion selesai", "success");
+      fetchOrders();
+    } catch (err: any) {
+      showToast(err.message || "Gagal sync ke Notion", "error");
+    } finally {
+      setSyncingNotion(false);
+    }
+  };
+
   const handleAddCustomProject = async () => {
     if (!addForm.project_title) return showToast("Judul proyek wajib diisi", "error");
     setAddSaving(true);
@@ -861,8 +884,8 @@ export default function AdminProjectsClient() {
         ))}
       </div>
 
-      <div className="flex items-center justify-between gap-4 mt-2 mb-2">
-         <div className="flex items-center gap-2">
+      <div className="flex items-center justify-between gap-4 mt-2 mb-2 flex-wrap">
+         <div className="flex items-center gap-2 flex-wrap">
             <div className="relative">
                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Cari pesanan..."
@@ -883,6 +906,23 @@ export default function AdminProjectsClient() {
                {syncingTickTick ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
                Sync ke TickTick
             </button>
+            <div className="flex items-center gap-1.5 bg-white border border-slate-200 rounded-xl shadow-sm px-1 py-1">
+              <input
+                type="month"
+                value={notionSyncMonth}
+                onChange={e => setNotionSyncMonth(e.target.value)}
+                className="text-xs font-medium text-slate-600 outline-none bg-transparent px-2 py-1 rounded-lg focus:ring-2 focus:ring-primary/20"
+              />
+              <button
+                onClick={handleSyncToNotion}
+                disabled={syncingNotion}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-slate-700 transition-colors whitespace-nowrap disabled:opacity-60 disabled:cursor-not-allowed"
+                title="Sync project bulan ini ke Notion"
+              >
+                {syncingNotion ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <BookMarked className="w-3.5 h-3.5" />}
+                Sync Notion
+              </button>
+            </div>
          </div>
       </div>
 
