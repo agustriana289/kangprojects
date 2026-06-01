@@ -295,7 +295,7 @@ export default function NotionSettingsClient() {
         </div>
 
         <div>
-          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Orders / Market</p>
+          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Orders / Projects</p>
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
@@ -311,7 +311,7 @@ export default function NotionSettingsClient() {
                   { name: "No. Order", type: "Rich Text", src: "Nomor order" },
                   { name: "Klien", type: "Rich Text", src: "Nama klien" },
                   { name: "WhatsApp", type: "Phone Number", src: "No. WhatsApp klien" },
-                  { name: "Layanan", type: "Rich Text", src: "Nama layanan" },
+                  { name: "Layanan", type: "Rich Text", src: "Nama layanan / produk" },
                   { name: "Package", type: "Rich Text", src: "Nama paket" },
                   { name: "Total Harga", type: "Number", src: "Total harga" },
                   { name: "Discount", type: "Number", src: "Jumlah diskon" },
@@ -332,7 +332,39 @@ export default function NotionSettingsClient() {
           </div>
         </div>
 
-        <div>
+        <div className="mt-6">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Manajemen Market (Items/Products)</p>
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="border-b border-slate-100">
+                  <th className="text-left py-2 px-3 font-bold text-slate-500">Kolom</th>
+                  <th className="text-left py-2 px-3 font-bold text-slate-500">Tipe Notion</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-50">
+                {[
+                  { name: "Produk", type: "Title" },
+                  { name: "Kategori", type: "Select" },
+                  { name: "Deskripsi", type: "Rich Text" },
+                  { name: "Slug", type: "Rich Text" },
+                  { name: "Harga Mulai", type: "Number" },
+                  { name: "Harga Tertinggi", type: "Number" },
+                  { name: "Jumlah Paket", type: "Number" },
+                  { name: "Detail Paket", type: "Rich Text" },
+                  { name: "Status", type: "Select (Diterbitkan / Draf)" },
+                ].map(col => (
+                  <tr key={col.name}>
+                    <td className="py-2 px-3 font-mono font-semibold text-slate-700">{col.name}</td>
+                    <td className="py-2 px-3 text-slate-500">{col.type}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div className="mt-6">
           <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Layanan / Services</p>
           <div className="overflow-x-auto">
             <table className="w-full text-xs">

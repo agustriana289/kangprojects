@@ -84,6 +84,14 @@ export default function ShopClient() {
 
   useEffect(() => { fetchProducts(); }, [fetchProducts]);
 
+  const notionSyncProduct = (productId: string) => {
+    fetch("/api/notion/sync-single-product", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ productId }),
+    }).catch(() => {});
+  };
+
   const openNew = () => {
     setEditingProduct(null);
     setForm(emptyForm);
@@ -120,11 +128,11 @@ export default function ShopClient() {
     if (editingProduct) {
       const { error } = await supabase.from("store_products").update(payload).eq("id", editingProduct.id);
       if (error) showToast(error.message || "Gagal memperbarui produk", "error");
-      else { showToast("Produk diperbarui", "success"); setView("list"); fetchProducts(); }
+      else { showToast("Produk diperbarui", "success"); setView("list"); fetchProducts(); notionSyncProduct(editingProduct.id); }
     } else {
-      const { error } = await supabase.from("store_products").insert(payload);
+      const { data: inserted, error } = await supabase.from("store_products").insert(payload).select("id").single();
       if (error) showToast(error.message || "Gagal membuat produk", "error");
-      else { showToast("Produk dibuat", "success"); setView("list"); fetchProducts(); }
+      else { showToast("Produk dibuat", "success"); setView("list"); fetchProducts(); if (inserted?.id) notionSyncProduct(inserted.id); }
     }
     setSaving(false);
   };
@@ -139,7 +147,7 @@ export default function ShopClient() {
   const togglePublished = async (prd: Product) => {
     const { error } = await supabase.from("store_products").update({ is_published: !prd.is_published }).eq("id", prd.id);
     if (error) showToast("Gagal memperbarui status", "error");
-    else fetchProducts();
+    else { fetchProducts(); notionSyncProduct(prd.id); }
   };
 
   const updatePackage = (index: number, field: keyof ProductPackage, value: string | number) => {

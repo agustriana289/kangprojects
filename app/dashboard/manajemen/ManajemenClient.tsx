@@ -417,7 +417,7 @@ export default function ManajemenClient() {
   const handleSyncMarketToNotion = async () => {
     setSyncingNotion(true);
     try {
-      const res = await fetch("/api/notion/sync-market", { method: "POST" });
+      const res = await fetch("/api/notion/sync-projects", { method: "POST" });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Gagal sinkronisasi ke Notion");
       showToast(data.message || "Sync Notion selesai", "success");

@@ -2,32 +2,36 @@ import { NextResponse } from "next/server";
 import {
   supabaseAdmin,
   getNotionSettings,
-  buildNotionProperties,
   notionCreatePage,
   notionUpdatePage,
-  NotionOrderData,
 } from "../notion-helpers";
 
-function parseFormData(raw: unknown): Record<string, unknown> {
-  try {
-    return typeof raw === "string" ? JSON.parse(raw) : (raw as Record<string, unknown> || {});
-  } catch { return {}; }
-}
+function buildProductProperties(prd: {
+  title: string;
+  category: string;
+  description: string;
+  slug: string;
+  is_published: boolean;
+  packages: { name: string; price: number; description: string }[];
+}): Record<string, unknown> {
+  const packageList = (prd.packages || [])
+    .map((p) => `${p.name}: Rp ${Number(p.price || 0).toLocaleString("id-ID")}`)
+    .join("\n");
+  const prices = (prd.packages || []).map((p) => Number(p.price || 0));
+  const minPrice = prices.length ? Math.min(...prices) : 0;
+  const maxPrice = prices.length ? Math.max(...prices) : 0;
 
-function parsePackageName(raw: unknown): string {
-  try {
-    const sp = typeof raw === "string" ? JSON.parse(raw) : raw as any;
-    return sp?.name || "";
-  } catch { return ""; }
-}
-
-function toDateStr(val: unknown): string {
-  if (!val) return "";
-  const s = String(val).trim();
-  if (!s) return "";
-  const d = new Date(s);
-  if (isNaN(d.getTime())) return "";
-  return d.toISOString().split("T")[0];
+  return {
+    Produk: { title: [{ text: { content: prd.title || "Tanpa Judul" } }] },
+    Kategori: { select: { name: prd.category || "Lainnya" } },
+    Deskripsi: { rich_text: [{ text: { content: (prd.description || "").slice(0, 2000) } }] },
+    Slug: { rich_text: [{ text: { content: prd.slug || "" } }] },
+    "Harga Mulai": { number: minPrice },
+    "Harga Tertinggi": { number: maxPrice },
+    "Jumlah Paket": { number: prd.packages?.length || 0 },
+    "Detail Paket": { rich_text: [{ text: { content: packageList.slice(0, 2000) } }] },
+    Status: { select: { name: prd.is_published ? "Diterbitkan" : "Draf" } },
+  };
 }
 
 export async function POST() {
@@ -38,45 +42,34 @@ export async function POST() {
     return NextResponse.json({ error: "Notion market belum dikonfigurasi atau dinonaktifkan" }, { status: 400 });
   }
 
-  const { data: orders, error } = await sb
-    .from("store_orders")
-    .select("id, status, total_amount, form_data, selected_package, service_id, guest_name, guest_phone, order_number, created_at, notion_market_page_id, store_services(title)")
+  const { data: products, error } = await sb
+    .from("store_products")
+    .select("id, title, slug, description, category, packages, is_published, notion_market_page_id")
     .order("created_at", { ascending: false });
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   const results = { synced: 0, created: 0, updated: 0, failed: 0 };
 
-  for (const order of orders || []) {
+  for (const prd of products || []) {
     try {
-      const fd = parseFormData(order.form_data);
+      const properties = buildProductProperties({
+        title: prd.title,
+        category: prd.category,
+        description: prd.description,
+        slug: prd.slug,
+        is_published: prd.is_published,
+        packages: prd.packages || [],
+      });
 
-      const data: NotionOrderData = {
-        projectTitle: (fd["project_title"] || fd["Project Title"] || fd["Nama Logo"] || "") as string,
-        clientName: (order.guest_name || fd["customer_name"] || fd["Client Name"] || "") as string,
-        clientEmail: (fd["email"] || fd["customer_email"] || "") as string,
-        whatsapp: (order.guest_phone || fd["whatsapp"] || "") as string,
-        serviceTitle: (order.store_services as any)?.title || "",
-        packageName: parsePackageName(order.selected_package),
-        totalAmount: Number(order.total_amount || 0),
-        discountAmount: Number(fd["discount_amount"] || 0),
-        status: order.status,
-        orderNumber: order.order_number,
-        createdAt: order.created_at,
-        finalFileUrl: (fd["final_file_url"] || fd["delivery_url"] || fd["file_url"] || "") as string,
-        deadline: toDateStr(fd["deadline"]),
-      };
-
-      const properties = buildNotionProperties(data);
-
-      if (order.notion_market_page_id) {
-        const ok = await notionUpdatePage(settings.token, order.notion_market_page_id, properties);
+      if (prd.notion_market_page_id) {
+        const ok = await notionUpdatePage(settings.token, prd.notion_market_page_id, properties);
         if (ok) { results.updated++; results.synced++; }
         else results.failed++;
       } else {
         const pageId = await notionCreatePage(settings.token, settings.marketDbId, properties);
         if (pageId) {
-          await sb.from("store_orders").update({ notion_market_page_id: pageId }).eq("id", order.id);
+          await sb.from("store_products").update({ notion_market_page_id: pageId }).eq("id", prd.id);
           results.created++;
           results.synced++;
         } else {
