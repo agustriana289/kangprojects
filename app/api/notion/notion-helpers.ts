@@ -32,17 +32,23 @@ export async function getNotionSettings(): Promise<{
   };
 }
 
-export function buildNotionProperties(
-  projectTitle: string,
-  clientName: string,
-  whatsapp: string,
-  serviceTitle: string,
-  packageName: string,
-  totalAmount: number,
-  status: string,
-  orderNumber: string,
-  createdAt: string
-): Record<string, unknown> {
+export type NotionOrderData = {
+  projectTitle: string;
+  clientName: string;
+  clientEmail: string;
+  whatsapp: string;
+  serviceTitle: string;
+  packageName: string;
+  totalAmount: number;
+  discountAmount: number;
+  status: string;
+  orderNumber: string;
+  createdAt: string;
+  finalFileUrl: string;
+  deadline: string;
+};
+
+export function buildNotionProperties(d: NotionOrderData): Record<string, unknown> {
   const STATUS_NOTION: Record<string, string> = {
     pending: "No Status",
     waiting_payment: "Belum Dibayar",
@@ -52,23 +58,26 @@ export function buildNotionProperties(
     completed: "Selesai",
   };
 
-  const layanan = serviceTitle
-    ? packageName
-      ? `${serviceTitle} - ${packageName}`
-      : serviceTitle
-    : packageName || "—";
-
-  return {
-    Proyek: { title: [{ text: { content: projectTitle || "Tanpa Judul" } }] },
-    Klien: { rich_text: [{ text: { content: clientName || "—" } }] },
-    WhatsApp: { phone_number: whatsapp || null },
-    Layanan: { rich_text: [{ text: { content: layanan } }] },
-    "Total Harga": { number: totalAmount },
-    Status: { select: { name: STATUS_NOTION[status] || "No Status" } },
-    "No. Order": { rich_text: [{ text: { content: orderNumber || "—" } }] },
-    "Tanggal Masuk": { date: { start: createdAt ? createdAt.split("T")[0] : new Date().toISOString().split("T")[0] } },
+  const props: Record<string, unknown> = {
+    Proyek: { title: [{ text: { content: d.projectTitle || "Tanpa Judul" } }] },
+    "No. Order": { rich_text: [{ text: { content: d.orderNumber || "—" } }] },
+    Klien: { rich_text: [{ text: { content: d.clientName || "—" } }] },
+    Layanan: { rich_text: [{ text: { content: d.serviceTitle || "—" } }] },
+    Package: { rich_text: [{ text: { content: d.packageName || "—" } }] },
+    "Total Harga": { number: d.totalAmount },
+    Discount: { number: d.discountAmount || 0 },
+    Status: { select: { name: STATUS_NOTION[d.status] || "No Status" } },
+    "Tanggal Masuk": { date: { start: d.createdAt ? d.createdAt.split("T")[0] : new Date().toISOString().split("T")[0] } },
   };
+
+  if (d.whatsapp) props["WhatsApp"] = { phone_number: d.whatsapp };
+  if (d.clientEmail) props["Customer Email"] = { email: d.clientEmail };
+  if (d.finalFileUrl) props["Final File"] = { url: d.finalFileUrl };
+  if (d.deadline) props["Deadline"] = { date: { start: d.deadline } };
+
+  return props;
 }
+
 
 export async function notionCreatePage(
   token: string,

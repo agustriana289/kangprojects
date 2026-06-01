@@ -292,23 +292,30 @@ export default function NotionSettingsClient() {
             <thead>
               <tr className="border-b border-slate-100">
                 <th className="text-left py-2 px-3 font-bold text-slate-500 uppercase tracking-wider">Nama Kolom</th>
-                <th className="text-left py-2 px-3 font-bold text-slate-500 uppercase tracking-wider">Tipe</th>
+                <th className="text-left py-2 px-3 font-bold text-slate-500 uppercase tracking-wider">Tipe Notion</th>
+                <th className="text-left py-2 px-3 font-bold text-slate-500 uppercase tracking-wider">Sumber Data</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
               {[
-                { name: "Proyek", type: "Title" },
-                { name: "Klien", type: "Rich Text" },
-                { name: "WhatsApp", type: "Phone Number" },
-                { name: "Layanan", type: "Rich Text" },
-                { name: "Total Harga", type: "Number" },
-                { name: "Status", type: "Select (No Status / Belum Dibayar / Dibatalkan / Dibayar / Dikerjakan / Selesai)" },
-                { name: "No. Order", type: "Rich Text" },
-                { name: "Tanggal Masuk", type: "Date" },
+                { name: "Proyek", type: "Title", src: "Judul proyek (wajib)" },
+                { name: "No. Order", type: "Rich Text", src: "Nomor order" },
+                { name: "Klien", type: "Rich Text", src: "Nama klien" },
+                { name: "WhatsApp", type: "Phone Number", src: "No. WhatsApp klien" },
+                { name: "Layanan", type: "Rich Text", src: "Nama layanan" },
+                { name: "Package", type: "Rich Text", src: "Nama paket layanan" },
+                { name: "Total Harga", type: "Number", src: "Total harga pesanan" },
+                { name: "Discount", type: "Number", src: "Jumlah diskon" },
+                { name: "Status", type: "Select", src: "No Status / Belum Dibayar / Dibatalkan / Dibayar / Dikerjakan / Selesai" },
+                { name: "Tanggal Masuk", type: "Date", src: "Tanggal order dibuat" },
+                { name: "Final File", type: "URL", src: "URL file akhir (dari form_data.final_file_url)" },
+                { name: "Deadline", type: "Date", src: "Tanggal deadline (dari form_data.deadline)" },
+                { name: "Customer Email", type: "Email", src: "Email klien" },
               ].map(col => (
                 <tr key={col.name}>
                   <td className="py-2 px-3 font-mono font-semibold text-slate-700">{col.name}</td>
                   <td className="py-2 px-3 text-slate-500">{col.type}</td>
+                  <td className="py-2 px-3 text-slate-400">{col.src}</td>
                 </tr>
               ))}
             </tbody>

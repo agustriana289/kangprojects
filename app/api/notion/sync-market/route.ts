@@ -5,6 +5,7 @@ import {
   buildNotionProperties,
   notionCreatePage,
   notionUpdatePage,
+  NotionOrderData,
 } from "../notion-helpers";
 
 function parseFormData(raw: unknown): Record<string, unknown> {
@@ -18,6 +19,15 @@ function parsePackageName(raw: unknown): string {
     const sp = typeof raw === "string" ? JSON.parse(raw) : raw as any;
     return sp?.name || "";
   } catch { return ""; }
+}
+
+function toDateStr(val: unknown): string {
+  if (!val) return "";
+  const s = String(val).trim();
+  if (!s) return "";
+  const d = new Date(s);
+  if (isNaN(d.getTime())) return "";
+  return d.toISOString().split("T")[0];
 }
 
 export async function POST() {
@@ -40,17 +50,24 @@ export async function POST() {
   for (const order of orders || []) {
     try {
       const fd = parseFormData(order.form_data);
-      const projectTitle = (fd["project_title"] || fd["Project Title"] || fd["Nama Logo"] || "") as string;
-      const clientName = (order.guest_name || fd["customer_name"] || fd["Client Name"] || "") as string;
-      const whatsapp = (order.guest_phone || fd["whatsapp"] || "") as string;
-      const serviceTitle = (order.store_services as any)?.title || "";
-      const packageName = parsePackageName(order.selected_package);
-      const totalAmount = Number(order.total_amount || 0);
 
-      const properties = buildNotionProperties(
-        projectTitle, clientName, whatsapp, serviceTitle, packageName,
-        totalAmount, order.status, order.order_number, order.created_at
-      );
+      const data: NotionOrderData = {
+        projectTitle: (fd["project_title"] || fd["Project Title"] || fd["Nama Logo"] || "") as string,
+        clientName: (order.guest_name || fd["customer_name"] || fd["Client Name"] || "") as string,
+        clientEmail: (fd["email"] || fd["customer_email"] || "") as string,
+        whatsapp: (order.guest_phone || fd["whatsapp"] || "") as string,
+        serviceTitle: (order.store_services as any)?.title || "",
+        packageName: parsePackageName(order.selected_package),
+        totalAmount: Number(order.total_amount || 0),
+        discountAmount: Number(fd["discount_amount"] || 0),
+        status: order.status,
+        orderNumber: order.order_number,
+        createdAt: order.created_at,
+        finalFileUrl: (fd["final_file_url"] || fd["delivery_url"] || fd["file_url"] || "") as string,
+        deadline: toDateStr(fd["deadline"]),
+      };
+
+      const properties = buildNotionProperties(data);
 
       if (order.notion_market_page_id) {
         const ok = await notionUpdatePage(settings.token, order.notion_market_page_id, properties);
