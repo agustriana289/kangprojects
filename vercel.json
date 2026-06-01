@@ -7,11 +7,11 @@
   },
   "crons": [
     {
-      "path": "/api/notion/sync-projects",
+      "path": "/api/notion/sync-market",
       "schedule": "0 17 * * *"
     },
     {
-      "path": "/api/notion/sync-market",
+      "path": "/api/notion/sync-services",
       "schedule": "5 17 * * *"
     }
   ],

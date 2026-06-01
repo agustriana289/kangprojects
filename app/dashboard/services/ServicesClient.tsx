@@ -97,6 +97,14 @@ export default function ServicesClient() {
 
   useEffect(() => { fetchServices(); fetchPortfolios(); }, [fetchServices, fetchPortfolios]);
 
+  const notionSyncService = (serviceId: string) => {
+    fetch("/api/notion/sync-single-service", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ serviceId }),
+    }).catch(() => {});
+  };
+
   const openNew = () => {
     setEditingService(null);
     setForm(emptyForm);
@@ -130,12 +138,12 @@ export default function ServicesClient() {
     if (editingService) {
       const { error } = await supabase.from("store_services").update({ ...form }).eq("id", editingService.id);
       if (error) showToast("Gagal memperbarui layanan", "error");
-      else { showToast("Layanan berhasil diperbarui", "success"); setView("list"); fetchServices(); }
+      else { showToast("Layanan berhasil diperbarui", "success"); setView("list"); fetchServices(); notionSyncService(editingService.id); }
     } else {
       const newOrder = services.length > 0 ? Math.max(...services.map((s: any) => s.sort_order || 0)) + 1 : 1;
-      const { error } = await supabase.from("store_services").insert({ ...form, sort_order: newOrder });
+      const { data: inserted, error } = await supabase.from("store_services").insert({ ...form, sort_order: newOrder }).select("id").single();
       if (error) showToast("Gagal membuat layanan", "error");
-      else { showToast("Layanan berhasil dibuat", "success"); setView("list"); fetchServices(); }
+      else { showToast("Layanan berhasil dibuat", "success"); setView("list"); fetchServices(); if (inserted?.id) notionSyncService(inserted.id); }
     }
     setSaving(false);
   };
@@ -150,7 +158,7 @@ export default function ServicesClient() {
   const togglePublished = async (svc: Service) => {
     const { error } = await supabase.from("store_services").update({ is_published: !svc.is_published }).eq("id", svc.id);
     if (error) showToast("Gagal memperbarui status", "error");
-    else fetchServices();
+    else { fetchServices(); notionSyncService(svc.id); }
   };
 
   // Form helpers

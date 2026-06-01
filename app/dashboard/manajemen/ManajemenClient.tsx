@@ -389,7 +389,7 @@ export default function ManajemenClient() {
     if (error) showToast("Gagal menyimpan", "error");
     else {
       setOrders(prev => prev.map(o => o.id === id ? { ...o, [field]: value } : o));
-
+      notionSyncOrder(id);
     }
     setSaving(s => ({ ...s, [id]: false }));
   };
@@ -398,7 +398,7 @@ export default function ManajemenClient() {
     setSaving(s => ({ ...s, [id]: true }));
     const { error } = await supabase.from("store_orders").update(extra).eq("id", id);
     if (error) showToast("Gagal menyimpan", "error");
-    else fetchOrders();
+    else { fetchOrders(); notionSyncOrder(id); }
     setSaving(s => ({ ...s, [id]: false }));
   };
 
@@ -410,7 +410,7 @@ export default function ManajemenClient() {
       form_data: getFormData(o),
     }).eq("id", id);
     if (error) showToast("Gagal menyimpan", "error");
-    else fetchOrders();
+    else { fetchOrders(); notionSyncOrder(id); }
     setSaving(s => ({ ...s, [id]: false }));
   };
 
@@ -426,6 +426,14 @@ export default function ManajemenClient() {
     } finally {
       setSyncingNotion(false);
     }
+  };
+
+  const notionSyncOrder = (orderId: string) => {
+    fetch("/api/notion/sync-single-order", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ orderId }),
+    }).catch(() => {});
   };
 
 

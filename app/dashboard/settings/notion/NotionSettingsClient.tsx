@@ -5,7 +5,7 @@ import { createClient } from "@/utils/supabase/client";
 import { useToast } from "@/components/ToastProvider";
 import {
   CheckCircle2, AlertCircle, Loader2, ExternalLink, Eye, EyeOff,
-  Settings, RefreshCcw, Database, ToggleLeft, ToggleRight, Clock
+  Settings, RefreshCcw, Database, ToggleLeft, ToggleRight, Clock, Zap, Hand
 } from "lucide-react";
 
 type NotionSettings = {
@@ -13,14 +13,41 @@ type NotionSettings = {
   token: string;
   projectsDbId: string;
   marketDbId: string;
+  servicesDbId: string;
   lastSyncProjectsAt: string | null;
   lastSyncMarketAt: string | null;
+  lastSyncServicesAt: string | null;
 };
 
-type VerifyState = {
-  projects: "idle" | "loading" | "ok" | "error";
-  market: "idle" | "loading" | "ok" | "error";
-};
+type VerifyKey = "projects" | "market" | "services";
+type VerifyState = Record<VerifyKey, "idle" | "loading" | "ok" | "error">;
+
+const DB_CONFIGS: { key: VerifyKey; label: string; stateKey: keyof NotionSettings; syncKey: keyof NotionSettings; mode: "auto" | "manual"; desc: string }[] = [
+  {
+    key: "projects",
+    label: "Database — Orders / Projects",
+    stateKey: "projectsDbId",
+    syncKey: "lastSyncProjectsAt",
+    mode: "manual",
+    desc: "Sync manual per bulan dari halaman Projects",
+  },
+  {
+    key: "market",
+    label: "Database — Manajemen Market",
+    stateKey: "marketDbId",
+    syncKey: "lastSyncMarketAt",
+    mode: "auto",
+    desc: "Auto-sync setiap kali ada perubahan pada data market",
+  },
+  {
+    key: "services",
+    label: "Database — Layanan / Services",
+    stateKey: "servicesDbId",
+    syncKey: "lastSyncServicesAt",
+    mode: "auto",
+    desc: "Auto-sync setiap kali layanan disimpan atau status berubah",
+  },
+];
 
 export default function NotionSettingsClient() {
   const supabase = createClient();
@@ -34,11 +61,13 @@ export default function NotionSettingsClient() {
     token: "",
     projectsDbId: "",
     marketDbId: "",
+    servicesDbId: "",
     lastSyncProjectsAt: null,
     lastSyncMarketAt: null,
+    lastSyncServicesAt: null,
   });
-  const [verify, setVerify] = useState<VerifyState>({ projects: "idle", market: "idle" });
-  const [verifyNames, setVerifyNames] = useState({ projects: "", market: "" });
+  const [verify, setVerify] = useState<VerifyState>({ projects: "idle", market: "idle", services: "idle" });
+  const [verifyNames, setVerifyNames] = useState<Record<VerifyKey, string>>({ projects: "", market: "", services: "" });
 
   const fetchSettings = useCallback(async () => {
     setLoading(true);
@@ -46,26 +75,23 @@ export default function NotionSettingsClient() {
       .from("app_settings")
       .select("key, value")
       .in("key", [
-        "notion_enabled",
-        "notion_token",
-        "notion_projects_db_id",
-        "notion_market_db_id",
-        "notion_last_sync_projects_at",
-        "notion_last_sync_market_at",
+        "notion_enabled", "notion_token",
+        "notion_projects_db_id", "notion_market_db_id", "notion_services_db_id",
+        "notion_last_sync_projects_at", "notion_last_sync_market_at", "notion_last_sync_services_at",
       ]);
 
     const map: Record<string, string | null> = {};
-    (data || []).forEach((r: { key: string; value: string | null }) => {
-      map[r.key] = r.value;
-    });
+    (data || []).forEach((r: { key: string; value: string | null }) => { map[r.key] = r.value; });
 
     setSettings({
       enabled: map["notion_enabled"] === "true",
       token: map["notion_token"] || "",
       projectsDbId: map["notion_projects_db_id"] || "",
       marketDbId: map["notion_market_db_id"] || "",
+      servicesDbId: map["notion_services_db_id"] || "",
       lastSyncProjectsAt: map["notion_last_sync_projects_at"] || null,
       lastSyncMarketAt: map["notion_last_sync_market_at"] || null,
+      lastSyncServicesAt: map["notion_last_sync_services_at"] || null,
     });
     setLoading(false);
   }, [supabase]);
@@ -79,6 +105,7 @@ export default function NotionSettingsClient() {
       { key: "notion_token", value: settings.token || null, updated_at: new Date().toISOString() },
       { key: "notion_projects_db_id", value: settings.projectsDbId || null, updated_at: new Date().toISOString() },
       { key: "notion_market_db_id", value: settings.marketDbId || null, updated_at: new Date().toISOString() },
+      { key: "notion_services_db_id", value: settings.servicesDbId || null, updated_at: new Date().toISOString() },
     ];
     const { error } = await supabase.from("app_settings").upsert(rows);
     if (error) showToast("Gagal menyimpan: " + error.message, "error");
@@ -87,11 +114,9 @@ export default function NotionSettingsClient() {
     setSaving(false);
   };
 
-  const handleVerify = async (type: "projects" | "market") => {
-    const dbId = type === "projects" ? settings.projectsDbId : settings.marketDbId;
-    if (!settings.token || !dbId) {
-      return showToast("Isi token dan Database ID terlebih dahulu", "error");
-    }
+  const handleVerify = async (type: VerifyKey) => {
+    const dbId = settings[DB_CONFIGS.find(c => c.key === type)!.stateKey] as string;
+    if (!settings.token || !dbId) return showToast("Isi token dan Database ID terlebih dahulu", "error");
     setVerify(v => ({ ...v, [type]: "loading" }));
     try {
       const res = await fetch("/api/notion/verify-database", {
@@ -139,7 +164,7 @@ export default function NotionSettingsClient() {
       <div>
         <h2 className="text-lg font-bold text-slate-900 tracking-tight mb-1">Integrasi Notion</h2>
         <p className="text-sm font-medium text-slate-500 border-b border-slate-100 pb-4">
-          Sinkronisasi project dan data manajemen ke Notion database secara otomatis.
+          Sinkronisasi project (manual), market dan layanan (otomatis) ke Notion database.
         </p>
       </div>
 
@@ -191,80 +216,64 @@ export default function NotionSettingsClient() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5 block">
-              Database ID — Projects
-            </label>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={settings.projectsDbId}
-                onChange={e => { setSettings(s => ({ ...s, projectsDbId: e.target.value })); setVerify(v => ({ ...v, projects: "idle" })); }}
-                placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-                className="flex-1 px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20 font-mono"
-              />
-              <button
-                onClick={() => handleVerify("projects")}
-                disabled={verify.projects === "loading"}
-                className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-slate-600 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl transition-colors disabled:opacity-60"
-              >
-                {verifyIcon(verify.projects)}
-              </button>
-            </div>
-            {verify.projects === "ok" && verifyNames.projects && (
-              <p className="text-[11px] text-emerald-600 font-medium mt-1.5 flex items-center gap-1">
-                <CheckCircle2 className="w-3 h-3" /> {verifyNames.projects}
-              </p>
-            )}
-            {verify.projects === "error" && (
-              <p className="text-[11px] text-rose-500 font-medium mt-1.5 flex items-center gap-1">
-                <AlertCircle className="w-3 h-3" /> Database tidak ditemukan atau tidak dapat diakses
-              </p>
-            )}
-            {settings.lastSyncProjectsAt && (
-              <p className="text-[11px] text-slate-400 font-medium mt-1.5 flex items-center gap-1">
-                <Clock className="w-3 h-3" /> Sync terakhir: {formatDate(settings.lastSyncProjectsAt)}
-              </p>
-            )}
-          </div>
-
-          <div>
-            <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5 block">
-              Database ID — Manajemen Market
-            </label>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={settings.marketDbId}
-                onChange={e => { setSettings(s => ({ ...s, marketDbId: e.target.value })); setVerify(v => ({ ...v, market: "idle" })); }}
-                placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-                className="flex-1 px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20 font-mono"
-              />
-              <button
-                onClick={() => handleVerify("market")}
-                disabled={verify.market === "loading"}
-                className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-slate-600 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl transition-colors disabled:opacity-60"
-              >
-                {verifyIcon(verify.market)}
-              </button>
-            </div>
-            {verify.market === "ok" && verifyNames.market && (
-              <p className="text-[11px] text-emerald-600 font-medium mt-1.5 flex items-center gap-1">
-                <CheckCircle2 className="w-3 h-3" /> {verifyNames.market}
-              </p>
-            )}
-            {verify.market === "error" && (
-              <p className="text-[11px] text-rose-500 font-medium mt-1.5 flex items-center gap-1">
-                <AlertCircle className="w-3 h-3" /> Database tidak ditemukan atau tidak dapat diakses
-              </p>
-            )}
-            {settings.lastSyncMarketAt && (
-              <p className="text-[11px] text-slate-400 font-medium mt-1.5 flex items-center gap-1">
-                <Clock className="w-3 h-3" /> Sync terakhir: {formatDate(settings.lastSyncMarketAt)}
-              </p>
-            )}
-          </div>
+        <div className="space-y-4">
+          {DB_CONFIGS.map(cfg => {
+            const dbId = settings[cfg.stateKey] as string;
+            const lastSync = settings[cfg.syncKey] as string | null;
+            return (
+              <div key={cfg.key} className="border border-slate-100 rounded-xl p-4 bg-slate-50/50 space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                    {cfg.label}
+                  </label>
+                  <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                    cfg.mode === "auto"
+                      ? "bg-emerald-50 text-emerald-700 border border-emerald-100"
+                      : "bg-slate-100 text-slate-500 border border-slate-200"
+                  }`}>
+                    {cfg.mode === "auto" ? <Zap className="w-2.5 h-2.5" /> : <Hand className="w-2.5 h-2.5" />}
+                    {cfg.mode === "auto" ? "Auto Sync" : "Manual"}
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-400 font-medium">{cfg.desc}</p>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={dbId}
+                    onChange={e => {
+                      setSettings(s => ({ ...s, [cfg.stateKey]: e.target.value }));
+                      setVerify(v => ({ ...v, [cfg.key]: "idle" }));
+                    }}
+                    placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                    className="flex-1 px-3 py-2 rounded-xl bg-white border border-slate-200 text-sm font-medium outline-none focus:ring-2 focus:ring-primary/20 font-mono"
+                  />
+                  <button
+                    onClick={() => handleVerify(cfg.key)}
+                    disabled={verify[cfg.key] === "loading"}
+                    className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-slate-600 bg-white hover:bg-slate-100 border border-slate-200 rounded-xl transition-colors disabled:opacity-60"
+                    title="Verifikasi database"
+                  >
+                    {verifyIcon(verify[cfg.key])}
+                  </button>
+                </div>
+                {verify[cfg.key] === "ok" && verifyNames[cfg.key] && (
+                  <p className="text-[11px] text-emerald-600 font-medium flex items-center gap-1">
+                    <CheckCircle2 className="w-3 h-3" /> {verifyNames[cfg.key]}
+                  </p>
+                )}
+                {verify[cfg.key] === "error" && (
+                  <p className="text-[11px] text-rose-500 font-medium flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" /> Database tidak ditemukan atau tidak dapat diakses
+                  </p>
+                )}
+                {lastSync && (
+                  <p className="text-[11px] text-slate-400 font-medium flex items-center gap-1">
+                    <Clock className="w-3 h-3" /> Sync terakhir: {formatDate(lastSync)}
+                  </p>
+                )}
+              </div>
+            );
+          })}
         </div>
 
         <div className="flex justify-end pt-2 border-t border-slate-100">
@@ -279,47 +288,81 @@ export default function NotionSettingsClient() {
         </div>
       </div>
 
-      <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-3">
+      <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
         <div className="flex items-center gap-2">
           <Database className="w-4 h-4 text-slate-400" />
-          <h3 className="text-sm font-bold text-slate-900">Kolom Database Notion yang Diperlukan</h3>
+          <h3 className="text-sm font-bold text-slate-900">Kolom Database yang Diperlukan</h3>
         </div>
-        <p className="text-xs font-medium text-slate-500">
-          Pastikan database Notion Anda memiliki kolom-kolom berikut (nama dan tipe harus sama persis):
-        </p>
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs">
-            <thead>
-              <tr className="border-b border-slate-100">
-                <th className="text-left py-2 px-3 font-bold text-slate-500 uppercase tracking-wider">Nama Kolom</th>
-                <th className="text-left py-2 px-3 font-bold text-slate-500 uppercase tracking-wider">Tipe Notion</th>
-                <th className="text-left py-2 px-3 font-bold text-slate-500 uppercase tracking-wider">Sumber Data</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-50">
-              {[
-                { name: "Proyek", type: "Title", src: "Judul proyek (wajib)" },
-                { name: "No. Order", type: "Rich Text", src: "Nomor order" },
-                { name: "Klien", type: "Rich Text", src: "Nama klien" },
-                { name: "WhatsApp", type: "Phone Number", src: "No. WhatsApp klien" },
-                { name: "Layanan", type: "Rich Text", src: "Nama layanan" },
-                { name: "Package", type: "Rich Text", src: "Nama paket layanan" },
-                { name: "Total Harga", type: "Number", src: "Total harga pesanan" },
-                { name: "Discount", type: "Number", src: "Jumlah diskon" },
-                { name: "Status", type: "Select", src: "No Status / Belum Dibayar / Dibatalkan / Dibayar / Dikerjakan / Selesai" },
-                { name: "Tanggal Masuk", type: "Date", src: "Tanggal order dibuat" },
-                { name: "Final File", type: "URL", src: "URL file akhir (dari form_data.final_file_url)" },
-                { name: "Deadline", type: "Date", src: "Tanggal deadline (dari form_data.deadline)" },
-                { name: "Customer Email", type: "Email", src: "Email klien" },
-              ].map(col => (
-                <tr key={col.name}>
-                  <td className="py-2 px-3 font-mono font-semibold text-slate-700">{col.name}</td>
-                  <td className="py-2 px-3 text-slate-500">{col.type}</td>
-                  <td className="py-2 px-3 text-slate-400">{col.src}</td>
+
+        <div>
+          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Orders / Market</p>
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="border-b border-slate-100">
+                  <th className="text-left py-2 px-3 font-bold text-slate-500">Kolom</th>
+                  <th className="text-left py-2 px-3 font-bold text-slate-500">Tipe Notion</th>
+                  <th className="text-left py-2 px-3 font-bold text-slate-500">Sumber</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-slate-50">
+                {[
+                  { name: "Proyek", type: "Title", src: "Judul proyek" },
+                  { name: "No. Order", type: "Rich Text", src: "Nomor order" },
+                  { name: "Klien", type: "Rich Text", src: "Nama klien" },
+                  { name: "WhatsApp", type: "Phone Number", src: "No. WhatsApp klien" },
+                  { name: "Layanan", type: "Rich Text", src: "Nama layanan" },
+                  { name: "Package", type: "Rich Text", src: "Nama paket" },
+                  { name: "Total Harga", type: "Number", src: "Total harga" },
+                  { name: "Discount", type: "Number", src: "Jumlah diskon" },
+                  { name: "Status", type: "Select", src: "No Status / Belum Dibayar / Dibatalkan / Dibayar / Dikerjakan / Selesai" },
+                  { name: "Tanggal Masuk", type: "Date", src: "Tanggal order dibuat" },
+                  { name: "Final File", type: "URL", src: "form_data.final_file_url" },
+                  { name: "Deadline", type: "Date", src: "form_data.deadline" },
+                  { name: "Customer Email", type: "Email", src: "Email klien" },
+                ].map(col => (
+                  <tr key={col.name}>
+                    <td className="py-2 px-3 font-mono font-semibold text-slate-700">{col.name}</td>
+                    <td className="py-2 px-3 text-slate-500">{col.type}</td>
+                    <td className="py-2 px-3 text-slate-400">{col.src}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div>
+          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Layanan / Services</p>
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="border-b border-slate-100">
+                  <th className="text-left py-2 px-3 font-bold text-slate-500">Kolom</th>
+                  <th className="text-left py-2 px-3 font-bold text-slate-500">Tipe Notion</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-50">
+                {[
+                  { name: "Layanan", type: "Title" },
+                  { name: "Kategori", type: "Select" },
+                  { name: "Deskripsi", type: "Rich Text" },
+                  { name: "Slug", type: "Rich Text" },
+                  { name: "Harga Mulai", type: "Number" },
+                  { name: "Harga Tertinggi", type: "Number" },
+                  { name: "Jumlah Paket", type: "Number" },
+                  { name: "Detail Paket", type: "Rich Text" },
+                  { name: "Status", type: "Select (Diterbitkan / Draf)" },
+                  { name: "Unggulan", type: "Checkbox" },
+                ].map(col => (
+                  <tr key={col.name}>
+                    <td className="py-2 px-3 font-mono font-semibold text-slate-700">{col.name}</td>
+                    <td className="py-2 px-3 text-slate-500">{col.type}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
@@ -327,11 +370,11 @@ export default function NotionSettingsClient() {
         <h4 className="text-xs font-bold uppercase tracking-wider text-amber-700 mb-2">Cara Setup</h4>
         <ol className="text-xs font-medium text-amber-800 space-y-1.5 list-decimal pl-4">
           <li>Buka <span className="font-mono">notion.so/my-integrations</span> → buat integration baru → salin <span className="font-bold">Internal Integration Token</span>.</li>
-          <li>Buat dua Database Notion (satu untuk Projects, satu untuk Manajemen Market).</li>
-          <li>Buka database → klik <span className="font-bold">⋯</span> → <span className="font-bold">Add connections</span> → pilih integration yang baru dibuat.</li>
-          <li>Salin Database ID dari URL: <span className="font-mono bg-amber-100 px-1 rounded">notion.so/[workspace]/<b>DATABASE_ID</b>?v=...</span></li>
-          <li>Tempel Token dan Database ID di form di atas → klik ikon verifikasi → Simpan.</li>
-          <li>Sync otomatis berjalan setiap hari. Manual sync tersedia di halaman Projects dan Manajemen.</li>
+          <li>Buat 3 Database Notion: satu untuk <b>Orders/Projects</b>, satu untuk <b>Market</b>, satu untuk <b>Services</b>.</li>
+          <li>Setiap database → klik <span className="font-bold">⋯</span> → <span className="font-bold">Add connections</span> → pilih integration yang dibuat.</li>
+          <li>Salin Database ID dari URL: <span className="font-mono bg-amber-100 px-1 rounded">notion.so/[ws]/<b>DATABASE_ID</b>?v=...</span></li>
+          <li>Isi Token dan 3 Database ID di atas → verifikasi masing-masing → Simpan.</li>
+          <li><span className="font-bold">Market & Services</span> sync otomatis setiap ada perubahan. <span className="font-bold">Orders</span> sync manual per bulan dari halaman Projects.</li>
         </ol>
       </div>
 

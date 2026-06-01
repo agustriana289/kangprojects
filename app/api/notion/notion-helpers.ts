@@ -12,12 +12,13 @@ export async function getNotionSettings(): Promise<{
   token: string | null;
   projectsDbId: string | null;
   marketDbId: string | null;
+  servicesDbId: string | null;
 }> {
   const sb = supabaseAdmin();
   const { data } = await sb
     .from("app_settings")
     .select("key, value")
-    .in("key", ["notion_enabled", "notion_token", "notion_projects_db_id", "notion_market_db_id"]);
+    .in("key", ["notion_enabled", "notion_token", "notion_projects_db_id", "notion_market_db_id", "notion_services_db_id"]);
 
   const map: Record<string, string | null> = {};
   (data || []).forEach((r: { key: string; value: string | null }) => {
@@ -29,6 +30,7 @@ export async function getNotionSettings(): Promise<{
     token: map["notion_token"] || null,
     projectsDbId: map["notion_projects_db_id"] || null,
     marketDbId: map["notion_market_db_id"] || null,
+    servicesDbId: map["notion_services_db_id"] || null,
   };
 }
 
