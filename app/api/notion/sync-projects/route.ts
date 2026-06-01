@@ -57,56 +57,68 @@ export async function POST(req: NextRequest) {
 
   const results = { synced: 0, created: 0, updated: 0, failed: 0 };
 
-  for (const order of orders || []) {
-    try {
-      const fd = parseFormData(order.form_data);
-
-      const data: NotionOrderData = {
-        projectTitle: (fd["project_title"] || fd["Project Title"] || fd["Nama Logo"] || "") as string,
-        clientName: (order.guest_name || fd["customer_name"] || fd["Client Name"] || "") as string,
-        clientEmail: (fd["email"] || fd["customer_email"] || "") as string,
-        whatsapp: (order.guest_phone || fd["whatsapp"] || "") as string,
-        serviceTitle: (order.store_services as any)?.title || "",
-        packageName: parsePackageName(order.selected_package),
-        totalAmount: Number(order.total_amount || 0),
-        discountAmount: Number(fd["discount_amount"] || 0),
-        status: order.status,
-        orderNumber: order.order_number,
-        createdAt: order.created_at,
-        finalFileUrl: (fd["final_file_url"] || fd["delivery_url"] || fd["file_url"] || "") as string,
-        deadline: toDateStr(fd["deadline"]),
-      };
-
-      const properties = buildNotionProperties(data);
-
-      if (order.notion_page_id) {
-        const ok = await notionUpdatePage(settings.token, order.notion_page_id, properties);
-        if (ok) { results.updated++; results.synced++; }
-        else results.failed++;
-      } else {
-        const pageId = await notionCreatePage(settings.token, settings.projectsDbId, properties);
-        if (pageId) {
-          await sb.from("store_orders").update({ notion_page_id: pageId }).eq("id", order.id);
-          results.created++;
-          results.synced++;
+    let lastError = "";
+    for (const order of orders || []) {
+      try {
+        const fd = parseFormData(order.form_data);
+  
+        const data: NotionOrderData = {
+          projectTitle: (fd["project_title"] || fd["Project Title"] || fd["Nama Logo"] || "") as string,
+          clientName: (order.guest_name || fd["customer_name"] || fd["Client Name"] || "") as string,
+          clientEmail: (fd["email"] || fd["customer_email"] || "") as string,
+          whatsapp: (order.guest_phone || fd["whatsapp"] || "") as string,
+          serviceTitle: (order.store_services as any)?.title || "",
+          packageName: parsePackageName(order.selected_package),
+          totalAmount: Number(order.total_amount || 0),
+          discountAmount: Number(fd["discount_amount"] || 0),
+          status: order.status,
+          orderNumber: order.order_number,
+          createdAt: order.created_at,
+          finalFileUrl: (fd["final_file_url"] || fd["delivery_url"] || fd["file_url"] || "") as string,
+          deadline: toDateStr(fd["deadline"]),
+        };
+  
+        const properties = buildNotionProperties(data);
+  
+        if (order.notion_page_id) {
+          const res = await fetch(`https://api.notion.com/v1/pages/${order.notion_page_id}`, {
+            method: "PATCH",
+            headers: { Authorization: `Bearer ${settings.token}`, "Content-Type": "application/json", "Notion-Version": "2022-06-28" },
+            body: JSON.stringify({ properties }),
+          });
+          if (res.ok) { results.updated++; results.synced++; }
+          else { results.failed++; lastError = await res.text(); }
         } else {
-          results.failed++;
+          const res = await fetch("https://api.notion.com/v1/pages", {
+            method: "POST",
+            headers: { Authorization: `Bearer ${settings.token}`, "Content-Type": "application/json", "Notion-Version": "2022-06-28" },
+            body: JSON.stringify({ parent: { database_id: settings.projectsDbId }, properties }),
+          });
+          if (res.ok) {
+            const data = await res.json();
+            await sb.from("store_orders").update({ notion_page_id: data.id }).eq("id", order.id);
+            results.created++;
+            results.synced++;
+          } else {
+            results.failed++;
+            lastError = await res.text();
+          }
         }
+      } catch (err: any) {
+        results.failed++;
+        lastError = err.message;
       }
-    } catch {
-      results.failed++;
     }
-  }
-
-  await sb.from("app_settings").upsert({
-    key: "notion_last_sync_projects_at",
-    value: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  });
-
-  return NextResponse.json({
-    success: true,
-    ...results,
-    message: `${results.synced} tersync (${results.created} baru, ${results.updated} diperbarui), ${results.failed} gagal.`,
-  });
+  
+    await sb.from("app_settings").upsert({
+      key: "notion_last_sync_projects_at",
+      value: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    });
+  
+    return NextResponse.json({
+      success: results.failed === 0,
+      ...results,
+      message: `${results.synced} tersync (${results.created} baru, ${results.updated} diperbarui), ${results.failed} gagal. ${lastError ? `Error: ${lastError}` : ''}`,
+    });
 }

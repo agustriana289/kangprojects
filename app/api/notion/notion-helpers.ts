@@ -62,7 +62,7 @@ export function buildNotionProperties(d: NotionOrderData): Record<string, unknow
 
   const props: Record<string, unknown> = {
     Proyek: { title: [{ text: { content: d.projectTitle || "Tanpa Judul" } }] },
-    "No. Order": { rich_text: [{ text: { content: d.orderNumber || "—" } }] },
+    "No Invoice": { rich_text: [{ text: { content: d.orderNumber || "—" } }] },
     Klien: { rich_text: [{ text: { content: d.clientName || "—" } }] },
     Layanan: { rich_text: [{ text: { content: d.serviceTitle || "—" } }] },
     Package: { rich_text: [{ text: { content: d.packageName || "—" } }] },
@@ -73,8 +73,8 @@ export function buildNotionProperties(d: NotionOrderData): Record<string, unknow
   };
 
   if (d.whatsapp) props["WhatsApp"] = { phone_number: d.whatsapp };
-  if (d.clientEmail) props["Customer Email"] = { email: d.clientEmail };
-  if (d.finalFileUrl) props["Final File"] = { url: d.finalFileUrl };
+  if (d.clientEmail) props["Email Klien"] = { email: d.clientEmail };
+  if (d.finalFileUrl) props["File"] = { url: d.finalFileUrl };
   if (d.deadline) props["Deadline"] = { date: { start: d.deadline } };
 
   return props;

@@ -308,7 +308,7 @@ export default function NotionSettingsClient() {
               <tbody className="divide-y divide-slate-50">
                 {[
                   { name: "Proyek", type: "Title", src: "Judul proyek" },
-                  { name: "No. Order", type: "Rich Text", src: "Nomor order" },
+                  { name: "No Invoice", type: "Rich Text", src: "Nomor order" },
                   { name: "Klien", type: "Rich Text", src: "Nama klien" },
                   { name: "WhatsApp", type: "Phone Number", src: "No. WhatsApp klien" },
                   { name: "Layanan", type: "Rich Text", src: "Nama layanan / produk" },
@@ -317,9 +317,9 @@ export default function NotionSettingsClient() {
                   { name: "Discount", type: "Number", src: "Jumlah diskon" },
                   { name: "Status", type: "Select", src: "No Status / Belum Dibayar / Dibatalkan / Dibayar / Dikerjakan / Selesai" },
                   { name: "Tanggal Masuk", type: "Date", src: "Tanggal order dibuat" },
-                  { name: "Final File", type: "URL", src: "form_data.final_file_url" },
+                  { name: "File", type: "URL", src: "form_data.final_file_url" },
                   { name: "Deadline", type: "Date", src: "form_data.deadline" },
-                  { name: "Customer Email", type: "Email", src: "Email klien" },
+                  { name: "Email Klien", type: "Email", src: "Email klien" },
                 ].map(col => (
                   <tr key={col.name}>
                     <td className="py-2 px-3 font-mono font-semibold text-slate-700">{col.name}</td>
