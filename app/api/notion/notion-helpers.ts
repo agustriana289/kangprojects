@@ -61,8 +61,8 @@ export function buildNotionProperties(d: NotionOrderData): Record<string, unknow
   };
 
   const props: Record<string, unknown> = {
-    Proyek: { title: [{ text: { content: d.projectTitle || "Tanpa Judul" } }] },
-    "No Invoice": { rich_text: [{ text: { content: d.orderNumber || "—" } }] },
+    Proyek: { rich_text: [{ text: { content: d.projectTitle || "Tanpa Judul" } }] },
+    "No Invoice": { title: [{ text: { content: d.orderNumber || "—" } }] },
     Klien: { rich_text: [{ text: { content: d.clientName || "—" } }] },
     Layanan: { rich_text: [{ text: { content: d.serviceTitle || "—" } }] },
     Package: { rich_text: [{ text: { content: d.packageName || "—" } }] },
