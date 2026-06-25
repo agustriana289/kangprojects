@@ -1,12 +1,10 @@
-import { Check, Tag } from "lucide-react";
+import { Check } from "lucide-react";
 import FadeIn from "./FadeIn";
-import { calculateDiscountedPrice } from "@/utils/discounts";
 
 const tiers = [
   {
     name: "Starter",
     id: "tier-starter",
-    href: "#",
     priceMonthly: "$99",
     description: "Cocok untuk proyek kecil dan perusahaan startup baru.",
     features: [
@@ -22,7 +20,6 @@ const tiers = [
   {
     name: "Professional",
     id: "tier-professional",
-    href: "#",
     priceMonthly: "$199",
     description: "Ideal untuk bisnis berkembang yang membutuhkan identitas yang kuat.",
     features: [
@@ -40,7 +37,6 @@ const tiers = [
   {
     name: "Enterprise",
     id: "tier-enterprise",
-    href: "#",
     priceMonthly: "$499",
     description: "Branding komprehensif untuk perusahaan mapan.",
     features: [
@@ -58,28 +54,30 @@ const tiers = [
   },
 ];
 
-export default function Pricing({ settings, featuredService, type = "service", activeDiscounts = [] }: { settings?: any, featuredService?: any, type?: "service" | "product", activeDiscounts?: any[] }) {
+export default function Pricing({ settings, featuredService, whatsappNumber }: { settings?: any, featuredService?: any, whatsappNumber?: string }) {
   let displayTiers: any[] = tiers;
+
   if (featuredService && featuredService.packages && featuredService.packages.length > 0) {
     displayTiers = featuredService.packages.map((pkg: any, index: number) => {
-      const { originalPrice, discountedPrice, appliedDiscount } = calculateDiscountedPrice(pkg.price, activeDiscounts, featuredService.id, type);
-      
+      const waNumber = whatsappNumber || "";
+      const waText = encodeURIComponent(
+        `Halo, saya tertarik dengan layanan ${featuredService.title} - Paket ${pkg.name} (Rp ${Number(pkg.price).toLocaleString("id-ID")}). Boleh minta info lebih lanjut?`
+      );
+      const waHref = waNumber ? `https://wa.me/${waNumber}?text=${waText}` : `https://wa.me/?text=${waText}`;
+
       return {
         name: pkg.name,
         id: `tier-${pkg.name.toLowerCase().replace(/\s+/g, '-')}`,
-        href: `/checkout?type=${type}&slug=${featuredService.slug}&plan=${encodeURIComponent(pkg.name)}`,
-        priceMonthly: `Rp ${Number(discountedPrice).toLocaleString("id-ID")}`,
-        originalPriceDisplay: `Rp ${Number(originalPrice).toLocaleString("id-ID")}`,
-        appliedDiscount,
+        href: waHref,
+        priceMonthly: `Rp ${Number(pkg.price).toLocaleString("id-ID")}`,
         description: pkg.description,
         features: pkg.features || [],
-        // Highlight the middle one or a specific one
         featured: index === Math.floor(featuredService.packages.length / 2),
-        cta: "Pesan Sekarang",
+        cta: "Pesan via WhatsApp",
       } as any;
     });
   }
-  
+
   return (
     <section className="bg-white py-24 sm:py-32" id="pricing">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -106,11 +104,6 @@ export default function Pricing({ settings, featuredService, type = "service", a
                   : "bg-slate-50 ring-slate-100/80 shadow-sm hover:shadow-xl"
               }`}
             >
-              {tier.appliedDiscount && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-white text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-full shadow-md flex items-center gap-1.5 whitespace-nowrap">
-                  <Tag size={12} /> {tier.appliedDiscount.name} Diterapkan
-                </div>
-              )}
               <div className="flex items-center justify-between gap-x-4">
                 <h3
                   id={tier.id}
@@ -131,36 +124,17 @@ export default function Pricing({ settings, featuredService, type = "service", a
               >
                 {tier.description}
               </p>
-              <div className="mt-6">
-                {tier.appliedDiscount ? (
-                  <div className="flex flex-col">
-                    <span className={`text-sm font-medium line-through mb-1 ${tier.featured ? "text-primary" : "text-slate-400"}`}>
-                      {tier.originalPriceDisplay}
-                    </span>
-                    <p className="flex items-baseline gap-x-1">
-                      <span className={`text-4xl font-bold tracking-tight ${tier.featured ? "text-white" : "text-slate-900"}`}>
-                        {tier.priceMonthly}
-                      </span>
-                      <span className={`text-sm font-semibold leading-6 ${tier.featured ? "text-slate-400" : "text-slate-500"}`}>
-                      </span>
-                    </p>
-                  </div>
-                ) : (
-                  <p className="flex items-baseline gap-x-1">
-                    <span
-                      className={`text-4xl font-bold tracking-tight ${tier.featured ? "text-white" : "text-slate-900"}`}
-                    >
-                      {tier.priceMonthly}
-                    </span>
-                    <span
-                      className={`text-sm font-semibold leading-6 ${tier.featured ? "text-slate-400" : "text-slate-500"}`}
-                    >
-                    </span>
-                  </p>
-                )}
-              </div>
+              <p className="mt-6 flex items-baseline gap-x-1">
+                <span
+                  className={`text-4xl font-bold tracking-tight ${tier.featured ? "text-white" : "text-slate-900"}`}
+                >
+                  {tier.priceMonthly}
+                </span>
+              </p>
               <a
                 href={tier.href}
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-describedby={tier.id}
                 className={`mt-6 block rounded-full px-3 py-3 text-center text-sm font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 transition-all duration-300 ${
                   tier.featured

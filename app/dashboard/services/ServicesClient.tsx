@@ -41,23 +41,21 @@ interface Service {
   is_featured: boolean;
   sort_order: number;
   created_at?: string;
-  portfolio_ids?: string[];
 }
 
-const emptyForm: Omit<Service, "id"> = { 
-  title: "", 
-  slug: "", 
-  description: "", 
-  category: "Desain", 
-  icon: "Briefcase", 
-  thumbnail_url: "", 
-  packages: [{ name: "Standar", price: 0, description: "Paket Standar", features: [] }], 
-  form_fields: [{ label: "Detail Proyek", type: "textarea", required: true }], 
+const emptyForm: Omit<Service, "id"> = {
+  title: "",
+  slug: "",
+  description: "",
+  category: "Desain",
+  icon: "Briefcase",
+  thumbnail_url: "",
+  packages: [{ name: "Standar", price: 0, description: "Paket Standar", features: [] }],
+  form_fields: [{ label: "Detail Proyek", type: "textarea", required: true }],
   key_features: [],
-  is_published: true, 
-  is_featured: false, 
+  is_published: true,
+  is_featured: false,
   sort_order: 0,
-  portfolio_ids: [] 
 };
 
 export default function ServicesClient() {
@@ -70,19 +68,9 @@ export default function ServicesClient() {
   const [editingService, setEditingService] = useState<Service | null>(null);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState<Omit<Service, "id">>(emptyForm);
-  const [portfolios, setPortfolios] = useState<any[]>([]);
-  const [showPortfolioModal, setShowPortfolioModal] = useState(false);
-  const [portfolioSearch, setPortfolioSearch] = useState("");
-  const [portfolioPage, setPortfolioPage] = useState(1);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const PORTFOLIOS_PER_PAGE = 18;
   const PAGE_SIZE = 10;
-
-  const fetchPortfolios = useCallback(async () => {
-    const { data } = await supabase.from("store_portfolios").select("id, title, images").eq("is_published", true).order("created_at", { ascending: false });
-    if (data) setPortfolios(data);
-  }, [supabase]);
 
   const fetchServices = useCallback(async () => {
     setLoading(true);
@@ -95,15 +83,7 @@ export default function ServicesClient() {
     setLoading(false);
   }, [supabase, showToast]);
 
-  useEffect(() => { fetchServices(); fetchPortfolios(); }, [fetchServices, fetchPortfolios]);
-
-  const notionSyncService = (serviceId: string) => {
-    fetch("/api/notion/sync-single-service", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ serviceId }),
-    }).catch(() => {});
-  };
+  useEffect(() => { fetchServices(); }, [fetchServices]);
 
   const openNew = () => {
     setEditingService(null);
@@ -113,20 +93,19 @@ export default function ServicesClient() {
 
   const openEdit = (svc: Service) => {
     setEditingService(svc);
-    setForm({ 
-      title: svc.title, 
-      slug: svc.slug, 
-      description: svc.description, 
-      category: svc.category, 
-      icon: svc.icon, 
-      thumbnail_url: svc.thumbnail_url || "", 
-      packages: svc.packages || [], 
-      form_fields: svc.form_fields || [], 
+    setForm({
+      title: svc.title,
+      slug: svc.slug,
+      description: svc.description,
+      category: svc.category,
+      icon: svc.icon,
+      thumbnail_url: svc.thumbnail_url || "",
+      packages: svc.packages || [],
+      form_fields: svc.form_fields || [],
       key_features: svc.key_features || [],
-      is_published: svc.is_published,  
-      is_featured: svc.is_featured, 
+      is_published: svc.is_published,
+      is_featured: svc.is_featured,
       sort_order: svc.sort_order,
-      portfolio_ids: svc.portfolio_ids || []
     });
     setView("form");
   };
@@ -138,12 +117,12 @@ export default function ServicesClient() {
     if (editingService) {
       const { error } = await supabase.from("store_services").update({ ...form }).eq("id", editingService.id);
       if (error) showToast("Gagal memperbarui layanan", "error");
-      else { showToast("Layanan berhasil diperbarui", "success"); setView("list"); fetchServices(); notionSyncService(editingService.id); }
+      else { showToast("Layanan berhasil diperbarui", "success"); setView("list"); fetchServices(); }
     } else {
       const newOrder = services.length > 0 ? Math.max(...services.map((s: any) => s.sort_order || 0)) + 1 : 1;
-      const { data: inserted, error } = await supabase.from("store_services").insert({ ...form, sort_order: newOrder }).select("id").single();
+      const { error } = await supabase.from("store_services").insert({ ...form, sort_order: newOrder });
       if (error) showToast("Gagal membuat layanan", "error");
-      else { showToast("Layanan berhasil dibuat", "success"); setView("list"); fetchServices(); if (inserted?.id) notionSyncService(inserted.id); }
+      else { showToast("Layanan berhasil dibuat", "success"); setView("list"); fetchServices(); }
     }
     setSaving(false);
   };
@@ -158,10 +137,9 @@ export default function ServicesClient() {
   const togglePublished = async (svc: Service) => {
     const { error } = await supabase.from("store_services").update({ is_published: !svc.is_published }).eq("id", svc.id);
     if (error) showToast("Gagal memperbarui status", "error");
-    else { fetchServices(); notionSyncService(svc.id); }
+    else { fetchServices(); }
   };
 
-  // Form helpers
   const updatePackage = (index: number, field: keyof ServicePackage, value: string | number) => {
     const pkgs = [...form.packages];
     pkgs[index] = { ...pkgs[index], [field]: value };
@@ -180,7 +158,7 @@ export default function ServicesClient() {
     setForm({ ...form, packages: [...form.packages, { name: defaultName, price: 0, description: "", features: [] }] });
   };
   const removePackage = (index: number) => setForm({ ...form, packages: form.packages.filter((_, i) => i !== index) });
-  
+
   const addFeature = (pkgIndex: number) => {
     const pkgs = [...form.packages];
     pkgs[pkgIndex].features.push("");
@@ -213,8 +191,8 @@ export default function ServicesClient() {
     setForm({ ...form, key_features: kfs });
   };
 
-  const filtered = services.filter(svc => 
-    svc.title.toLowerCase().includes(search.toLowerCase()) || 
+  const filtered = services.filter(svc =>
+    svc.title.toLowerCase().includes(search.toLowerCase()) ||
     svc.category.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -247,9 +225,8 @@ export default function ServicesClient() {
 
         <form onSubmit={handleSave} className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
+
             <div className="lg:col-span-2 space-y-6">
-              
 
               <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-6 space-y-5">
                 <h3 className="text-lg font-bold text-slate-800 mb-4 border-b border-slate-100 pb-3">Informasi Dasar</h3>
@@ -267,7 +244,7 @@ export default function ServicesClient() {
                     <input required value={form.slug} onChange={e => setForm(p => ({ ...p, slug: e.target.value }))} className={`${inputClass} font-mono text-slate-500`} />
                   </div>
                 </div>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block">Kategori</label>
@@ -280,28 +257,26 @@ export default function ServicesClient() {
                     </select>
                   </div>
                 </div>
-                
+
                 <div className="space-y-2">
                   <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Deskripsi</label>
                   <textarea rows={4} value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} placeholder="Jelaskan penawaran layanan Anda..." className={`${inputClass} resize-none`} />
                 </div>
 
-                <ImageUploader 
-                  label="Thumbnail Layanan" 
-                  value={form.thumbnail_url} 
-                  onChange={(url) => setForm(p => ({ ...p, thumbnail_url: url }))} 
+                <ImageUploader
+                  label="Thumbnail Layanan"
+                  value={form.thumbnail_url}
+                  onChange={(url) => setForm(p => ({ ...p, thumbnail_url: url }))}
                   folder="services"
                 />
               </div>
-
-              
 
               <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-6">
                 <div className="flex items-center justify-between mb-6 border-b border-slate-100 pb-3">
                   <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2"><Layers className="w-5 h-5 text-primary" /> Paket Harga</h3>
                   <button type="button" onClick={addPackage} className="text-xs font-bold bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg hover:bg-slate-200 inline-flex items-center gap-1"><Plus className="w-3 h-3"/> Tambah Paket</button>
                 </div>
-                
+
                 <div className="space-y-6">
                   {form.packages.map((pkg, pIdx) => (
                     <div key={pIdx} className="bg-slate-50 p-5 rounded-2xl border border-slate-200 relative">
@@ -354,7 +329,6 @@ export default function ServicesClient() {
             </div>
 
             <div className="space-y-6">
-              
 
               <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-6">
                  <h3 className="text-lg font-bold text-slate-800 mb-4 border-b border-slate-100 pb-3">Status</h3>
@@ -380,14 +354,12 @@ export default function ServicesClient() {
                  </div>
               </div>
 
-              
-
               <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-6">
                 <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
                   <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2"><MessageSquare className="w-4 h-4 text-primary" /> Persyaratan Klien</h3>
                   <button type="button" onClick={addField} className="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-1 rounded hover:bg-slate-200">+ Tambah</button>
                 </div>
-                
+
                 <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
                    {form.form_fields.map((f: any, i: number) => (
                      <div key={i} className="bg-slate-50 p-3 rounded-xl border border-slate-200 relative">
@@ -425,14 +397,12 @@ export default function ServicesClient() {
                 </div>
               </div>
 
-              
-
               <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-6 mt-6">
                 <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
                   <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2"><Star className="w-4 h-4 text-primary fill-primary" /> Sorotan Layanan</h3>
                   <button type="button" onClick={addKeyFeature} className="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-1 rounded hover:bg-slate-200">+ Tambah</button>
                 </div>
-                
+
                 <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
                    {(form.key_features || []).map((kf: any, i: number) => (
                      <div key={i} className="bg-slate-50 p-3 rounded-xl border border-slate-200 relative mt-3">
@@ -459,162 +429,9 @@ export default function ServicesClient() {
                 </div>
               </div>
 
-              <div className="bg-white shadow-sm ring-1 ring-slate-100 rounded-2xl p-6 mt-6">
-                <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
-                  <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2"><BriefcaseBusiness className="w-4 h-4 text-primary" /> Portofolio Terhubung</h3>
-                  <button type="button" onClick={() => setShowPortfolioModal(true)} className="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-1 rounded hover:bg-slate-200">+ Tambah Portofolio</button>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4 max-h-[400px] overflow-y-auto">
-                  {(form.portfolio_ids || []).map((pid: any) => {
-                    const port = portfolios.find((p: any) => p.id === pid);
-                    if (!port) return null;
-                    const portImage = Array.isArray(port.images) && port.images.length > 0 ? port.images[0] : (typeof port.images === 'string' && port.images ? port.images : "");
-                    
-                    return (
-                      <div key={pid} className="relative group rounded-xl overflow-hidden border border-slate-200 shadow-sm">
-                        {portImage ? (
-                          <img src={portImage} alt={port.title || "Portfolio"} className="w-full h-24 object-cover bg-slate-100" />
-                        ) : (
-                          <div className="w-full h-24 bg-slate-100 flex items-center justify-center text-slate-300">
-                            <BriefcaseBusiness className="w-6 h-6 opacity-20" />
-                          </div>
-                        )}
-                        <div className="p-2 bg-white border-t border-slate-100">
-                          <p className="text-xs font-bold truncate text-slate-800">{port.title || "Tanpa Judul"}</p>
-                        </div>
-                        <button type="button" onClick={() => setForm((p: any) => ({ ...p, portfolio_ids: (p.portfolio_ids || []).filter((id: any) => id !== pid) }))} className="absolute top-1 right-1 bg-white/90 backdrop-blur rounded p-1 text-slate-500 hover:text-red-500 hover:bg-white shadow">
-                          <X className="w-3 h-3" />
-                        </button>
-                      </div>
-                    )
-                  })}
-                  {(!form.portfolio_ids || form.portfolio_ids.length === 0) && (
-                    <div className="col-span-2 text-xs text-slate-400 text-center py-4">Tidak ada portofolio yang terhubung.</div>
-                  )}
-                </div>
-              </div>
-
             </div>
           </div>
         </form>
-
-        {showPortfolioModal && (
-          <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[85vh] flex flex-col">
-              <div className="flex items-center justify-between p-4 border-b border-slate-100">
-                <h3 className="font-bold text-slate-900">Pilih Portofolio (Maks 9)</h3>
-                <button onClick={() => setShowPortfolioModal(false)} className="text-slate-400 hover:text-slate-600"><X className="w-5 h-5"/></button>
-              </div>
-
-              <div className="px-4 py-3 border-b border-slate-100 bg-slate-50/50">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
-                  <input 
-                    type="text"
-                    value={portfolioSearch}
-                    onChange={(e) => {
-                      setPortfolioSearch(e.target.value);
-                      setPortfolioPage(1); // Reset page on search
-                    }}
-                    placeholder="Cari portofolio..."
-                    className="w-full bg-white border border-slate-200 pl-9 pr-4 py-2 rounded-lg text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-                  />
-                </div>
-              </div>
-
-              <div className="p-4 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 flex-1">
-                {(() => {
-                  const filteredPortfolios = portfolios.filter((p: any) => !portfolioSearch || p.title?.toLowerCase().includes(portfolioSearch.toLowerCase()));
-                  const totalPages = Math.ceil(filteredPortfolios.length / PORTFOLIOS_PER_PAGE);
-                  const pagedPortfolios = filteredPortfolios.slice((portfolioPage - 1) * PORTFOLIOS_PER_PAGE, portfolioPage * PORTFOLIOS_PER_PAGE);
-
-                  if (filteredPortfolios.length === 0) {
-                    return (
-                      <div className="col-span-full text-center py-12 text-slate-400">
-                        <BriefcaseBusiness className="w-8 h-8 mx-auto mb-3 opacity-20" />
-                        <p>Tidak ada portofolio ditemukan.</p>
-                      </div>
-                    );
-                  }
-
-                  return (
-                    <>
-                      {pagedPortfolios.map((port: any) => {
-                        const isSelected = (form.portfolio_ids || []).includes(port.id);
-                        
-                        return (
-                          <div 
-                            key={port.id} 
-                            onClick={() => {
-                              const current = form.portfolio_ids || [];
-                              if (isSelected) {
-                                setForm((p: any) => ({ ...p, portfolio_ids: current.filter((id: any) => id !== port.id) }));
-                              } else if (current.length < 9) {
-                                setForm((p: any) => ({ ...p, portfolio_ids: [...current, port.id] }));
-                              }
-                            }}
-                            className={`cursor-pointer border rounded-lg overflow-hidden transition-all flex items-center p-3 ${
-                              isSelected 
-                                ? 'border-primary bg-primary/5 shadow-sm' 
-                                : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
-                            }`}
-                          >
-                            <div className="flex-1 min-w-0 pr-2">
-                              <p className="text-sm font-semibold truncate text-slate-800">{port.title || "Tanpa Judul Portofolio"}</p>
-                            </div>
-                            <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 border ${isSelected ? 'bg-primary border-primary' : 'bg-white border-slate-300'}`}>
-                              {isSelected && <Check className="w-3 h-3 text-white" />}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </>
-                  );
-                })()}
-              </div>
-
-              {/* Pagination controls & Footer */}
-              <div className="p-4 border-t border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-4 bg-slate-50/50 rounded-b-2xl">
-                {(() => {
-                  const filteredLength = portfolios.filter((p: any) => !portfolioSearch || p.title?.toLowerCase().includes(portfolioSearch.toLowerCase())).length;
-                  const totalPages = Math.max(1, Math.ceil(filteredLength / PORTFOLIOS_PER_PAGE));
-                  
-                  return (
-                    <div className="flex items-center gap-4 w-full sm:w-auto overflow-x-auto">
-                      <div className="text-xs text-slate-500 whitespace-nowrap">
-                        Menampilkan {Math.min(filteredLength, (portfolioPage - 1) * PORTFOLIOS_PER_PAGE + 1)} - {Math.min(filteredLength, portfolioPage * PORTFOLIOS_PER_PAGE)} dari {filteredLength}
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <button 
-                          onClick={() => setPortfolioPage(p => Math.max(1, p - 1))}
-                          disabled={portfolioPage === 1}
-                          className="p-1 rounded text-slate-500 hover:bg-slate-200 disabled:opacity-50 disabled:hover:bg-transparent"
-                        >
-                          <ChevronLeft className="w-4 h-4" />
-                        </button>
-                        <span className="text-xs font-medium px-2 py-1 bg-white border border-slate-200 rounded min-w-[32px] text-center">
-                          {portfolioPage} / {totalPages}
-                        </span>
-                        <button 
-                          onClick={() => setPortfolioPage(p => Math.min(totalPages, p + 1))}
-                          disabled={portfolioPage >= totalPages}
-                          className="p-1 rounded text-slate-500 hover:bg-slate-200 disabled:opacity-50 disabled:hover:bg-transparent"
-                        >
-                          <ChevronRight className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })()}
-
-                <button onClick={() => setShowPortfolioModal(false)} className="w-full sm:w-auto bg-primary text-white text-sm font-bold px-6 py-2 rounded-lg hover:bg-primary/90 shadow-sm">
-                  Simpan Pilihan ({(form.portfolio_ids || []).length}/9)
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     );
   }
@@ -633,7 +450,7 @@ export default function ServicesClient() {
           <Plus className="w-4 h-4" /> Layanan Baru
         </button>
       </div>
-      
+
       <div className="relative mb-6">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
         <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} placeholder="Cari layanan berdasarkan judul atau kategori..."
@@ -697,7 +514,7 @@ export default function ServicesClient() {
                       </td>
                       <td className="px-6 py-4">
                          <button onClick={() => togglePublished(svc)} className="flex items-center gap-1.5 text-xs font-semibold py-1.5 px-3 rounded-lg hover:bg-slate-100 transition-colors">
-                           {svc.is_published 
+                           {svc.is_published
                              ? <><div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div> <span className="text-emerald-700">Diterbitkan</span></>
                              : <><div className="w-2 h-2 rounded-full bg-slate-300"></div> <span className="text-slate-500">Draf</span></>}
                          </button>
@@ -743,7 +560,7 @@ export default function ServicesClient() {
                         {p}
                       </button>
                     ))}
-                  <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
+                  <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page >= totalPages}
                     className="p-2 rounded-xl border border-slate-200 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed text-slate-600 transition-all">
                     <ChevronRight className="w-4 h-4" />
                   </button>

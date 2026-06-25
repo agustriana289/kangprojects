@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   BarChart3, LayoutGrid, Tag, Search, ChevronDown, Trash2, Eye, ExternalLink, Mail, Edit3,
-  ChevronRight, ChevronLeft, Loader2, Check, FileText, Phone, Users, Briefcase, Plus, PartyPopper, MessageSquare, Copy, Star, X, Send, Calendar, Wallet, TrendingUp, Paperclip, Upload, Download, BookMarked
+  ChevronRight, ChevronLeft, Loader2, Check, FileText, Phone, Users, Briefcase, Plus, PartyPopper, MessageSquare, Copy, Star, X, Send, Calendar, Wallet, TrendingUp, Paperclip, Upload, Download
 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { useToast } from "@/components/ToastProvider";
@@ -219,12 +219,6 @@ export default function AdminProjectsClient() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [addForm, setAddForm] = useState({ project_title: "", customer_name: "", whatsapp: "", customer_email: "", total_amount: "", status: "pending" as string, service_id: "", package_name: "" });
   const [addSaving, setAddSaving] = useState(false);
-  const [syncingTickTick, setSyncingTickTick] = useState(false);
-  const [syncingNotion, setSyncingNotion] = useState(false);
-  const [notionSyncMonth, setNotionSyncMonth] = useState(() => {
-    const now = new Date();
-    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
-  });
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true); }, []);
 
@@ -587,50 +581,6 @@ export default function AdminProjectsClient() {
       setEmailNotification({ type: "error", message: err.message || "Gagal mengirim file" });
       setSendingEmail(false);
       setUploadProgress(0);
-    }
-  };
-
-  const sendToTickTick = async (title: string, content: string) => {
-    try {
-      await fetch("/api/ticktick/create-task", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, content }),
-      });
-    } catch {
-    }
-  };
-
-  const handleSyncAllToTickTick = async () => {
-    setSyncingTickTick(true);
-    try {
-      const res = await fetch("/api/ticktick/sync-orders", { method: "POST" });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Gagal sinkronisasi");
-      showToast(data.message || "Sinkronisasi selesai", "success");
-      fetchOrders();
-    } catch (err: any) {
-      showToast(err.message || "Gagal sinkronisasi ke TickTick", "error");
-    } finally {
-      setSyncingTickTick(false);
-    }
-  };
-
-  const handleSyncToNotion = async () => {
-    setSyncingNotion(true);
-    try {
-      const url = notionSyncMonth
-        ? `/api/notion/sync-projects?month=${notionSyncMonth}`
-        : "/api/notion/sync-projects";
-      const res = await fetch(url, { method: "POST" });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Gagal sinkronisasi ke Notion");
-      showToast(data.message || "Sync Notion selesai", "success");
-      fetchOrders();
-    } catch (err: any) {
-      showToast(err.message || "Gagal sync ke Notion", "error");
-    } finally {
-      setSyncingNotion(false);
     }
   };
 

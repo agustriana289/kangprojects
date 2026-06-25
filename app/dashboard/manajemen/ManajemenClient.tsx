@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   BarChart3, LayoutGrid, Tag, Search, ChevronDown,
-  ChevronRight, ChevronLeft, Loader2, Check, FileText, Phone, Users, Briefcase, BookMarked
+  ChevronRight, ChevronLeft, Loader2, Check, FileText, Phone, Users, Briefcase
 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { useToast } from "@/components/ToastProvider";
@@ -310,7 +310,6 @@ export default function ManajemenClient() {
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
   const [saving, setSaving] = useState<Record<string, boolean>>({});
   const [page, setPage] = useState(1);
-  const [syncingNotion, setSyncingNotion] = useState(false);
 
   const getFormData = (o: Record<string, unknown>) => {
     try { return typeof o.form_data === "string" ? JSON.parse(o.form_data) : (o.form_data as Record<string, unknown> || {}); }
@@ -389,7 +388,6 @@ export default function ManajemenClient() {
     if (error) showToast("Gagal menyimpan", "error");
     else {
       setOrders(prev => prev.map(o => o.id === id ? { ...o, [field]: value } : o));
-      notionSyncOrder(id);
     }
     setSaving(s => ({ ...s, [id]: false }));
   };
@@ -398,7 +396,7 @@ export default function ManajemenClient() {
     setSaving(s => ({ ...s, [id]: true }));
     const { error } = await supabase.from("store_orders").update(extra).eq("id", id);
     if (error) showToast("Gagal menyimpan", "error");
-    else { fetchOrders(); notionSyncOrder(id); }
+    else { fetchOrders(); }
     setSaving(s => ({ ...s, [id]: false }));
   };
 
@@ -410,30 +408,8 @@ export default function ManajemenClient() {
       form_data: getFormData(o),
     }).eq("id", id);
     if (error) showToast("Gagal menyimpan", "error");
-    else { fetchOrders(); notionSyncOrder(id); }
+    else { fetchOrders(); }
     setSaving(s => ({ ...s, [id]: false }));
-  };
-
-  const handleSyncMarketToNotion = async () => {
-    setSyncingNotion(true);
-    try {
-      const res = await fetch("/api/notion/sync-projects", { method: "POST" });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Gagal sinkronisasi ke Notion");
-      showToast(data.message || "Sync Notion selesai", "success");
-    } catch (err: any) {
-      showToast(err.message || "Gagal sync ke Notion", "error");
-    } finally {
-      setSyncingNotion(false);
-    }
-  };
-
-  const notionSyncOrder = (orderId: string) => {
-    fetch("/api/notion/sync-single-order", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ orderId }),
-    }).catch(() => {});
   };
 
 
@@ -692,15 +668,6 @@ export default function ManajemenClient() {
               <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Cari..."
                 className="pl-8 pr-3 py-1.5 text-sm bg-slate-50 border border-slate-200 rounded-md outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 w-48" />
             </div>
-            <button
-              onClick={handleSyncMarketToNotion}
-              disabled={syncingNotion}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-slate-700 transition-colors whitespace-nowrap disabled:opacity-60 disabled:cursor-not-allowed"
-              title="Sync semua data ke Notion"
-            >
-              {syncingNotion ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <BookMarked className="w-3.5 h-3.5" />}
-              Sync Notion
-            </button>
           </div>
         </div>
       </div>

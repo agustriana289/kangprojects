@@ -3,9 +3,8 @@
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import {
-  LayoutDashboard, FolderKanban, ShoppingBag,
-  Ticket, Tags, Megaphone,
-  Users, LayoutTemplate, BriefcaseBusiness, BookOpen, Tv2, Star, Images, HelpCircle, MessageSquare, PercentCircle, Mail, Trophy, BookMarked
+  LayoutDashboard, FolderKanban,
+  Ticket, Users, LayoutTemplate, BriefcaseBusiness, Star, HelpCircle, Mail
 } from "lucide-react";
 
 export default function Sidebar({ isAdmin }: { isAdmin: boolean }) {
@@ -15,37 +14,22 @@ export default function Sidebar({ isAdmin }: { isAdmin: boolean }) {
     { name: "Dasbor", href: "/dashboard", icon: LayoutDashboard },
     { name: "Proyek", href: "/dashboard/projects", icon: FolderKanban },
     { name: "Layanan", href: "/dashboard/services", icon: BriefcaseBusiness },
-    { name: "Toko", href: "/dashboard/shop", icon: ShoppingBag },
-    { name: "Diskon", href: "/dashboard/discounts", icon: Tags },
-    { name: "Pengumuman", href: "/dashboard/announcements", icon: Megaphone },
     { name: "Tiket Dukungan", href: "/dashboard/tickets", icon: Ticket },
-    { name: "Portofolio", href: "/dashboard/portfolios", icon: Images },
     { name: "Testimoni", href: "/dashboard/testimonials", icon: Star },
-    { name: "Blog", href: "/dashboard/blogs", icon: BookOpen },
-    { name: "Promo", href: "/dashboard/promos", icon: PercentCircle },
-    { name: "Undian", href: "/dashboard/undian", icon: Trophy },
-    { name: "Iklan", href: "/dashboard/ads", icon: Tv2 },
     { name: "Halaman", href: "/dashboard/pages", icon: LayoutTemplate },
     { name: "FAQ", href: "/dashboard/faq", icon: HelpCircle },
     { name: "Email", href: "/dashboard/settings/email", icon: Mail },
-    { name: "Notion", href: "/dashboard/settings/notion", icon: BookMarked },
     { name: "Pengguna", href: "/dashboard/user", icon: Users },
   ];
 
   const userMenu = [
     { name: "Dasbor", href: "/dashboard", icon: LayoutDashboard },
     { name: "Proyek Saya", href: "/dashboard/projects", icon: FolderKanban },
-    { name: "Telusuri Toko", href: "/dashboard/browse-shop", icon: ShoppingBag },
-    { name: "Diskon", href: "/dashboard/vouchers", icon: Tags },
-    { name: "Postingan Terbaru", href: "/dashboard/latest-posts", icon: BookOpen },
-    { name: "Jelajahi Halaman", href: "/dashboard/user-pages", icon: LayoutTemplate },
     { name: "Bantuan & FAQ", href: "/dashboard/help-faq", icon: HelpCircle },
-    { name: "Chat dengan Admin", href: "/dashboard/chat", icon: MessageSquare },
     { name: "Tiket Dukungan", href: "/dashboard/tickets", icon: Ticket },
   ];
 
   const menus = isAdmin ? adminMenu : userMenu;
-
 
   return (
     <>

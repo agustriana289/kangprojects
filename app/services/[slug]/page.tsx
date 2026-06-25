@@ -7,7 +7,7 @@ import FadeIn from "@/components/landing/FadeIn";
 import Pricing from "@/components/landing/Pricing";
 import Link from "next/link";
 import FAQSection from "@/components/landing/FAQSection";
-import { ArrowLeft, ArrowRight, BriefcaseBusiness, ChevronRight, Home } from "lucide-react";
+import { ArrowRight, BriefcaseBusiness, ChevronRight, Home } from "lucide-react";
 import DynamicIcon from "@/components/dashboard/DynamicIcon";
 
 interface ServiceProps {
@@ -40,22 +40,13 @@ export default async function ServiceDetail({ params }: ServiceProps) {
   const service = await getService(slug);
   if (!service) notFound();
 
-  // Create a minimal settings object for the Pricing component
   const mockSettings = {
     pricing_badge: service.category || "Paket Harga",
     pricing_title: `Pilih paket ${service.title} Anda`,
     pricing_description: "Pilih paket yang paling sesuai dengan kebutuhan Anda. Semua paket disertai jaminan kualitas dan dukungan.",
   };
 
-  // Fetch active automated discounts
   const supabase = await createClient();
-  const { data: discounts } = await supabase
-    .from("store_discounts")
-    .select("*")
-    .eq("is_active", true)
-    .is("code", null);
-
-  const activeDiscounts = discounts || [];
 
   const { data: serviceFaqs } = await supabase
     .from("faqs")
@@ -65,32 +56,12 @@ export default async function ServiceDetail({ params }: ServiceProps) {
     .eq("is_published", true)
     .order("sort_order", { ascending: true });
 
-  // Fetch related portfolios based on portfolio_ids array
-  let relatedPortfolios: any[] = [];
-  if (service.portfolio_ids && service.portfolio_ids.length > 0) {
-    const { data: ports } = await supabase
-      .from("store_portfolios")
-      .select("id, title, description, category, images")
-      .in("id", service.portfolio_ids)
-      .eq("is_published", true);
-      
-    if (ports && ports.length > 0) {
-      // Map to maintain the order defined in portfolio_ids
-      relatedPortfolios = service.portfolio_ids
-        .map((id: string) => ports.find(p => p.id === id))
-        .filter(Boolean);
-    }
-  }
-
-  // Fetch settings for the WhatsApp CTA (id=1)
   const { data: settings } = await supabase.from("settings").select("*").eq("id", 1).single();
   const whatsappNumber = settings?.phone_number ? settings.phone_number.replace(/\D/g, "") : "";
 
   return (
     <div className="min-h-screen font-sans text-slate-900">
       <Header />
-      
-      
 
       <div className="py-4 pt-4">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -126,8 +97,6 @@ export default async function ServiceDetail({ params }: ServiceProps) {
       <main className="py-4">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="lg:grid lg:grid-cols-2 lg:gap-16">
-            
-            
 
             <FadeIn delay={100} className="flex flex-col">
               <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-sm font-medium text-primary mb-6 w-max">
@@ -137,15 +106,12 @@ export default async function ServiceDetail({ params }: ServiceProps) {
               <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl mb-6">
                 {service.title}
               </h1>
-              
-              
 
-              <div 
+              <div
                 className="prose prose-slate prose-lg max-w-none prose-headings:font-bold prose-headings:tracking-tight prose-a:text-primary hover:prose-a:text-primary mb-12 whitespace-pre-wrap"
               >
                 {service.description}
               </div>
-              
 
               {service.key_features && service.key_features.length > 0 && (
                 <div className="mt-auto space-y-4">
@@ -163,8 +129,6 @@ export default async function ServiceDetail({ params }: ServiceProps) {
                 </div>
               )}
             </FadeIn>
-
-            
 
             <FadeIn delay={200} className="mt-12 lg:mt-0">
               <div className="overflow-hidden rounded-3xl bg-slate-100 ring-1 ring-slate-200 shadow-2xl sticky top-24">
@@ -186,75 +150,14 @@ export default async function ServiceDetail({ params }: ServiceProps) {
         </div>
       </main>
 
-      <Pricing settings={mockSettings} featuredService={service} activeDiscounts={activeDiscounts} />
+      <Pricing settings={mockSettings} featuredService={service} whatsappNumber={whatsappNumber} />
 
-      {/* RELATED PORTFOLIOS SECTION */}
-      {relatedPortfolios.length > 0 && (
-        <section className="py-20 bg-slate-50 relative border-t border-slate-100">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <FadeIn>
-              <div className="text-center max-w-2xl mx-auto mb-16">
-                <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-sm font-medium text-primary mb-6">
-                  <BriefcaseBusiness size={14} />
-                  <span>Contoh Karya</span>
-                </div>
-                <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
-                  Portofolio {service.title}
-                </h2>
-                <p className="mt-4 text-lg text-slate-600">
-                  Lihat beberapa proyek pilihan kami untuk layanan ini.
-                </p>
-              </div>
-            </FadeIn>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {relatedPortfolios.map((portfolio, idx) => (
-                <FadeIn key={portfolio.id} delay={150 + idx * 80}>
-                  <article className="group relative flex flex-col bg-white rounded-3xl ring-1 ring-slate-100/80 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden h-full">
-                    <div className="relative aspect-square overflow-hidden bg-slate-100">
-                      {portfolio.images && portfolio.images.length > 0 ? (
-                        <img
-                          src={portfolio.images[0]}
-                          alt={portfolio.title}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-slate-300">
-                          <BriefcaseBusiness className="w-10 h-10" />
-                        </div>
-                      )}
-                      {portfolio.category && (
-                        <div className="absolute top-4 left-4 flex flex-wrap gap-1">
-                          <span className="rounded-full bg-white/90 backdrop-blur-sm px-3 py-1 text-xs font-semibold text-slate-900 shadow-sm">
-                            {portfolio.category.trim()}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex flex-col flex-1 p-6">
-                      <h3 className="text-xl font-bold text-slate-900 leading-snug mb-3 group-hover:text-primary transition-colors">
-                        {portfolio.title}
-                      </h3>
-                      {portfolio.description && (
-                        <p className="text-sm text-slate-500 leading-relaxed line-clamp-3 flex-1">
-                          {portfolio.description}
-                        </p>
-                      )}
-                    </div>
-                  </article>
-                </FadeIn>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      <FAQSection 
-        faqs={serviceFaqs || []} 
+      <FAQSection
+        faqs={serviceFaqs || []}
         title={`Pertanyaan tentang ${service.title}`}
         badge="FAQ Layanan"
       />
 
-      {/* CTA SECTION - Standardized with Landing Page Style */}
       <section className="bg-white py-16 sm:py-24" id="cta">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <FadeIn delay={100}>
@@ -266,7 +169,7 @@ export default async function ServiceDetail({ params }: ServiceProps) {
                 Konsultasikan dengan tim ahli kami. Kami siap membantu mewujudkan visi Anda dan memberikan konsep awal dalam waktu 24 jam.
               </p>
               <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-6">
-                <a 
+                <a
                   href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(`Hi, saya ingin berkonsultasi mengenai layanan ${service.title} di website kangjasa.com.`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -275,14 +178,14 @@ export default async function ServiceDetail({ params }: ServiceProps) {
                   Konsultasi via WhatsApp
                   <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
                 </a>
-                <Link 
-                  href="/#pricing" 
+                <Link
+                  href="/#pricing"
                   className="flex items-center justify-center gap-2 text-base font-semibold leading-6 text-white transition-colors hover:text-secondary w-full sm:w-auto py-2"
                 >
                   Lihat Paket Harga
                 </Link>
               </div>
-              
+
               <svg
                 viewBox="0 0 1024 1024"
                 className="absolute left-1/2 top-1/2 -z-10 h-256 w-5xl -translate-x-1/2 mask-[radial-gradient(closest-side,white,transparent)]"

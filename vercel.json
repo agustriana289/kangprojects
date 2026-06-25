@@ -5,16 +5,6 @@
       "maxDuration": 60
     }
   },
-  "crons": [
-    {
-      "path": "/api/notion/sync-market",
-      "schedule": "0 17 * * *"
-    },
-    {
-      "path": "/api/notion/sync-services",
-      "schedule": "5 17 * * *"
-    }
-  ],
   "env": {
     "NODE_OPTIONS": "--max-old-space-size=1024"
   }
