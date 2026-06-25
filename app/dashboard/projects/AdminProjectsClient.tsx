@@ -836,32 +836,6 @@ export default function AdminProjectsClient() {
             >
                <Plus className="w-4 h-4" /> Tambah Proyek
             </button>
-            <button
-               onClick={handleSyncAllToTickTick}
-               disabled={syncingTickTick}
-               className="inline-flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 text-slate-700 text-sm font-bold rounded-xl hover:bg-slate-50 transition-colors shadow-sm whitespace-nowrap disabled:opacity-60 disabled:cursor-not-allowed"
-               title="Export semua pesanan aktif ke TickTick (tidak duplikat)"
-            >
-               {syncingTickTick ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-               Sync ke TickTick
-            </button>
-            <div className="flex items-center gap-1.5 bg-white border border-slate-200 rounded-xl shadow-sm px-1 py-1">
-              <input
-                type="month"
-                value={notionSyncMonth}
-                onChange={e => setNotionSyncMonth(e.target.value)}
-                className="text-xs font-medium text-slate-600 outline-none bg-transparent px-2 py-1 rounded-lg focus:ring-2 focus:ring-primary/20"
-              />
-              <button
-                onClick={handleSyncToNotion}
-                disabled={syncingNotion}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-slate-700 transition-colors whitespace-nowrap disabled:opacity-60 disabled:cursor-not-allowed"
-                title="Sync project bulan ini ke Notion"
-              >
-                {syncingNotion ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <BookMarked className="w-3.5 h-3.5" />}
-                Sync Notion
-              </button>
-            </div>
          </div>
       </div>
 
