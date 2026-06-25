@@ -89,14 +89,15 @@ export default async function Home() {
 
       <main className="relative overflow-hidden bg-white selection:bg-primary/20 selection:text-primary">
         
-        {/* HERO SECTION - CLEAN LIGHT & PREMIUM */}
-        <div className="relative pt-32 pb-24 lg:pt-40 lg:pb-32 overflow-hidden">
-          {/* Subtle Grid Background */}
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-40"></div>
+        {/* HERO SECTION - REDESIGNED PASTEL */}
+        <div className="relative pt-32 pb-32 lg:pt-40 lg:pb-40 overflow-hidden bg-gradient-to-b from-purple-50 via-white to-white">
+          {/* Abstract background blur elements to match pastel look */}
+          <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-purple-200/40 rounded-full blur-3xl opacity-60 -translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
+          <div className="absolute top-[20%] right-0 w-[400px] h-[400px] bg-orange-100/50 rounded-full blur-3xl opacity-60 translate-x-1/4 pointer-events-none"></div>
 
-          <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
+          <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center z-10">
             <FadeIn delay={0}>
-              <div className="mx-auto mb-8 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-1.5 text-sm font-medium text-slate-600 shadow-sm">
+              <div className="mx-auto mb-8 inline-flex items-center gap-2 rounded-full border border-purple-100 bg-white/60 backdrop-blur-sm px-4 py-1.5 text-sm font-medium text-slate-700 shadow-sm">
                 <span className="flex h-2 w-2 rounded-full bg-primary animate-pulse"></span>
                 <span>{settings?.hero_badge || "Jasa Desain & Pengembangan Profesional"}</span>
               </div>
@@ -118,14 +119,14 @@ export default async function Home() {
                   href={waHero}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group flex h-14 w-full sm:w-auto items-center justify-center gap-2.5 rounded-full bg-slate-900 px-8 text-base font-bold text-white transition-all hover:bg-primary hover:shadow-xl hover:shadow-primary/20 hover:-translate-y-0.5"
+                  className="group flex h-14 w-full sm:w-auto items-center justify-center gap-2.5 rounded-full bg-primary px-8 text-base font-bold text-white transition-all hover:bg-primary/90 hover:shadow-lg hover:-translate-y-0.5"
                 >
                   {settings?.hero_button1_text || "Mulai Konsultasi Gratis"}
                   <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
                 </a>
                 <Link
                   href="#semua-layanan"
-                  className="flex h-14 w-full sm:w-auto items-center justify-center rounded-full border-2 border-slate-200 bg-white px-8 text-base font-bold text-slate-700 transition-all hover:border-slate-300 hover:bg-slate-50"
+                  className="group flex h-14 w-full sm:w-auto items-center justify-center rounded-full bg-slate-900 px-8 text-base font-bold text-white transition-all hover:bg-slate-800 hover:shadow-lg hover:-translate-y-0.5"
                 >
                   {settings?.hero_button2_text || "Lihat Layanan Kami"}
                 </Link>

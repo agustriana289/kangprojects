@@ -14,7 +14,7 @@ export default function Steps({ settings }: { settings?: any }) {
     : defaultSteps;
 
   return (
-    <section className="bg-slate-50 py-24 sm:py-32" id="process">
+    <section className="bg-white py-24 sm:py-32" id="process">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <FadeIn delay={100} className="mx-auto max-w-3xl text-center mb-24">
           <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-sm font-medium text-slate-600 mb-6 shadow-sm">
@@ -28,29 +28,42 @@ export default function Steps({ settings }: { settings?: any }) {
           </p>
         </FadeIn>
 
-        <div className="relative">
-          {/* Connecting Line (Desktop Only) */}
-          <div className="hidden lg:block absolute top-8 left-[12.5%] right-[12.5%] h-px bg-slate-200"></div>
-
-          <div className="grid grid-cols-1 gap-12 lg:grid-cols-4 lg:gap-8">
-            {stepsList.map((step: any, idx: number) => (
-              <FadeIn key={idx} delay={150 + idx * 100} className="relative z-10">
-                <div className="group flex flex-col items-center text-center">
-
-                  <div className="relative mb-8 flex h-16 w-16 items-center justify-center rounded-full bg-white border border-slate-200 shadow-sm text-slate-900 group-hover:border-primary group-hover:text-primary transition-colors duration-300">
-                    <span className="text-xl font-bold">{step.id}</span>
-                  </div>
-
-                  <h3 className="text-xl font-bold tracking-tight text-slate-900 mb-3 group-hover:text-primary transition-colors duration-300">
-                    {step.name}
-                  </h3>
-                  <p className="text-base text-slate-500 leading-relaxed max-w-[250px] mx-auto">
-                    {step.description}
-                  </p>
+        <div className="space-y-24">
+          {stepsList.map((step: any, idx: number) => {
+            const isEven = idx % 2 === 1;
+            return (
+              <div key={idx} className={`flex flex-col gap-12 lg:items-center ${isEven ? 'lg:flex-row-reverse' : 'lg:flex-row'}`}>
+                {/* Content Side */}
+                <div className="w-full lg:w-1/2">
+                  <FadeIn delay={150}>
+                    <div className="flex flex-col max-w-md mx-auto lg:mx-0">
+                      <span className="text-6xl font-light text-slate-200 mb-4 block">
+                        {String(idx + 1).padStart(2, '0')}
+                      </span>
+                      <h3 className="text-3xl font-bold tracking-tight text-slate-900 mb-4">
+                        {step.name}
+                      </h3>
+                      <p className="text-lg text-slate-500 leading-relaxed">
+                        {step.description}
+                      </p>
+                    </div>
+                  </FadeIn>
                 </div>
-              </FadeIn>
-            ))}
-          </div>
+                
+                {/* Graphic/Visual Side */}
+                <div className="w-full lg:w-1/2">
+                  <FadeIn delay={250}>
+                    <div className="relative aspect-[4/3] rounded-[2rem] bg-gradient-to-br from-purple-50 to-orange-50/30 overflow-hidden flex items-center justify-center border border-slate-100 shadow-sm">
+                      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.8)_0%,transparent_100%)]"></div>
+                      <div className="relative z-10 w-24 h-24 rounded-3xl bg-white shadow-xl flex items-center justify-center text-primary rotate-3 hover:rotate-0 transition-transform duration-500">
+                         <DynamicIcon name={step.icon || "Sparkles"} size={40} />
+                      </div>
+                    </div>
+                  </FadeIn>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>

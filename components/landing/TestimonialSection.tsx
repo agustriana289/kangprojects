@@ -22,28 +22,28 @@ export default function TestimonialSection({ settings, testimonials = [] }: { se
   if (!testimonials || testimonials.length === 0) return null;
 
   return (
-    <section className="bg-white py-24 sm:py-32 border-y border-slate-100" id="testimonials">
+    <section className="bg-white py-24 sm:py-32" id="testimonials">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <FadeIn delay={100} className="mx-auto max-w-3xl text-center mb-20">
-          <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-sm font-medium text-slate-600 mb-6 shadow-sm">
-            <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
-            <span>{settings?.testimonial_badge || "Testimoni Klien"}</span>
-          </div>
+        <FadeIn delay={100} className="text-left mb-20 max-w-3xl">
           <h2 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl">
-            {settings?.testimonial_title || "Dipercaya oleh ratusan merek"}
+            {settings?.testimonial_title || "Pengalaman Nyata Dari Klien Kami"}
           </h2>
           <p className="mt-6 text-lg leading-8 text-slate-500">
             {settings?.testimonial_description || "Jangan hanya mendengar dari kami. Dengarkan langsung dari klien-klien yang telah merasakan dampak nyata dari layanan kami."}
           </p>
         </FadeIn>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
           {testimonials.slice(0, 6).map((t, idx) => {
             const avgStars = Math.round((t.rating_quality + t.rating_communication + t.rating_speed) / 3 || 5);
             return (
               <FadeIn key={t.id || idx} delay={100 + (idx % 3) * 100}>
-                <div className="flex flex-col h-full rounded-3xl bg-white border border-slate-200 shadow-sm hover:shadow-xl hover:border-slate-300 p-8 transition-all duration-300">
-                  <div className="flex text-amber-400 mb-6">
+                <div className="relative flex flex-col h-full rounded-3xl bg-white border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-8 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300">
+                  <div className="absolute top-8 right-8 text-primary/10">
+                    <Quote size={48} className="rotate-180" />
+                  </div>
+                  
+                  <div className="flex text-amber-400 mb-6 relative z-10">
                     {[...Array(5)].map((_, i) => (
                       <Star
                         key={i}
@@ -55,12 +55,12 @@ export default function TestimonialSection({ settings, testimonials = [] }: { se
                     ))}
                   </div>
 
-                  <p className="text-slate-700 text-base leading-relaxed line-clamp-4 flex-1 mb-8 italic">
-                    &quot;{t.comment}&quot;
+                  <p className="text-slate-700 text-base leading-relaxed line-clamp-4 flex-1 mb-8 relative z-10">
+                    "{t.comment}"
                   </p>
 
-                  <div className="flex items-center gap-4 pt-6 border-t border-slate-100 mt-auto">
-                    <div className="w-12 h-12 rounded-full bg-slate-50 text-slate-700 flex items-center justify-center font-bold text-sm shrink-0 border border-slate-200">
+                  <div className="flex items-center gap-4 mt-auto relative z-10">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-50 to-orange-50 text-primary flex items-center justify-center font-bold text-sm shrink-0 shadow-inner">
                       {t.client_name ? t.client_name.substring(0, 2).toUpperCase() : "AA"}
                     </div>
                     <div className="flex-1 min-w-0">
