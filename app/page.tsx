@@ -164,6 +164,7 @@ export default async function Home() {
                   </div>
                 </div>
               </div>
+            </FadeIn>
             </div>
           </div>
         </div>
