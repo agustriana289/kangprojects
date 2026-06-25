@@ -229,10 +229,7 @@ export default function UserProjectsClient({ userId }: { userId: string }) {
                           className="p-2 rounded-lg bg-slate-100 text-slate-500 hover:bg-indigo-50 hover:text-primary transition-colors" title="Lihat Detail">
                           <Eye className="w-4 h-4" />
                         </button>
-                        <Link href={`/workspace/${o.id}`}
-                          className="p-2 rounded-lg bg-slate-100 text-slate-500 hover:bg-indigo-50 hover:text-primary transition-colors" title="Buka Ruang Kerja">
-                          <MessageSquare className="w-4 h-4" />
-                        </Link>
+
                       </div>
                     </td>
                   </tr>
@@ -342,12 +339,7 @@ export default function UserProjectsClient({ userId }: { userId: string }) {
               )}
             </div>
 
-            <div className="px-6 py-4 border-t border-slate-100 flex gap-3">
-              <Link href={`/workspace/${selected.id}`}
-                className="flex-1 inline-flex items-center justify-center gap-2 bg-primary hover:bg-secondary text-white py-2.5 rounded-xl text-sm font-bold transition-colors">
-                <MessageSquare className="w-4 h-4" /> Buka Ruang Kerja
-              </Link>
-            </div>
+
           </div>
         </div>
       )}

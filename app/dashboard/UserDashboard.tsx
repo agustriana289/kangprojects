@@ -148,7 +148,7 @@ export default async function UserDashboard({ name }: { name: string }) {
                           <th scope="col" className="p-4 text-center text-xs font-bold uppercase tracking-wider text-slate-500">Jumlah</th>
                           <th scope="col" className="p-4 text-center text-xs font-bold uppercase tracking-wider text-slate-500">Status</th>
                           <th scope="col" className="p-4 text-right text-xs font-bold uppercase tracking-wider text-slate-500">Tanggal</th>
-                          <th scope="col" className="p-4 text-right text-xs font-bold uppercase tracking-wider text-slate-500">Aksi</th>
+
                         </tr>
                       </thead>
                       <tbody className="bg-white divide-y divide-slate-100 border-t border-slate-200">
@@ -194,16 +194,7 @@ export default async function UserDashboard({ name }: { name: string }) {
                                 <td className="p-4 whitespace-nowrap text-xs font-medium text-slate-400 text-right">
                                   {new Date(order.created_at).toLocaleDateString("id-ID", { day: 'numeric', month: 'short', year: 'numeric' })}
                                 </td>
-                                <td className="p-4 whitespace-nowrap text-right">
-                                  <div className="flex justify-end">
-                                    <a href={`/workspace/${order.id}`} className="text-white bg-primary hover:bg-secondary px-3 py-1.5 rounded-lg inline-flex items-center gap-2 transition-colors shadow-sm text-xs font-bold uppercase tracking-wider" title="Open Workspace">
-                                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
-                                      </svg>
-                                      Ruang Kerja
-                                    </a>
-                                  </div>
-                                </td>
+
                               </tr>
                             );
                           })

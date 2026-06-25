@@ -9,7 +9,7 @@ import {
   Home, BookOpen, Images, LogOut, User as UserIcon, MessageSquare
 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
-import ChatNotificationBell from "@/components/dashboard/ChatNotificationBell";
+
 import NotificationBell from "@/components/dashboard/NotificationBell";
 import GlobalSearch from "@/components/dashboard/GlobalSearch";
 
@@ -100,7 +100,7 @@ export default function DashboardHeader({ user, profile, settings }: { user: Use
             
 
             <div className="hidden lg:flex items-center">
-              <ChatNotificationBell role={isAdmin ? 'admin' : 'user'} userId={user?.id} />
+
               <NotificationBell role={isAdmin ? 'admin' : 'user'} />
 
               
