@@ -10,6 +10,7 @@ import TestimonialSection from "@/components/landing/TestimonialSection";
 import WhyChooseUs from "@/components/landing/WhyChooseUs";
 import AllServices from "@/components/landing/AllServices";
 import DynamicIcon from "@/components/dashboard/DynamicIcon";
+import AnimatedHeroTitle from "@/components/landing/AnimatedHeroTitle";
 import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 
@@ -79,11 +80,6 @@ export default async function Home() {
         { value: "99", suffix: "%", label: "Kepuasan Klien" },
       ];
 
-  const heroTitleWords = settings?.hero_title ? settings.hero_title.split(" ") : "Wujudkan Identitas Merek yang Tak Terlupakan".split(" ");
-  const midPoint = Math.ceil(heroTitleWords.length / 2);
-  const heroTitleStart = heroTitleWords.slice(0, midPoint).join(" ");
-  const heroTitleEnd = heroTitleWords.slice(midPoint).join(" ");
-
   const waNumber = settings?.phone_number ? settings.phone_number.replace(/\D/g, "") : "";
   const waHero = waNumber ? `https://wa.me/${waNumber}?text=${encodeURIComponent("Halo, saya ingin konsultasi mengenai layanan Anda.")}` : "#";
 
@@ -107,12 +103,7 @@ export default async function Home() {
             </FadeIn>
 
             <FadeIn delay={80}>
-              <h1 className="mx-auto max-w-5xl text-5xl font-extrabold tracking-tighter text-slate-900 sm:text-7xl lg:text-8xl leading-[1.1]">
-                {heroTitleStart}{" "}
-                <span className="text-primary inline-block">
-                  {heroTitleEnd}
-                </span>
-              </h1>
+              <AnimatedHeroTitle title={settings?.hero_title} />
             </FadeIn>
 
             <FadeIn delay={160}>
