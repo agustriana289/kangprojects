@@ -1,4 +1,4 @@
-import { ArrowRight, Star, CheckCircle2, Zap, MessageCircle } from "lucide-react";
+import { ArrowRight, Star, Zap, CheckCircle2 } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import FadeIn from "@/components/landing/FadeIn";
@@ -91,55 +91,50 @@ export default async function Home() {
     <>
       <Header />
 
-      <main className="relative overflow-hidden">
-        <div className="relative min-h-screen flex flex-col justify-center bg-slate-950 pt-20 pb-20 overflow-hidden">
+      <main className="relative overflow-hidden bg-white selection:bg-primary/20 selection:text-primary">
+        
+        {/* HERO SECTION - CLEAN LIGHT & PREMIUM */}
+        <div className="relative pt-32 pb-24 lg:pt-40 lg:pb-32 overflow-hidden">
+          {/* Subtle Grid Background */}
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-40"></div>
 
-          <div className="absolute inset-0 -z-10 overflow-hidden">
-            <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[900px] h-[900px] rounded-full bg-primary/10 blur-[120px]" />
-            <div className="absolute bottom-0 right-0 w-[500px] h-[500px] rounded-full bg-secondary/10 blur-[100px]" />
-            <div className="absolute top-1/3 left-0 w-[300px] h-[300px] rounded-full bg-primary/5 blur-[80px]" />
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px]" />
-          </div>
-
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-
+          <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
             <FadeIn delay={0}>
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 backdrop-blur-sm px-4 py-1.5 text-sm font-medium text-white/70 mb-8">
-                <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+              <div className="mx-auto mb-8 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-1.5 text-sm font-medium text-slate-600 shadow-sm">
+                <span className="flex h-2 w-2 rounded-full bg-primary animate-pulse"></span>
                 <span>{settings?.hero_badge || "Jasa Desain & Pengembangan Profesional"}</span>
               </div>
             </FadeIn>
 
             <FadeIn delay={80}>
-              <h1 className="mx-auto max-w-4xl text-5xl font-extrabold tracking-tight text-white sm:text-7xl leading-[1.08] mb-6">
+              <h1 className="mx-auto max-w-5xl text-5xl font-extrabold tracking-tighter text-slate-900 sm:text-7xl lg:text-8xl leading-[1.1]">
                 {heroTitleStart}{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
+                <span className="text-primary inline-block">
                   {heroTitleEnd}
                 </span>
               </h1>
             </FadeIn>
 
             <FadeIn delay={160}>
-              <p className="mx-auto max-w-2xl text-lg leading-8 text-white/60 mb-10">
+              <p className="mx-auto mt-8 max-w-2xl text-lg sm:text-xl leading-relaxed text-slate-500 font-medium">
                 {settings?.hero_description || "Dari desain logo hingga website, kami menghadirkan solusi visual berkualitas tinggi yang memperkuat identitas merek dan mendorong pertumbuhan bisnis Anda."}
               </p>
             </FadeIn>
 
             <FadeIn delay={240}>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+              <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
                 <a
                   href={waHero}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group flex h-14 w-full sm:w-auto items-center justify-center gap-2.5 rounded-full bg-primary px-8 text-base font-bold text-white transition-all hover:bg-secondary hover:shadow-2xl hover:shadow-primary/40 hover:-translate-y-0.5"
+                  className="group flex h-14 w-full sm:w-auto items-center justify-center gap-2.5 rounded-full bg-slate-900 px-8 text-base font-bold text-white transition-all hover:bg-primary hover:shadow-xl hover:shadow-primary/20 hover:-translate-y-0.5"
                 >
-                  <MessageCircle size={18} />
                   {settings?.hero_button1_text || "Mulai Konsultasi Gratis"}
-                  <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+                  <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
                 </a>
                 <Link
                   href="#semua-layanan"
-                  className="flex h-14 w-full sm:w-auto items-center justify-center rounded-full border border-white/15 bg-white/5 backdrop-blur-sm px-8 text-base font-semibold text-white/80 transition-all hover:bg-white/10 hover:border-white/25 hover:text-white"
+                  className="flex h-14 w-full sm:w-auto items-center justify-center rounded-full border-2 border-slate-200 bg-white px-8 text-base font-bold text-slate-700 transition-all hover:border-slate-300 hover:bg-slate-50"
                 >
                   {settings?.hero_button2_text || "Lihat Layanan Kami"}
                 </Link>
@@ -147,80 +142,74 @@ export default async function Home() {
             </FadeIn>
 
             <FadeIn delay={320}>
-              <div className="flex flex-wrap items-center justify-center gap-4">
-                <div className="flex items-center gap-2 rounded-full bg-white/5 border border-white/10 px-4 py-2">
-                  <div className="flex -space-x-2.5">
+              <div className="mt-16 flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex -space-x-3">
                     {recentNonAdminUsers.slice(0, 4).map((user: any) => (
                       user.avatar_url ? (
                         <img
                           key={user.id}
                           src={user.avatar_url}
                           alt={user.full_name || "User"}
-                          className="w-7 h-7 rounded-full ring-2 ring-slate-950 object-cover"
+                          className="w-10 h-10 rounded-full ring-2 ring-white object-cover shadow-sm"
                           referrerPolicy="no-referrer"
                         />
                       ) : (
-                        <div key={user.id} className="w-7 h-7 flex items-center justify-center rounded-full ring-2 ring-slate-950 bg-primary/20 text-primary font-bold text-xs shrink-0">
+                        <div key={user.id} className="w-10 h-10 flex items-center justify-center rounded-full ring-2 ring-white bg-slate-100 text-slate-500 font-bold text-sm shrink-0 shadow-sm">
                           {(user.full_name || user.email || "U").charAt(0).toUpperCase()}
                         </div>
                       )
                     ))}
                   </div>
-                  <span className="text-sm font-medium text-white/70">
-                    {recentNonAdminUsers.length > 0 ? `${recentNonAdminUsers.length}+ klien aktif` : "Dipercaya banyak klien"}
-                  </span>
-                </div>
-                <div className="flex items-center gap-1.5 rounded-full bg-white/5 border border-white/10 px-4 py-2">
-                  <div className="flex text-amber-400">
-                    {[...Array(5)].map((_, i) => <Star key={i} size={13} fill="currentColor" strokeWidth={0} />)}
+                  <div className="text-left">
+                    <div className="flex items-center gap-1 text-amber-400">
+                      {[...Array(5)].map((_, i) => <Star key={i} size={14} fill="currentColor" strokeWidth={0} />)}
+                    </div>
+                    <span className="text-sm font-medium text-slate-600 block mt-0.5">
+                      {avgRating > 0 ? avgRating.toFixed(1) : "5.0"} dari {recentNonAdminUsers.length > 0 ? `${recentNonAdminUsers.length}+` : "ratusan"} klien
+                    </span>
                   </div>
-                  <span className="text-sm font-medium text-white/70">
-                    {avgRating > 0 ? avgRating.toFixed(1) : "5.0"} rating
-                  </span>
-                </div>
-                <div className="flex items-center gap-1.5 rounded-full bg-white/5 border border-white/10 px-4 py-2">
-                  <Zap size={14} className="text-primary" />
-                  <span className="text-sm font-medium text-white/70">Respon cepat</span>
                 </div>
               </div>
             </FadeIn>
           </div>
         </div>
 
-        <div className="bg-white py-16 sm:py-20 border-b border-slate-100">
+        {/* LOGOS / STATS SECTION */}
+        <div className="border-y border-slate-100 bg-slate-50/50 py-12">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-10">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {statsList.map((stat: any, idx: number) => (
-                <FadeIn key={idx} delay={idx * 80} className="text-center">
-                  <p className="text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900">
-                    {stat.value}<span className="text-primary text-3xl">{stat.suffix}</span>
+                <FadeIn key={idx} delay={idx * 100} className="text-center">
+                  <p className="text-4xl sm:text-5xl font-bold tracking-tight text-slate-900">
+                    {stat.value}<span className="text-primary">{stat.suffix}</span>
                   </p>
-                  <p className="mt-2 text-sm font-medium text-slate-500">{stat.label}</p>
+                  <p className="mt-2 text-sm font-medium text-slate-500 uppercase tracking-widest">{stat.label}</p>
                 </FadeIn>
               ))}
             </div>
           </div>
         </div>
 
-        <div className="bg-white py-16 sm:py-20 border-b border-slate-100">
+        {/* VALUE PROPOSITION / FEATURES */}
+        <div className="py-24 bg-white">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {featuresList.map((feature: any, idx: number) => (
                 <FadeIn key={idx} delay={idx * 100}>
-                  <div className="group relative flex gap-5 items-start p-6 rounded-2xl bg-slate-50 hover:bg-primary/5 border border-transparent hover:border-primary/15 transition-all duration-300">
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white shadow-sm text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300">
-                      <DynamicIcon name={feature.icon || "Sparkles"} size={20} />
+                  <div className="group h-full p-8 rounded-3xl bg-white border border-slate-200 shadow-sm hover:shadow-xl hover:border-slate-300 transition-all duration-300">
+                    <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-50 text-slate-900 group-hover:bg-primary group-hover:text-white group-hover:-rotate-3 transition-all duration-300">
+                      <DynamicIcon name={feature.icon || "Sparkles"} size={24} />
                     </div>
-                    <div>
-                      <h3 className="font-bold text-slate-900 mb-1 group-hover:text-primary transition-colors">{feature.title}</h3>
-                      <p className="text-sm text-slate-500 leading-relaxed">{feature.desc}</p>
-                    </div>
+                    <h3 className="text-xl font-bold text-slate-900 mb-3 tracking-tight">{feature.title}</h3>
+                    <p className="text-base text-slate-500 leading-relaxed">{feature.desc}</p>
                   </div>
                 </FadeIn>
               ))}
             </div>
           </div>
         </div>
+
       </main>
 
       <AllServices settings={settings} services={allServices} />

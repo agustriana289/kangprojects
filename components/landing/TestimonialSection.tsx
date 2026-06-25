@@ -22,51 +22,50 @@ export default function TestimonialSection({ settings, testimonials = [] }: { se
   if (!testimonials || testimonials.length === 0) return null;
 
   return (
-    <section className="bg-slate-950 py-24 sm:py-32" id="testimonials">
+    <section className="bg-white py-24 sm:py-32 border-y border-slate-100" id="testimonials">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <FadeIn delay={100} className="mb-16 text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-sm font-medium text-white/70 mb-4">
-            <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
-            <span>{settings?.testimonial_badge || "Kisah Sukses"}</span>
+        <FadeIn delay={100} className="mx-auto max-w-3xl text-center mb-20">
+          <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-sm font-medium text-slate-600 mb-6 shadow-sm">
+            <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
+            <span>{settings?.testimonial_badge || "Testimoni Klien"}</span>
           </div>
-          <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
-            {settings?.testimonial_title || "Apa kata klien kami"}
+          <h2 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl">
+            {settings?.testimonial_title || "Dipercaya oleh ratusan merek"}
           </h2>
-          <p className="mt-4 text-lg text-white/50 max-w-2xl mx-auto">
-            {settings?.testimonial_description || "Jangan hanya percaya kata-kata kami. Berikut adalah apa yang dikatakan merek tentang karya kami."}
+          <p className="mt-6 text-lg leading-8 text-slate-500">
+            {settings?.testimonial_description || "Jangan hanya mendengar dari kami. Dengarkan langsung dari klien-klien yang telah merasakan dampak nyata dari layanan kami."}
           </p>
         </FadeIn>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {testimonials.slice(0, 6).map((t, idx) => {
             const avgStars = Math.round((t.rating_quality + t.rating_communication + t.rating_speed) / 3 || 5);
             return (
               <FadeIn key={t.id || idx} delay={100 + (idx % 3) * 100}>
-                <div className="flex flex-col h-full rounded-2xl bg-white/5 border border-white/10 p-6 backdrop-blur-sm hover:bg-white/8 hover:border-white/20 transition-all duration-300">
-                  <Quote className="w-8 h-8 text-primary/50 mb-4 shrink-0" />
+                <div className="flex flex-col h-full rounded-3xl bg-white border border-slate-200 shadow-sm hover:shadow-xl hover:border-slate-300 p-8 transition-all duration-300">
+                  <div className="flex text-amber-400 mb-6">
+                    {[...Array(5)].map((_, i) => (
+                      <Star
+                        key={i}
+                        size={16}
+                        fill={i < avgStars ? "currentColor" : "transparent"}
+                        strokeWidth={i < avgStars ? 0 : 2}
+                        className={i < avgStars ? "" : "text-amber-200"}
+                      />
+                    ))}
+                  </div>
 
-                  <p className="text-white/70 text-sm leading-relaxed line-clamp-4 flex-1 mb-6 italic">
-                    {t.comment}
+                  <p className="text-slate-700 text-base leading-relaxed line-clamp-4 flex-1 mb-8 italic">
+                    &quot;{t.comment}&quot;
                   </p>
 
-                  <div className="flex items-center gap-3 pt-4 border-t border-white/10 mt-auto">
-                    <div className="w-10 h-10 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-sm shrink-0 border border-primary/30">
+                  <div className="flex items-center gap-4 pt-6 border-t border-slate-100 mt-auto">
+                    <div className="w-12 h-12 rounded-full bg-slate-50 text-slate-700 flex items-center justify-center font-bold text-sm shrink-0 border border-slate-200">
                       {t.client_name ? t.client_name.substring(0, 2).toUpperCase() : "AA"}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="text-sm font-bold text-white truncate">{t.client_name || "Klien Anonim"}</h4>
-                      <p className="text-xs text-white/40 truncate">{getProjectTitle(t)}</p>
-                    </div>
-                    <div className="flex text-amber-400 shrink-0">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          size={12}
-                          fill={i < avgStars ? "currentColor" : "transparent"}
-                          strokeWidth={i < avgStars ? 0 : 2}
-                          className={i < avgStars ? "" : "text-amber-400/30"}
-                        />
-                      ))}
+                      <h4 className="text-base font-bold text-slate-900 truncate">{t.client_name || "Klien Anonim"}</h4>
+                      <p className="text-sm text-slate-500 truncate">{getProjectTitle(t)}</p>
                     </div>
                   </div>
                 </div>

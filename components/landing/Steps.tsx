@@ -2,55 +2,49 @@ import FadeIn from "./FadeIn";
 import DynamicIcon from "../dashboard/DynamicIcon";
 
 const defaultSteps = [
-  { id: "01", name: "Konsultasi", description: "Ceritakan kebutuhan proyek Anda melalui WhatsApp. Kami akan merespons dalam hitungan menit.", icon: "MessageSquareText" },
-  { id: "02", name: "Briefing", description: "Kami pahami visi Anda, target audiens, dan preferensi desain untuk menghasilkan konsep terbaik.", icon: "PenTool" },
-  { id: "03", name: "Pengerjaan", description: "Tim kami mulai mengerjakan proyek sesuai timeline yang disepakati dengan update progres berkala.", icon: "RefreshCw" },
-  { id: "04", name: "Selesai", description: "Proyek selesai, file lengkap dikirimkan. Kami siap membantu jika ada pertanyaan setelah itu.", icon: "Send" },
+  { id: "1", name: "Konsultasi Awal", description: "Hubungi kami via WhatsApp untuk diskusi singkat mengenai visi dan kebutuhan spesifik proyek Anda.", icon: "MessageSquareText" },
+  { id: "2", name: "Ideasi & Konsep", description: "Tim desainer kami akan mengembangkan beberapa konsep awal yang relevan dalam waktu 24 jam.", icon: "Lightbulb" },
+  { id: "3", name: "Revisi Detail", description: "Kami berkolaborasi dengan Anda untuk menyempurnakan desain hingga mencapai hasil yang sempurna.", icon: "PenTool" },
+  { id: "4", name: "Penyerahan Aset", description: "Anda akan menerima semua file master resolusi tinggi yang siap digunakan untuk berbagai keperluan.", icon: "FolderOpen" },
 ];
 
 export default function Steps({ settings }: { settings?: any }) {
   const stepsList = settings?.process_list && settings.process_list.length > 0
-    ? settings.process_list.map((step: any, i: number) => ({ ...step, id: String(i + 1).padStart(2, "0"), name: step.title, description: step.desc }))
+    ? settings.process_list.map((step: any, i: number) => ({ ...step, id: String(i + 1), name: step.title, description: step.desc }))
     : defaultSteps;
 
   return (
-    <section className="bg-white py-24 sm:py-32 overflow-hidden" id="process">
+    <section className="bg-slate-50 py-24 sm:py-32" id="process">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <FadeIn delay={100} className="mx-auto max-w-2xl text-center mb-20">
-          <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-sm font-medium text-primary mb-4">
+        <FadeIn delay={100} className="mx-auto max-w-3xl text-center mb-24">
+          <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-sm font-medium text-slate-600 mb-6 shadow-sm">
             <span>{settings?.process_badge || "Cara Kerja"}</span>
           </div>
-          <h2 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-            {settings?.process_title || "Proses sederhana, hasil luar biasa"}
+          <h2 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl">
+            {settings?.process_title || "Langkah mudah menuju hasil terbaik"}
           </h2>
-          <p className="mt-4 text-lg text-slate-500">
-            {settings?.process_description || "Kami telah menyederhanakan proses kerja agar Anda bisa fokus pada bisnis, bukan mengurus detail teknis."}
+          <p className="mt-6 text-lg leading-8 text-slate-500">
+            {settings?.process_description || "Proses kerja kami dirancang untuk meniadakan hambatan, sehingga Anda mendapatkan hasil berkualitas tinggi dengan cepat."}
           </p>
         </FadeIn>
 
         <div className="relative">
-          <div className="hidden lg:block absolute top-10 left-[calc(12.5%+28px)] right-[calc(12.5%+28px)] h-px">
-            <div className="h-full border-t-2 border-dashed border-slate-200" />
-          </div>
+          {/* Connecting Line (Desktop Only) */}
+          <div className="hidden lg:block absolute top-8 left-[12.5%] right-[12.5%] h-px bg-slate-200"></div>
 
-          <div className="grid grid-cols-1 gap-10 lg:grid-cols-4 lg:gap-6">
+          <div className="grid grid-cols-1 gap-12 lg:grid-cols-4 lg:gap-8">
             {stepsList.map((step: any, idx: number) => (
-              <FadeIn key={idx} delay={150 + idx * 120}>
+              <FadeIn key={idx} delay={150 + idx * 100} className="relative z-10">
                 <div className="group flex flex-col items-center text-center">
 
-                  <div className="relative mb-6 z-10">
-                    <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-slate-50 border border-slate-100 shadow-sm group-hover:bg-primary group-hover:border-primary group-hover:shadow-lg group-hover:shadow-primary/20 transition-all duration-300">
-                      <DynamicIcon name={step.icon} size={28} className="text-primary group-hover:text-white transition-colors duration-300" />
-                    </div>
-                    <span className="absolute -top-3 -right-3 w-7 h-7 flex items-center justify-center rounded-full bg-primary text-white text-xs font-extrabold shadow-md">
-                      {step.id}
-                    </span>
+                  <div className="relative mb-8 flex h-16 w-16 items-center justify-center rounded-full bg-white border border-slate-200 shadow-sm text-slate-900 group-hover:border-primary group-hover:text-primary transition-colors duration-300">
+                    <span className="text-xl font-bold">{step.id}</span>
                   </div>
 
-                  <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-primary transition-colors duration-300">
+                  <h3 className="text-xl font-bold tracking-tight text-slate-900 mb-3 group-hover:text-primary transition-colors duration-300">
                     {step.name}
                   </h3>
-                  <p className="text-sm text-slate-500 leading-relaxed max-w-xs mx-auto">
+                  <p className="text-base text-slate-500 leading-relaxed max-w-[250px] mx-auto">
                     {step.description}
                   </p>
                 </div>
