@@ -51,7 +51,7 @@ export default function AnimatedHeroTitle({ title }: { title: string }) {
     const end = words.slice(midPoint).join(" ");
 
     return (
-      <h1 className="mx-auto max-w-5xl text-5xl font-extrabold tracking-tighter text-slate-900 sm:text-7xl lg:text-8xl leading-[1.1]">
+      <h1 className="mx-auto max-w-5xl text-5xl font-extrabold tracking-tighter text-slate-900 sm:text-7xl leading-[1.1]">
         {start}{" "}
         <span className="text-primary inline-block">{end}</span>
       </h1>
@@ -64,7 +64,7 @@ export default function AnimatedHeroTitle({ title }: { title: string }) {
   const line2Start = baseWords.length > 2 ? baseWords[baseWords.length - 1] : "";
 
   return (
-    <h1 className="mx-auto max-w-5xl text-5xl font-extrabold tracking-tighter text-slate-900 sm:text-7xl lg:text-8xl leading-[1.1] flex flex-col items-center">
+    <h1 className="mx-auto max-w-5xl text-5xl font-extrabold tracking-tighter text-slate-900 sm:text-7xl leading-[1.1] flex flex-col items-center">
       <span>{line1}</span>
       <span className="text-primary mt-2 flex flex-row items-center justify-center flex-wrap gap-x-3 sm:gap-x-4">
         <span>{line2Start}</span>

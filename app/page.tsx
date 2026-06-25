@@ -133,38 +133,6 @@ export default async function Home() {
                 </Link>
               </div>
             </FadeIn>
-
-            <FadeIn delay={320}>
-              <div className="mt-16 flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="flex -space-x-3">
-                    {recentNonAdminUsers.slice(0, 4).map((user: any) => (
-                      user.avatar_url ? (
-                        <img
-                          key={user.id}
-                          src={user.avatar_url}
-                          alt={user.full_name || "User"}
-                          className="w-10 h-10 rounded-full ring-2 ring-white object-cover shadow-sm"
-                          referrerPolicy="no-referrer"
-                        />
-                      ) : (
-                        <div key={user.id} className="w-10 h-10 flex items-center justify-center rounded-full ring-2 ring-white bg-slate-100 text-slate-500 font-bold text-sm shrink-0 shadow-sm">
-                          {(user.full_name || user.email || "U").charAt(0).toUpperCase()}
-                        </div>
-                      )
-                    ))}
-                  </div>
-                  <div className="text-left">
-                    <div className="flex items-center gap-1 text-amber-400">
-                      {[...Array(5)].map((_, i) => <Star key={i} size={14} fill="currentColor" strokeWidth={0} />)}
-                    </div>
-                    <span className="text-sm font-medium text-slate-600 block mt-0.5">
-                      {avgRating > 0 ? avgRating.toFixed(1) : "5.0"} dari {recentNonAdminUsers.length > 0 ? `${recentNonAdminUsers.length}+` : "ratusan"} klien
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </FadeIn>
             </div>
           </div>
         </div>
