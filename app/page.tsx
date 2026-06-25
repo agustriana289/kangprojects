@@ -89,13 +89,14 @@ export default async function Home() {
 
       <main className="relative overflow-hidden bg-white selection:bg-primary/20 selection:text-primary">
         
-        {/* HERO SECTION - REDESIGNED PASTEL */}
-        <div className="relative pt-32 pb-32 lg:pt-40 lg:pb-40 overflow-hidden bg-gradient-to-b from-purple-50 via-white to-white">
-          {/* Abstract background blur elements to match pastel look */}
-          <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-purple-200/40 rounded-full blur-3xl opacity-60 -translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
-          <div className="absolute top-[20%] right-0 w-[400px] h-[400px] bg-orange-100/50 rounded-full blur-3xl opacity-60 translate-x-1/4 pointer-events-none"></div>
+        {/* HERO SECTION - CTA STYLE */}
+        <div className="bg-white pt-8 pb-8 sm:pt-12 lg:pt-16 lg:pb-16 px-4 sm:px-6 lg:px-8">
+          <div className="relative isolate overflow-hidden bg-gradient-to-br from-purple-100/80 via-white to-orange-50/80 rounded-[3rem] px-6 py-24 sm:py-32 lg:px-20 text-center shadow-sm border border-slate-100 mx-auto max-w-7xl">
+            {/* Abstract background blur elements inside the box */}
+            <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-purple-200/40 rounded-full blur-3xl opacity-60 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-[-1]"></div>
+            <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-orange-200/50 rounded-full blur-3xl opacity-60 translate-x-1/4 pointer-events-none z-[-1]"></div>
 
-          <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center z-10">
+            <div className="relative z-10">
             <FadeIn delay={0}>
               <div className="mx-auto mb-8 inline-flex items-center gap-2 rounded-full border border-purple-100 bg-white/60 backdrop-blur-sm px-4 py-1.5 text-sm font-medium text-slate-700 shadow-sm">
                 <span className="flex h-2 w-2 rounded-full bg-primary animate-pulse"></span>
@@ -163,12 +164,12 @@ export default async function Home() {
                   </div>
                 </div>
               </div>
-            </FadeIn>
+            </div>
           </div>
         </div>
 
         {/* LOGOS / STATS SECTION */}
-        <div className="border-y border-slate-100 bg-slate-50/50 py-12">
+        <div className="bg-white py-12">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {statsList.map((stat: any, idx: number) => (
@@ -189,12 +190,12 @@ export default async function Home() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {featuresList.map((feature: any, idx: number) => (
                 <FadeIn key={idx} delay={idx * 100}>
-                  <div className="group h-full p-8 rounded-3xl bg-white border border-slate-200 shadow-sm hover:shadow-xl hover:border-slate-300 transition-all duration-300">
-                    <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-50 text-slate-900 group-hover:bg-primary group-hover:text-white group-hover:-rotate-3 transition-all duration-300">
-                      <DynamicIcon name={feature.icon || "Sparkles"} size={24} />
+                  <div className="group h-full p-8 rounded-[2rem] bg-white border border-slate-100 shadow-[0_2px_10px_rgb(0,0,0,0.02)] transition-all duration-300">
+                    <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-50 text-slate-700">
+                      <DynamicIcon name={feature.icon || "Sparkles"} size={20} />
                     </div>
-                    <h3 className="text-xl font-bold text-slate-900 mb-3 tracking-tight">{feature.title}</h3>
-                    <p className="text-base text-slate-500 leading-relaxed">{feature.desc}</p>
+                    <h3 className="text-lg font-bold text-slate-900 mb-2 tracking-tight">{feature.title}</h3>
+                    <p className="text-sm text-slate-500 leading-relaxed">{feature.desc}</p>
                   </div>
                 </FadeIn>
               ))}
